@@ -1,23 +1,353 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <title>Test</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <head>
-        <title>Test</title>
-        <meta charset="utf-8" />
-        <link rel="icon" href="data:," />
-        <script src="lib/matrix.js"></script>
-        <script src="minimalTest.js"></script>
-    </head>
-    <body>
-        <h1> Omnispace </h1>
-        <button onClick="setActiveRoom(null); render();">Back</button>
-        <div id="game">
-            <iframe allow="cross-origin-isolated"
-            src = "https://telegram-space-l1c9paxke-igneous-labs.vercel.app/">
-            </iframe>
+    <meta charset="utf-8" />
+    <link rel="icon" href="data:," />
+    <!-- <script src="/lib/matrix.js"></script>
+    <script src="/minimalTest.js"></script> -->
+    <script src="/characterCustomizer.js"></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.11.1/dist/cdn.min.js"
+    ></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <link href="/dist/output.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="px-4 py-10">
+      <h1 class="text-xl font-bold">Omnispace</h1>
+      <button
+        onClick="setActiveRoom(null); render();"
+        class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+      >
+        Back
+      </button>
+      <div class="flex justify-between">
+        <div>
+          <div id="game" class="mt-4">
+            <!-- <iframe
+              allow="cross-origin-isolated"
+              src="https://telegram-space-l1c9paxke-igneous-labs.vercel.app/"
+              >
+            </iframe> -->
+          </div>
+          <div id="view"></div>
+          <div id="rooms"></div>
+          <div id="room_history"></div>
         </div>
-        <div id="view"></div>
-        <div id="rooms"></div>
-        <div id="room_history"></div>
-    </body>
+
+        <!-- Start customize character sidebar -->
+        <div x-data="{ characterMenuOpen: false }">
+          <button
+            @click="characterMenuOpen = true"
+            class="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            Open menu
+          </button>
+
+          <div
+            @keydown.window.escape="characterMenuOpen = false"
+            x-show="characterMenuOpen"
+            class="relative z-10"
+            aria-labelledby="slide-over-title"
+            x-ref="dialog"
+            aria-modal="true"
+          >
+            <div
+              x-description="Background backdrop, show/hide based on slide-over state."
+              class="fixed inset-0"
+            ></div>
+
+            <div class="fixed inset-0 overflow-hidden">
+              <div class="absolute inset-0 overflow-hidden">
+                <div
+                  class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full sm:pl-10"
+                >
+                  <div
+                    x-show="characterMenuOpen"
+                    x-transition:enter="transform transition ease-in-out duration-500 sm:duration-700"
+                    x-transition:enter-start="translate-x-full"
+                    x-transition:enter-end="translate-x-0"
+                    x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700"
+                    x-transition:leave-start="translate-x-0"
+                    x-transition:leave-end="translate-x-full"
+                    class="pointer-events-auto w-screen max-w-md"
+                    x-description="Slide-over panel, show/hide based on slide-over state."
+                    @click.away="characterMenuOpen = false"
+                  >
+                    <div
+                      class="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl"
+                      x-data="menuData"
+                    >
+                      <div
+                        class="flex min-h-0 flex-1 flex-col overflow-y-scroll py-6"
+                      >
+                        <div class="px-4 sm:px-6">
+                          <div class="flex items-start justify-between">
+                            <h2
+                              class="text-lg font-medium text-gray-900"
+                              id="slide-over-title"
+                            >
+                              Customize character
+                            </h2>
+                            <div class="ml-3 flex h-7 items-center">
+                              <button
+                                type="button"
+                                class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                @click="characterMenuOpen = false"
+                              >
+                                <span class="sr-only">Close panel</span>
+                                <svg
+                                  class="h-6 w-6"
+                                  x-description="Heroicon name: outline/x-mark"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke-width="1.5"
+                                  stroke="currentColor"
+                                  aria-hidden="true"
+                                >
+                                  <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M6 18L18 6M6 6l12 12"
+                                  ></path>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Start character customizer content -->
+                        <div
+                          class="relative mt-6 flex-1 px-4 sm:px-6 space-y-4"
+                        >
+                          <!-- Start character preview -->
+                          <!-- TODO: Build an api to which we send the selectedItems JSON and get a character image with all the selectedItems on back? -->
+                          <div class="flex justify-between space-x-4">
+                            <pre
+                              x-text="JSON.stringify(selectedItems, null, 2)"
+                              class="whitespace-pre-wrap"
+                            ></pre>
+
+                            <div
+                              class="w-[50%]"
+                              x-data="{
+                                get parsedSelectedItems() {
+                                  return Object.entries(selectedItems)
+                                    .map((item) => {
+                                      return Object.entries(item[1]).map((i) => ({
+                                        category: item[0],
+                                        subcategory: i[0],
+                                        data: i[1],
+                                      }))
+                                    })
+                                    .flat()
+                                },
+                              }"
+                            >
+                              <template x-if="parsedSelectedItems.length > 0">
+                                <div>
+                                  <div
+                                    class="flex space-x-4 items-center justify-between pb-1 w-full"
+                                  >
+                                    <p>Preview</p>
+
+                                    <button
+                                      class="inline-flex justify-center rounded-md border border-transparent bg-red-600 py-1 px-2 text-sm font-medium text-white shadow-sm hover:bg-red-700"
+                                      @click="handleRemoveAllItems"
+                                    >
+                                      <svg
+                                        class="h-4 w-4"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.5"
+                                        viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        aria-hidden="true"
+                                      >
+                                        <path
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                                        ></path>
+                                      </svg>
+                                    </button>
+                                  </div>
+
+                                  <ul
+                                    role="list"
+                                    class="divide-y divide-gray-200 border-b border-b-gray-200 max-h-[180px] overflow-y-scroll"
+                                  >
+                                    <template
+                                      x-for="item in parsedSelectedItems"
+                                      :key="item.category + item.subcategory"
+                                    >
+                                      <li class="py-2">
+                                        <div class="flex items-center">
+                                          <div class="flex-shrink-0">
+                                            <img
+                                              class="h-8 w-8 mr-1"
+                                              :alt="item.data.name"
+                                              :src="item.data.src"
+                                            />
+                                          </div>
+
+                                          <div class="min-w-0 flex-1">
+                                            <p
+                                              class="truncate font-medium text-gray-900"
+                                              x-text="item.data.name"
+                                            ></p>
+                                            <p
+                                              class="truncate text-xs text-gray-500"
+                                              x-text="item.subcategory"
+                                            ></p>
+                                          </div>
+                                          <div>
+                                            <button
+                                              class="ml-4 inline-flex items-center rounded-full bg-red px-2 py-1 text-sm font-medium leading-5 bg-red-600 text-white shadow-sm hover:bg-red-700"
+                                              @click="handleRemoveItem(item.category, item.subcategory)"
+                                            >
+                                              <svg
+                                                class="h-4 w-4"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="1.5"
+                                                viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                aria-hidden="true"
+                                              >
+                                                <path
+                                                  stroke-linecap="round"
+                                                  stroke-linejoin="round"
+                                                  d="M6 18L18 6M6 6l12 12"
+                                                ></path>
+                                              </svg>
+                                            </button>
+                                          </div>
+                                        </div>
+                                      </li>
+                                    </template>
+                                  </ul>
+                                </div>
+                              </template>
+                            </div>
+                          </div>
+
+                          <!-- End character preview -->
+
+                          <!-- Start selectors -->
+                          <div class="space-y-2">
+                            <!-- Start category selector -->
+                            <div
+                              class="flex items-center justify-center w-full"
+                            >
+                              <div class="w-full">
+                                <select
+                                  id="category"
+                                  name="category"
+                                  class="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                                  x-model="selectors.category"
+                                  x-on:change="selectors.subcategory = subcategories[selectors.category][0]"
+                                >
+                                  <template
+                                    x-for="category in categories"
+                                    :key="category"
+                                  >
+                                    <option
+                                      x-text="category"
+                                      :value="category"
+                                      :selected="category === selectors.category"
+                                    ></option>
+                                  </template>
+                                </select>
+                              </div>
+                            </div>
+                            <!-- End category selector -->
+
+                            <!-- Start subcategory selector -->
+                            <div
+                              class="flex items-center justify-center w-full"
+                            >
+                              <div class="w-full">
+                                <select
+                                  id="subcategory"
+                                  name="subcategory"
+                                  class="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                                  x-model="selectors.subcategory"
+                                >
+                                  <template
+                                    x-for="subcategory in subcategories[selectors.category]"
+                                    :key="subcategory"
+                                  >
+                                    <option
+                                      x-text="subcategory"
+                                      :value="subcategory"
+                                      :selected="subcategory === selectors.subcategory"
+                                    ></option>
+                                  </template>
+                                </select>
+                              </div>
+                            </div>
+                            <!-- End subcategory selector -->
+                          </div>
+                          <!-- End selectors -->
+
+                          <!-- Start list of items -->
+                          <div
+                            class="grid grid-cols-8 gap-0"
+                            x-data="{
+                              get itemsToShow() {
+                                return items
+                                [selectors.category][selectors.subcategory]
+                              }
+                            }"
+                          >
+                            <template
+                              x-for="item in itemsToShow"
+                              :key="item.name"
+                            >
+                              <div
+                                class="rounded-md p-2 cursor-pointer hover:bg-slate-100 flex justify-center"
+                                @click="handleSelectItem(item)"
+                              >
+                                <!-- TODO: show <img> with `src="item.src"` instead and show `item.name` on hover? -->
+                                <span x-text="item.name"></span>
+                              </div>
+                            </template>
+                          </div>
+                          <!-- End list of items -->
+                        </div>
+                        <!-- End character customizer content -->
+                      </div>
+
+                      <div class="flex flex-shrink-0 justify-end px-4 py-4">
+                        <button
+                          type="button"
+                          class="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                          @click="characterMenuOpen = false"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          @click="saveCharacter(selectedItems)"
+                          class="ml-4 inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End customize character sidebar -->
+      </div>
+    </div>
+  </body>
 </html>
