@@ -24,7 +24,7 @@ function toMessageMsg(matrixEvent) {
 
 async function initLoop() {
     while (true) {
-        const gameIFrame = document.getElementById("game_iframe");
+        const gameIFrame = document.getElementById("game_frame");
         if (gameIFrame) {
             // console.log("trying to connect to game_iframe");
             gameChannel = new MessageChannel();
