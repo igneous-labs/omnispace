@@ -22,9 +22,11 @@ function setActiveRoom(roomName) {
 
 function printRoomList() {
     console.log("printing room list")
+    let html = ''
     for (let i = 0; i < roomList.length; i++) {
-        document.getElementById("view").innerHTML += `<div onClick="setActiveRoom('${roomList[i].name}'); render();">${roomList[i].name} </div>`
+        html += `<div onClick="setActiveRoom('${roomList[i].name}'); render();">${roomList[i].name} </div>`
     }    
+    document.getElementById("view").innerHTML = html
 }
 
 function render() {
