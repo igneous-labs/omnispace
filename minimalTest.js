@@ -1,16 +1,23 @@
+const MATRIX_USER_ID = "@fp:melchior.info";
+const MATRIX_PASSWORD = "123456789";
+const MATRIX_BASEURL = "https://matrix.melchior.info";
+
 var roomList = [];
 var viewingRoom = null;
 var messageHistory = {}
+var accessToken = undefined;
 
 const client = matrixcs.createClient({
-    baseUrl: "https://matrix.melchior.info",
-    accessToken: "syt_ZnA_pAgfSpoWUqWbfCUMlJSd_1IImad",
-    userId: "@fp:melchior.info",
+    baseUrl: MATRIX_BASEURL,
+    accessToken,
+    userId : MATRIX_USER_ID,
 });
 
-// client.login("m.login.password", {"user": myUserId, "password": "123456789"}).then((response) => {
-//     console.log(response.access_token);
-// });
+if (accessToken === undefined) {
+    client.login("m.login.password", { user: MATRIX_USER_ID, password: MATRIX_PASSWORD }).then((response) => {
+        accessToken = response.access_token;
+    });
+}
 
 function setRoomList() {
     roomList = client.getRooms();
@@ -63,9 +70,14 @@ async function start() {
         if (event.getType() !== "m.room.message") {
             return; // only print messages
         }
-        messageHistory[room.name] += `${event.getSender()}: ${event.getContent().body} <br/>`
+        const c = event.getContent();
+        // console.log("event.getContent:", c);
+        messageHistory[room.name] += `${event.getSender()}: ${c.body} <br/>`
+
+        if (gameCommOnMatrixMsg) {
+            gameCommOnMatrixMsg(event);
+        }
     });
 }
 
 start();
-

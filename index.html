@@ -7,13 +7,17 @@
         <link rel="icon" href="data:," />
         <script src="lib/matrix.js"></script>
         <script src="minimalTest.js"></script>
+        <script src="gameComm.js"></script>
     </head>
     <body>
         <h1> Omnispace </h1>
         <button onClick="setActiveRoom(null); render();">Back</button>
         <div id="game">
-            <iframe allow="cross-origin-isolated"
-            src = "https://telegram-space-l1c9paxke-igneous-labs.vercel.app/">
+            <iframe
+                allow="cross-origin-isolated"
+                src="http://localhost:5000"
+                id="game_iframe"
+            >
             </iframe>
         </div>
         <div id="view"></div>
