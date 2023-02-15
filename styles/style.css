@@ -1,0 +1,14 @@
+#wrapper {
+    max-height: 100vh;
+    overflow: hidden;
+}
+
+#game_frame {
+    height: 50vh;
+    width: 100%;
+}
+
+#view {
+    max-height: 33vh;
+    overflow-y: scroll;
+}
