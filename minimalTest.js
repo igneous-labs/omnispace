@@ -98,6 +98,8 @@ async function start() {
             return; // only print messages
         }
         messageHistory[room.roomId] += `${event.getSender()}: ${event.getContent().body} <br/>`
+        setRoomList();
+        render();
     });
 }
 
