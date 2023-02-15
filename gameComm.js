@@ -39,7 +39,7 @@ async function initLoop() {
                     port1.onmessage = (msg) => {
                         console.log("Received from game:", msg.data);
                     }
-                    console.log("gameCommOnMatrixMsg set");
+                    // console.log("gameCommOnMatrixMsg set");
                     return;
                 }
                 throw new Error(`unexpected init echo from iframe: ${msg}`);

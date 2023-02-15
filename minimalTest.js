@@ -80,6 +80,11 @@ function render() {
     }
 }
 
+// Hack: matrix events are recent if localTimestamp within 60s
+function isRecentEvent(event) {
+    return Math.abs(event.localTimestamp - Date.now()) < 60_000;
+}
+
 async function start() {
     await client.startClient();
     
@@ -97,7 +102,7 @@ async function start() {
         setRoomList();
     })
 
-    client.on("Room.timeline", (event, room, toStartOfTimeline) => {
+    client.on("Room.timeline", (event, room, toStartOfTimeline, _removed, data) => {
         if (toStartOfTimeline) {
             return; // don't print paginated results
         }
@@ -107,7 +112,8 @@ async function start() {
         const c = event.getContent();
         messageHistory[room.roomId] += `${event.getSender()}: ${c.body} <br/>`;
 
-        if (gameCommOnMatrixMsg) {
+        // only send recent/new messages to game
+        if (gameCommOnMatrixMsg && isRecentEvent(event)) {
             gameCommOnMatrixMsg(event);
         }
     });
