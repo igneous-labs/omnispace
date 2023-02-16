@@ -1,4 +1,4 @@
-var roomList = [];
+var roomList = new Map();
 var viewingRoom = null;
 var messageHistory = {}
 
@@ -27,9 +27,9 @@ function sendMessage() {
 
 function setRoomList() {
     console.log("Setting room list")
-    roomList = client.getRooms();
+    let tmp = client.getRooms();
     // console.log(roomList);
-    roomList.sort((a, b) => {
+    tmp.sort((a, b) => {
         // < 0 = a comes first (lower index) - we want high indexes = newer
         var aMsg = a.timeline[a.timeline.length - 1];
         if (!aMsg) {
@@ -46,7 +46,10 @@ function setRoomList() {
         }
         return 0;
     });
-    roomList = roomList.reverse()
+    tmp = tmp.reverse()
+    let tmp2 = new Map();
+    tmp.map((room) => {tmp2.set(room.roomId, room)})
+    roomList = tmp2
 }
 
 function setActiveRoom(roomId) {
@@ -56,8 +59,8 @@ function setActiveRoom(roomId) {
 function printRoomList() {
     console.log("printing room list")
     let html = ''
-    for (let i = 0; i < roomList.length; i++) {
-        html += `<div onClick="setActiveRoom('${roomList[i].roomId}'); render();"> ${roomList[i].name} </div>`
+    for (const [roomId, room] of roomList) {
+        html += `<div onClick="setActiveRoom('${roomId}'); render();"> ${room.name} </div>`
     }    
     document.getElementById("view").innerHTML = html
 }
@@ -70,8 +73,19 @@ function render() {
     }
     else {
         console.log(viewingRoom)
-        document.getElementById("title").textContent = roomList.filter((room) => room.roomId === viewingRoom)[0].name;
-        document.getElementById("view").innerHTML = messageHistory[viewingRoom];
+        document.getElementById("title").textContent = roomList.get(viewingRoom).name
+
+        var messageHistoryHTML = messageHistory[viewingRoom].reduce((acc, message) => {
+            // Find the room where 
+            const roomId = message['event']['room_id']
+            const senderId = message['event']['sender']
+            const members = roomList.get(roomId).getMembers()
+            const senderName = members.filter((member) => member.userId === senderId)[0].rawDisplayName
+            return acc + `<div><strong>${senderName}: </strong> ${message.event.content.body} </div>`
+        }, '')
+
+        console.log(messageHistoryHTML)
+        document.getElementById("view").innerHTML = messageHistoryHTML
     }
 }
 
@@ -99,7 +113,10 @@ async function start() {
         if (event.getType() !== "m.room.message") {
             return; // only print messages
         }
-        messageHistory[room.roomId] += `${event.getSender()}: ${event.getContent().body} <br/>`
+        if (!messageHistory[room.roomId]) {
+            messageHistory[room.roomId] = []
+        }
+        messageHistory[room.roomId].push(event)
         setRoomList();
         render();
     });
