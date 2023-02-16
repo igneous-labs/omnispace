@@ -78,7 +78,6 @@ function render() {
         printRoomList();
     }
     else {
-        console.log(viewingRoom)
         document.getElementById("title").textContent = roomList.get(viewingRoom).name
 
         var messageHistoryHTML = messageHistory[viewingRoom].reduce((acc, message) => {
@@ -90,7 +89,6 @@ function render() {
             return acc + `<div><strong>${senderName}: </strong> ${message.event.content.body} </div>`
         }, '')
 
-        console.log(messageHistoryHTML)
         document.getElementById("view").innerHTML = messageHistoryHTML
     }
 }
