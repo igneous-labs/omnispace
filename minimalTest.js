@@ -72,10 +72,12 @@ function printRoomList() {
 function render() {
     document.getElementById("view").innerHTML = ""
     if (viewingRoom === null) {
+        document.getElementById("title").textContent = "Omnispaces"
         printRoomList();
     }
     else {
         console.log(viewingRoom)
+        document.getElementById("title").textContent = roomList.filter((room) => room.roomId === viewingRoom)[0].name;
         document.getElementById("view").innerHTML = messageHistory[viewingRoom];
     }
 }
@@ -109,6 +111,7 @@ async function start() {
         if (event.getType() !== "m.room.message") {
             return; // only print messages
         }
+
         const c = event.getContent();
         messageHistory[room.roomId] += `${event.getSender()}: ${c.body} <br/>`;
 
@@ -116,6 +119,8 @@ async function start() {
         if (gameCommOnMatrixMsg && isRecentEvent(event)) {
             gameCommOnMatrixMsg(event);
         }
+        setRoomList();
+        render();
     });
 }
 
