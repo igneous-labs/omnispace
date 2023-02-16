@@ -1,16 +1,23 @@
+const MATRIX_USER_ID = "@fp:melchior.info";
+const MATRIX_PASSWORD = "123456789";
+const MATRIX_BASEURL = "https://matrix.melchior.info";
+
 var roomList = [];
 var viewingRoom = null;
 var messageHistory = {}
+var accessToken = undefined;
 
 const client = matrixcs.createClient({
-    baseUrl: "https://matrix.melchior.info",
-    accessToken: "syt_ZnA_pAgfSpoWUqWbfCUMlJSd_1IImad",
-    userId: "@fp:melchior.info",
+    baseUrl: MATRIX_BASEURL,
+    accessToken,
+    userId : MATRIX_USER_ID,
 });
 
-// client.login("m.login.password", {"user": myUserId, "password": "123456789"}).then((response) => {
-//     console.log(response.access_token);
-// });
+if (accessToken === undefined) {
+    client.login("m.login.password", { user: MATRIX_USER_ID, password: MATRIX_PASSWORD }).then((response) => {
+        accessToken = response.access_token;
+    });
+}
 
 function sendMessage() {
     const message = document.getElementById("chat_input").value
@@ -75,6 +82,11 @@ function render() {
     }
 }
 
+// Hack: matrix events are recent if localTimestamp within 60s
+function isRecentEvent(event) {
+    return Math.abs(event.localTimestamp - Date.now()) < 60_000;
+}
+
 async function start() {
     await client.startClient();
     
@@ -99,11 +111,17 @@ async function start() {
         if (event.getType() !== "m.room.message") {
             return; // only print messages
         }
-        messageHistory[room.roomId] += `${event.getSender()}: ${event.getContent().body} <br/>`
+
+        const c = event.getContent();
+        messageHistory[room.roomId] += `${event.getSender()}: ${c.body} <br/>`;
+
+        // only send recent/new messages to game
+        if (gameCommOnMatrixMsg && isRecentEvent(event)) {
+            gameCommOnMatrixMsg(event);
+        }
         setRoomList();
         render();
     });
 }
 
 start();
-
