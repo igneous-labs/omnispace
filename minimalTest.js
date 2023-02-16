@@ -104,7 +104,7 @@ async function start() {
         setRoomList();
     })
 
-    client.on("Room.timeline", (event, room, toStartOfTimeline, _removed, data) => {
+    client.on("Room.timeline", (event, room, toStartOfTimeline) => {
         if (toStartOfTimeline) {
             return; // don't print paginated results
         }
