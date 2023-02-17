@@ -38,15 +38,12 @@
                     console.log(e);
                 });
             }
-            document.addEventListener("DOMContentLoaded", function(event) { 
-                document.getElementById("login-form").addEventListener("submit", onSubmit)
-            });
         </script>
         <link href="styles/style.css" rel="stylesheet" />
         <body>
             <div id="wrapper">
                 <h1 id="title"> Login </h1>
-                <form id="login-form">
+                <form id="login-form" onsubmit="onSubmit(event)">
                     <label for="username">Username:</label>
                     <input type="text" name="username" /><br>
 

@@ -9,15 +9,35 @@
         <script src="consts.js"></script>
         <script src="minimalTest.js"></script>
         <script src="gameComm.js"></script>
+        <script>
+            const IS_MOBILE = /Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent);
+            function onInputFocusIn() {
+                // move top_half down so stuff doesnt get pushed out by mobile keyboard
+                document.getElementById('top_half').style.top = '33vh';
+            }
+            function onInputFocusOut() {
+                document.getElementById('top_half').style.top = '0';
+            }
+
+            document.addEventListener("DOMContentLoaded", function(_event) { 
+                if (IS_MOBILE) {
+                    const chatInput = document.getElementById("chat_input");
+                    chatInput.addEventListener("focusin", onInputFocusIn);
+                    chatInput.addEventListener("focusout", onInputFocusOut)
+                }
+            });
+        </script>
         <link href="styles/style.css" rel="stylesheet" />
     </head>
     <body>
         <div id="wrapper">
-            <h1 id="title"> Omnispace </h1>
-            <div id="game">
-                <iframe id="game_frame" allow="cross-origin-isolated"
-                src = "https://telegram-space-4glp3pnhm-igneous-labs.vercel.app/"> 
-                </iframe>
+            <div id="top_half">
+                <h1 id="title"> Omnispace </h1>
+                <div id="game">
+                    <iframe id="game_frame" allow="cross-origin-isolated"
+                    src = "https://telegram-space-4glp3pnhm-igneous-labs.vercel.app/"> 
+                    </iframe>
+                </div>
             </div>
             <button onClick="setActiveRoom(null); render();">Back</button>
             <button onClick="logout()">Logout</button>

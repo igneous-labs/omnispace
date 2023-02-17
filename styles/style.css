@@ -56,6 +56,10 @@
     overflow: hidden;
 }
 
+#top_half {
+    position: relative;
+}
+
 #game_frame {
     height: 50vh;
     width: 100%;
