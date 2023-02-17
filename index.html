@@ -29,8 +29,8 @@
           <div id="game" class="mt-4">
             <!-- <iframe
               allow="cross-origin-isolated"
-              src="https://telegram-space-l1c9paxke-igneous-labs.vercel.app/"
-              >
+              src="https://telegram-space-4glp3pnhm-igneous-labs.vercel.app/"
+            >
             </iframe> -->
           </div>
           <div id="view"></div>
@@ -123,17 +123,22 @@
                         <!-- Start character customizer content -->
                         <div
                           class="relative mt-6 flex-1 px-4 sm:px-6 space-y-4"
+                          x-data="characterOptions"
                         >
                           <!-- Start character preview -->
-                          <!-- TODO: Build an api to which we send the selectedItems JSON and get a character image with all the selectedItems on back? -->
-                          <div class="flex justify-between space-x-4">
-                            <pre
-                              x-text="JSON.stringify(selectedItems, null, 2)"
-                              class="whitespace-pre-wrap"
-                            ></pre>
-
+                          <div class="flex justify-between space-x-8">
                             <div
-                              class="w-[50%]"
+                              class="flex items-center justify-center h-44 w-64"
+                              x-init="fetchCharacterPreview()"
+                            >
+                              <img
+                                class="h-28 pixel"
+                                alt="Character preview"
+                                :src="`${characterPreview}`"
+                              />
+                            </div>
+                            <div
+                              class="w-full"
                               x-data="{
                                 get parsedSelectedItems() {
                                   return Object.entries(selectedItems)
@@ -189,9 +194,9 @@
                                         <div class="flex items-center">
                                           <div class="flex-shrink-0">
                                             <img
-                                              class="h-8 w-8 mr-1"
+                                              class="h-8 w-8 mr-1 pixel"
                                               :alt="item.data.name"
-                                              :src="item.data.src"
+                                              :src="`/assets/${selectors.category}/${selectors.subcategory}/${item.data.id}.png`"
                                             />
                                           </div>
 
@@ -235,90 +240,2759 @@
                               </template>
                             </div>
                           </div>
-
                           <!-- End character preview -->
 
                           <!-- Start selectors -->
-                          <div class="space-y-2">
-                            <!-- Start category selector -->
-                            <div
-                              class="flex items-center justify-center w-full"
-                            >
-                              <div class="w-full">
-                                <select
-                                  id="category"
-                                  name="category"
-                                  class="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                                  x-model="selectors.category"
-                                  x-on:change="selectors.subcategory = subcategories[selectors.category][0]"
-                                >
-                                  <template
-                                    x-for="category in categories"
-                                    :key="category"
-                                  >
-                                    <option
-                                      x-text="category"
-                                      :value="category"
-                                      :selected="category === selectors.category"
-                                    ></option>
-                                  </template>
-                                </select>
-                              </div>
-                            </div>
-                            <!-- End category selector -->
-
-                            <!-- Start subcategory selector -->
-                            <div
-                              class="flex items-center justify-center w-full"
-                            >
-                              <div class="w-full">
-                                <select
-                                  id="subcategory"
-                                  name="subcategory"
-                                  class="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                                  x-model="selectors.subcategory"
-                                >
-                                  <template
-                                    x-for="subcategory in subcategories[selectors.category]"
-                                    :key="subcategory"
-                                  >
-                                    <option
-                                      x-text="subcategory"
-                                      :value="subcategory"
-                                      :selected="subcategory === selectors.subcategory"
-                                    ></option>
-                                  </template>
-                                </select>
-                              </div>
-                            </div>
-                            <!-- End subcategory selector -->
-                          </div>
-                          <!-- End selectors -->
-
-                          <!-- Start list of items -->
                           <div
-                            class="grid grid-cols-8 gap-0"
+                            class="space-y-4"
                             x-data="{
-                              get itemsToShow() {
-                                return items
-                                [selectors.category][selectors.subcategory]
-                              }
+                              itemsPerPage: 1000
                             }"
                           >
-                            <template
-                              x-for="item in itemsToShow"
-                              :key="item.name"
-                            >
+                            <!-- Start character selector -->
+                            <div>
+                              <p class="text-lg font-bold">Character</p>
+
                               <div
-                                class="rounded-md p-2 cursor-pointer hover:bg-slate-100 flex justify-center"
-                                @click="handleSelectItem(item)"
+                                class="grid grid-cols-2 gap-4 bg-slate-300 p-4 rounded-md"
                               >
-                                <!-- TODO: show <img> with `src="item.src"` instead and show `item.name` on hover? -->
-                                <span x-text="item.name"></span>
+                                <div class="">
+                                  <label
+                                    for="skin"
+                                    class="block text-md font-medium text-slate-800"
+                                    >Skin</label
+                                  >
+                                  <select
+                                    id="skin"
+                                    name="skin"
+                                    class="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm cursor-pointer"
+                                    x-model="selectors.skin"
+                                    x-on:change="fetchCharacterPreview()"
+                                  >
+                                    <template
+                                      x-for="skin in characterOptions.skins"
+                                      :key="skin.value"
+                                    >
+                                      <option
+                                        x-text="skin.label"
+                                        :value="skin.value"
+                                        :selected="skin.value === selectors.skin"
+                                      ></option>
+                                    </template>
+                                  </select>
+                                </div>
+
+                                <div class="">
+                                  <label
+                                    for="expression"
+                                    class="block text-md font-medium text-slate-800"
+                                    >Expression</label
+                                  >
+                                  <select
+                                    id="expression"
+                                    name="expression"
+                                    class="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm cursor-pointer"
+                                    x-model="selectors.expression"
+                                    x-on:change="fetchCharacterPreview()"
+                                  >
+                                    <template
+                                      x-for="expression in characterOptions.expressions"
+                                      :key="expression.value"
+                                    >
+                                      <option
+                                        x-text="expression.label"
+                                        :value="expression.value"
+                                        :selected="expression.value === selectors.expression"
+                                      ></option>
+                                    </template>
+                                  </select>
+                                </div>
+
+                                <div class="">
+                                  <label
+                                    for="ears"
+                                    class="block text-md font-medium text-slate-800"
+                                    >Ears</label
+                                  >
+                                  <select
+                                    id="ears"
+                                    name="ears"
+                                    class="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm cursor-pointer"
+                                    x-model="selectors.ears"
+                                    x-on:change="fetchCharacterPreview()"
+                                  >
+                                    <template
+                                      x-for="ear in characterOptions.ears"
+                                      :key="ear.value"
+                                    >
+                                      <option
+                                        x-text="ear.label"
+                                        :value="ear.value"
+                                        :selected="ear.value === selectors.ears"
+                                      ></option>
+                                    </template>
+                                  </select>
+                                </div>
+
+                                <div class="">
+                                  <label
+                                    for="hair"
+                                    class="block text-md font-medium text-slate-800"
+                                    >Hair</label
+                                  >
+                                  <div
+                                    x-data="{
+                                    open: false,
+                                    page: 0,
+                                    get hasPreviousPage() {
+                                      return this.page > 0
+                                    },
+                                    get hasNextPage() {
+                                      return this.hairs && Math.ceil(this.hairs.length / itemsPerPage) > this.page + 1
+                                    },
+                                    previousPage() {
+                                      if (!this.hasPreviousPage) return
+                                      this.page = this.page - 1
+                                      const hairsEl = document.getElementById('hairs')
+                                      hairsEl.scrollTo(0, 0)
+                                    },
+                                    nextPage() {
+                                      if (!this.hasNextPage) return
+                                      this.page = this.page + 1
+                                      const hairsEl = document.getElementById('hairs')
+                                      hairsEl.scrollTo(0, 0)
+                                    },
+                                    get currentPageHairs() {
+                                      if (!this.hairs) return
+                                      const start = this.page * itemsPerPage
+                                      const end = start + itemsPerPage
+                                      return this.hairs.slice(start, end)
+                                    },
+                                    hairs: null,
+                                    isLoading: false,
+                                    async fetchHair() {
+                                      if (this.hairs || !this.open) return
+
+                                      this.isLoading = true
+
+                                      const res = await fetch(
+                                        '/assets/hair.json',
+                                        {
+                                          headers: {
+                                            Accept: 'application/json',
+                                            'Content-Type': 'application/json',
+                                          },
+                                        },
+                                      )
+
+                                      const json = await res.json()
+
+                                      this.hairs = json
+                                      this.isLoading = false
+                                    }
+                                  }"
+                                    @keydown.escape.stop="open = false;"
+                                    @click.away="open = false;"
+                                    class="relative inline-block text-left w-full"
+                                    x-effect="fetchHair()"
+                                  >
+                                    <button
+                                      type="button"
+                                      class="inline-flex mt-1 w-full rounded-md border-2 border-gray-300 bg-white py-2 px-3 text-left text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                                      id="menu-button"
+                                      x-ref="button"
+                                      @click="open = true;"
+                                      @keyup.space.prevent="open = true;"
+                                      @keydown.enter.prevent="open = true;"
+                                      aria-expanded="true"
+                                      aria-haspopup="true"
+                                      x-bind:aria-expanded="open.toString()"
+                                      x-text="selectors.hair.name"
+                                    ></button>
+
+                                    <div
+                                      x-show="open"
+                                      x-transition:enter="transition ease-out duration-100"
+                                      x-transition:enter-start="transform opacity-0 scale-95"
+                                      x-transition:enter-end="transform opacity-100 scale-100"
+                                      x-transition:leave="transition ease-in duration-75"
+                                      x-transition:leave-start="transform opacity-100 scale-100"
+                                      x-transition:leave-end="transform opacity-0 scale-95"
+                                      class="absolute right-0 z-10 mt-2 w-80 md:w-96 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                      x-ref="menu-items"
+                                      role="menu"
+                                      aria-orientation="vertical"
+                                      aria-labelledby="menu-button"
+                                      tabindex="-1"
+                                      @keydown.tab="open = false"
+                                      @keydown.enter.prevent="open = false;"
+                                      @keyup.space.prevent="open = false;"
+                                    >
+                                      <div class="p-2 w-full" role="none">
+                                        <template x-if="isLoading">
+                                          <p>Loading hair...</p>
+                                        </template>
+
+                                        <div>
+                                          <template x-if="!isLoading">
+                                            <div
+                                              id="hairs"
+                                              class="h-[300px] overflow-y-scroll grid grid-cols-5 gap-0"
+                                            >
+                                              <template
+                                                x-for="hair in currentPageHairs"
+                                                :key="hair.hairId"
+                                              >
+                                                <div
+                                                  class="rounded-md py-2 px-1.5 cursor-pointer hover:bg-slate-100 flex justify-center max-h-10"
+                                                  @click="selectors.hair = hair; fetchCharacterPreview();"
+                                                >
+                                                  <img
+                                                    crossorigin="anonymous"
+                                                    :src="`https://api.maplestory.net/hair/${hair.hairId}/icon`"
+                                                    loading="lazy"
+                                                  />
+                                                </div>
+                                              </template>
+                                            </div>
+                                          </template>
+
+                                          <nav
+                                            class="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0"
+                                          >
+                                            <div class="-mt-px flex w-0 flex-1">
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pr-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="previousPage()"
+                                                :disabled="!hasPreviousPage"
+                                              >
+                                                <svg
+                                                  class="mr-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-left"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M18 10a.75.75 0 01-.75.75H4.66l2.1 1.95a.75.75 0 11-1.02 1.1l-3.5-3.25a.75.75 0 010-1.1l3.5-3.25a.75.75 0 111.02 1.1l-2.1 1.95h12.59A.75.75 0 0118 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                                Previous
+                                              </button>
+                                            </div>
+                                            <div class="flex -mt-px">
+                                              <p
+                                                class="inline-flex items-center border-t-2 border-blue-500 px-4 pt-4 text-sm font-medium text-blue-600"
+                                                aria-current="page"
+                                                x-text="page + 1"
+                                              ></p>
+                                            </div>
+                                            <div
+                                              class="-mt-px flex w-0 flex-1 justify-end"
+                                            >
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pl-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="nextPage()"
+                                                :disabled="!hasNextPage"
+                                              >
+                                                Next
+                                                <svg
+                                                  class="ml-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-right"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M2 10a.75.75 0 01.75-.75h12.59l-2.1-1.95a.75.75 0 111.02-1.1l3.5 3.25a.75.75 0 010 1.1l-3.5 3.25a.75.75 0 11-1.02-1.1l2.1-1.95H2.75A.75.75 0 012 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                              </button>
+                                            </div>
+                                          </nav>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="">
+                                  <label
+                                    for="face"
+                                    class="block text-md font-medium text-slate-800"
+                                    >Face</label
+                                  >
+                                  <div
+                                    x-data="{
+                                    open: false,
+                                    page: 0,
+                                    get hasPreviousPage() {
+                                      return this.page > 0
+                                    },
+                                    get hasNextPage() {
+                                      return this.faces && Math.ceil(this.faces.length / itemsPerPage) > this.page + 1
+                                    },
+                                    previousPage() {
+                                      if (!this.hasPreviousPage) return
+                                      this.page = this.page - 1
+                                      const facesEl = document.getElementById('faces')
+                                      facesEl.scrollTo(0, 0)
+                                    },
+                                    nextPage() {
+                                      if (!this.hasNextPage) return
+                                      this.page = this.page + 1
+                                      const facesEl = document.getElementById('faces')
+                                      facesEl.scrollTo(0, 0)
+                                    },
+                                    get currentPageFaces() {
+                                      if (!this.faces) return
+                                      const start = this.page * itemsPerPage
+                                      const end = start + itemsPerPage
+                                      return this.faces.slice(start, end)
+                                    },
+                                    faces: null,
+                                    isLoading: false,
+                                    async fetchFaces() {
+                                      if (this.faces || !this.open) return
+
+                                      this.isLoading = true
+
+                                      const res = await fetch(
+                                        '/assets/faces.json',
+                                        {
+                                          headers: {
+                                            Accept: 'application/json',
+                                            'Content-Type': 'application/json',
+                                          },
+                                        },
+                                      )
+
+                                      const json = await res.json()
+
+                                      this.faces = json
+                                      this.isLoading = false
+                                    }
+                                  }"
+                                    @keydown.escape.stop="open = false;"
+                                    @click.away="open = false;"
+                                    class="relative inline-block text-left w-full"
+                                    x-effect="fetchFaces()"
+                                  >
+                                    <button
+                                      type="button"
+                                      class="inline-flex mt-1 w-full rounded-md border-2 border-gray-300 bg-white py-2 px-3 text-left text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                                      id="menu-button"
+                                      x-ref="button"
+                                      @click="open = true;"
+                                      @keyup.space.prevent="open = true;"
+                                      @keydown.enter.prevent="open = true;"
+                                      aria-expanded="true"
+                                      aria-haspopup="true"
+                                      x-bind:aria-expanded="open.toString()"
+                                      x-text="selectors.face.name"
+                                    ></button>
+
+                                    <div
+                                      x-show="open"
+                                      x-transition:enter="transition ease-out duration-100"
+                                      x-transition:enter-start="transform opacity-0 scale-95"
+                                      x-transition:enter-end="transform opacity-100 scale-100"
+                                      x-transition:leave="transition ease-in duration-75"
+                                      x-transition:leave-start="transform opacity-100 scale-100"
+                                      x-transition:leave-end="transform opacity-0 scale-95"
+                                      class="absolute left-0 z-10 mt-2 w-80 md:w-96 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                      x-ref="menu-items"
+                                      role="menu"
+                                      aria-orientation="vertical"
+                                      aria-labelledby="menu-button"
+                                      tabindex="-1"
+                                      @keydown.tab="open = false"
+                                      @keydown.enter.prevent="open = false;"
+                                      @keyup.space.prevent="open = false;"
+                                    >
+                                      <div class="p-2 w-full" role="none">
+                                        <template x-if="isLoading">
+                                          <p>Loading faces...</p>
+                                        </template>
+
+                                        <div>
+                                          <template x-if="!isLoading">
+                                            <div>
+                                              <div
+                                                id="faces"
+                                                class="h-[300px] overflow-y-scroll grid grid-cols-5 gap-0"
+                                              >
+                                                <template
+                                                  x-for="face in currentPageFaces"
+                                                  :key="face.faceId"
+                                                >
+                                                  <div
+                                                    class="rounded-md py-2 px-1.5 cursor-pointer hover:bg-slate-100 flex justify-center max-h-10"
+                                                    @click="selectors.face = face; fetchCharacterPreview();"
+                                                  >
+                                                    <img
+                                                      crossorigin="anonymous"
+                                                      :src="`https://api.maplestory.net/face/${face.faceId}/icon`"
+                                                      loading="lazy"
+                                                    />
+                                                  </div>
+                                                </template>
+                                              </div>
+
+                                              <nav
+                                                class="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0"
+                                              >
+                                                <div
+                                                  class="-mt-px flex w-0 flex-1"
+                                                >
+                                                  <button
+                                                    class="inline-flex items-center border-t-2 border-transparent pt-4 pr-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                    @click="previousPage()"
+                                                    :disabled="!hasPreviousPage"
+                                                  >
+                                                    <svg
+                                                      class="mr-3 h-5 w-5 text-gray-400"
+                                                      x-description="Heroicon name: mini/arrow-long-left"
+                                                      xmlns="http://www.w3.org/2000/svg"
+                                                      viewBox="0 0 20 20"
+                                                      fill="currentColor"
+                                                      aria-hidden="true"
+                                                    >
+                                                      <path
+                                                        fill-rule="evenodd"
+                                                        d="M18 10a.75.75 0 01-.75.75H4.66l2.1 1.95a.75.75 0 11-1.02 1.1l-3.5-3.25a.75.75 0 010-1.1l3.5-3.25a.75.75 0 111.02 1.1l-2.1 1.95h12.59A.75.75 0 0118 10z"
+                                                        clip-rule="evenodd"
+                                                      ></path>
+                                                    </svg>
+                                                    Previous
+                                                  </button>
+                                                </div>
+                                                <div class="flex -mt-px">
+                                                  <p
+                                                    class="inline-flex items-center border-t-2 border-blue-500 px-4 pt-4 text-sm font-medium text-blue-600"
+                                                    aria-current="page"
+                                                    x-text="page + 1"
+                                                  ></p>
+                                                </div>
+                                                <div
+                                                  class="-mt-px flex w-0 flex-1 justify-end"
+                                                >
+                                                  <button
+                                                    class="inline-flex items-center border-t-2 border-transparent pt-4 pl-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                    @click="nextPage()"
+                                                    :disabled="!hasNextPage"
+                                                  >
+                                                    Next
+                                                    <svg
+                                                      class="ml-3 h-5 w-5 text-gray-400"
+                                                      x-description="Heroicon name: mini/arrow-long-right"
+                                                      xmlns="http://www.w3.org/2000/svg"
+                                                      viewBox="0 0 20 20"
+                                                      fill="currentColor"
+                                                      aria-hidden="true"
+                                                    >
+                                                      <path
+                                                        fill-rule="evenodd"
+                                                        d="M2 10a.75.75 0 01.75-.75h12.59l-2.1-1.95a.75.75 0 111.02-1.1l3.5 3.25a.75.75 0 010 1.1l-3.5 3.25a.75.75 0 11-1.02-1.1l2.1-1.95H2.75A.75.75 0 012 10z"
+                                                        clip-rule="evenodd"
+                                                      ></path>
+                                                    </svg>
+                                                  </button>
+                                                </div>
+                                              </nav>
+                                            </div>
+                                          </template>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
-                            </template>
+                            </div>
+                            <!-- End character selector -->
+
+                            <!-- Start Accessories selector -->
+                            <div>
+                              <p class="text-lg font-bold">Accessories</p>
+
+                              <div
+                                class="grid grid-cols-2 gap-4 bg-slate-300 p-4 rounded-md"
+                              >
+                                <div class="">
+                                  <label
+                                    for="faceAccessory"
+                                    class="block text-md font-medium text-slate-800"
+                                    >Face accessory</label
+                                  >
+                                  <div
+                                    x-data="{
+                                    open: false,
+                                    page: 0,
+                                    get hasPreviousPage() {
+                                      return this.page > 0
+                                    },
+                                    get hasNextPage() {
+                                      return this.faceAccessories && Math.ceil(this.faceAccessories.length / itemsPerPage) > this.page + 1
+                                    },
+                                    previousPage() {
+                                      if (!this.hasPreviousPage) return
+                                      this.page = this.page - 1
+                                      const faceAccessoriesEl = document.getElementById('faceAccessories')
+                                      faceAccessoriesEl.scrollTo(0, 0)
+                                    },
+                                    nextPage() {
+                                      if (!this.hasNextPage) return
+                                      this.page = this.page + 1
+                                      const faceAccessoriesEl = document.getElementById('faceAccessories')
+                                      faceAccessoriesEl.scrollTo(0, 0)
+                                    },
+                                    get currentPageFaceAccessories() {
+                                      if (!this.faceAccessories) return
+                                      const start = this.page * itemsPerPage
+                                      const end = start + itemsPerPage
+                                      return this.faceAccessories.slice(start, end)
+                                    },
+                                    faceAccessories: null,
+                                    isLoading: false,
+                                    async fetchFaceAccessories() {
+                                      if (this.faceAccessories || !this.open) return
+
+                                      this.isLoading = true
+
+                                      const res = await fetch(
+                                        '/assets/faceAccessories.json',
+                                        {
+                                          headers: {
+                                            Accept: 'application/json',
+                                            'Content-Type': 'application/json',
+                                          },
+                                        },
+                                      )
+
+                                      const json = await res.json()
+
+                                      this.faceAccessories = json
+                                      this.isLoading = false
+                                    }
+                                  }"
+                                    @keydown.escape.stop="open = false;"
+                                    @click.away="open = false;"
+                                    class="relative inline-block text-left w-full"
+                                    x-effect="fetchFaceAccessories()"
+                                  >
+                                    <button
+                                      type="button"
+                                      class="inline-flex mt-1 w-full rounded-md border-2 border-gray-300 bg-white py-2 px-3 text-left text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                                      id="menu-button"
+                                      x-ref="button"
+                                      @click="open = true;"
+                                      @keyup.space.prevent="open = true;"
+                                      @keydown.enter.prevent="open = true;"
+                                      aria-expanded="true"
+                                      aria-haspopup="true"
+                                      x-bind:aria-expanded="open.toString()"
+                                      x-text="selectors.faceAccessory && selectors.faceAccessory.name || 'None'"
+                                    ></button>
+
+                                    <div
+                                      x-show="open"
+                                      x-transition:enter="transition ease-out duration-100"
+                                      x-transition:enter-start="transform opacity-0 scale-95"
+                                      x-transition:enter-end="transform opacity-100 scale-100"
+                                      x-transition:leave="transition ease-in duration-75"
+                                      x-transition:leave-start="transform opacity-100 scale-100"
+                                      x-transition:leave-end="transform opacity-0 scale-95"
+                                      class="absolute left-0 z-10 mt-2 w-80 md:w-96 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                      x-ref="menu-items"
+                                      role="menu"
+                                      aria-orientation="vertical"
+                                      aria-labelledby="menu-button"
+                                      tabindex="-1"
+                                      @keydown.tab="open = false"
+                                      @keydown.enter.prevent="open = false;"
+                                      @keyup.space.prevent="open = false;"
+                                    >
+                                      <div class="p-2 w-full" role="none">
+                                        <template x-if="isLoading">
+                                          <p>Loading face accessories...</p>
+                                        </template>
+
+                                        <div>
+                                          <template x-if="!isLoading">
+                                            <div>
+                                              <div
+                                                id="faceAccessories"
+                                                class="h-[300px] overflow-y-scroll grid grid-cols-5 gap-0"
+                                              >
+                                                <template
+                                                  x-for="faceAccessory in currentPageFaceAccessories"
+                                                  :key="faceAccessory.itemId"
+                                                >
+                                                  <div
+                                                    class="rounded-md py-2 px-1.5 cursor-pointer hover:bg-slate-100 flex justify-center max-h-10"
+                                                    @click="selectors.faceAccessory = faceAccessory; fetchCharacterPreview();"
+                                                  >
+                                                    <img
+                                                      crossorigin="anonymous"
+                                                      :src="`https://api.maplestory.net/item/${faceAccessory.itemId}/iconRaw`"
+                                                      loading="lazy"
+                                                    />
+                                                  </div>
+                                                </template>
+                                              </div>
+
+                                              <nav
+                                                class="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0"
+                                              >
+                                                <div
+                                                  class="-mt-px flex w-0 flex-1"
+                                                >
+                                                  <button
+                                                    class="inline-flex items-center border-t-2 border-transparent pt-4 pr-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                    @click="previousPage()"
+                                                    :disabled="!hasPreviousPage"
+                                                  >
+                                                    <svg
+                                                      class="mr-3 h-5 w-5 text-gray-400"
+                                                      x-description="Heroicon name: mini/arrow-long-left"
+                                                      xmlns="http://www.w3.org/2000/svg"
+                                                      viewBox="0 0 20 20"
+                                                      fill="currentColor"
+                                                      aria-hidden="true"
+                                                    >
+                                                      <path
+                                                        fill-rule="evenodd"
+                                                        d="M18 10a.75.75 0 01-.75.75H4.66l2.1 1.95a.75.75 0 11-1.02 1.1l-3.5-3.25a.75.75 0 010-1.1l3.5-3.25a.75.75 0 111.02 1.1l-2.1 1.95h12.59A.75.75 0 0118 10z"
+                                                        clip-rule="evenodd"
+                                                      ></path>
+                                                    </svg>
+                                                    Previous
+                                                  </button>
+                                                </div>
+                                                <div class="flex -mt-px">
+                                                  <p
+                                                    class="inline-flex items-center border-t-2 border-blue-500 px-4 pt-4 text-sm font-medium text-blue-600"
+                                                    aria-current="page"
+                                                    x-text="page + 1"
+                                                  ></p>
+                                                </div>
+                                                <div
+                                                  class="-mt-px flex w-0 flex-1 justify-end"
+                                                >
+                                                  <button
+                                                    class="inline-flex items-center border-t-2 border-transparent pt-4 pl-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                    @click="nextPage()"
+                                                    :disabled="!hasNextPage"
+                                                  >
+                                                    Next
+                                                    <svg
+                                                      class="ml-3 h-5 w-5 text-gray-400"
+                                                      x-description="Heroicon name: mini/arrow-long-right"
+                                                      xmlns="http://www.w3.org/2000/svg"
+                                                      viewBox="0 0 20 20"
+                                                      fill="currentColor"
+                                                      aria-hidden="true"
+                                                    >
+                                                      <path
+                                                        fill-rule="evenodd"
+                                                        d="M2 10a.75.75 0 01.75-.75h12.59l-2.1-1.95a.75.75 0 111.02-1.1l3.5 3.25a.75.75 0 010 1.1l-3.5 3.25a.75.75 0 11-1.02-1.1l2.1-1.95H2.75A.75.75 0 012 10z"
+                                                        clip-rule="evenodd"
+                                                      ></path>
+                                                    </svg>
+                                                  </button>
+                                                </div>
+                                              </nav>
+                                            </div>
+                                          </template>
+
+                                          <nav
+                                            class="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0"
+                                          >
+                                            <div class="-mt-px flex w-0 flex-1">
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pr-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="previousPage()"
+                                                :disabled="!hasPreviousPage"
+                                              >
+                                                <svg
+                                                  class="mr-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-left"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M18 10a.75.75 0 01-.75.75H4.66l2.1 1.95a.75.75 0 11-1.02 1.1l-3.5-3.25a.75.75 0 010-1.1l3.5-3.25a.75.75 0 111.02 1.1l-2.1 1.95h12.59A.75.75 0 0118 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                                Previous
+                                              </button>
+                                            </div>
+                                            <div class="flex -mt-px">
+                                              <p
+                                                class="inline-flex items-center border-t-2 border-blue-500 px-4 pt-4 text-sm font-medium text-blue-600"
+                                                aria-current="page"
+                                                x-text="page + 1"
+                                              ></p>
+                                            </div>
+                                            <div
+                                              class="-mt-px flex w-0 flex-1 justify-end"
+                                            >
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pl-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="nextPage()"
+                                                :disabled="!hasNextPage"
+                                              >
+                                                Next
+                                                <svg
+                                                  class="ml-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-right"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M2 10a.75.75 0 01.75-.75h12.59l-2.1-1.95a.75.75 0 111.02-1.1l3.5 3.25a.75.75 0 010 1.1l-3.5 3.25a.75.75 0 11-1.02-1.1l2.1-1.95H2.75A.75.75 0 012 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                              </button>
+                                            </div>
+                                          </nav>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="">
+                                  <label
+                                    for="eyeAccessory"
+                                    class="block text-md font-medium text-slate-800"
+                                    >Eye accessory</label
+                                  >
+                                  <div
+                                    x-data="{
+                                    open: false,
+                                    page: 0,
+                                    get hasPreviousPage() {
+                                      return this.page > 0
+                                    },
+                                    get hasNextPage() {
+                                      return this.eyeAccessories && Math.ceil(this.eyeAccessories.length / itemsPerPage) > this.page + 1
+                                    },
+                                    previousPage() {
+                                      if (!this.hasPreviousPage) return
+                                      this.page = this.page - 1
+                                      const eyeAccessoriesEl = document.getElementById('eyeAccessories')
+                                      eyeAccessoriesEl.scrollTo(0, 0)
+                                    },
+                                    nextPage() {
+                                      if (!this.hasNextPage) return
+                                      this.page = this.page + 1
+                                      const eyeAccessoriesEl = document.getElementById('eyeAccessories')
+                                      eyeAccessoriesEl.scrollTo(0, 0)
+                                    },
+                                    get currentPageEyeAccessories() {
+                                      if (!this.eyeAccessories) return
+                                      const start = this.page * itemsPerPage
+                                      const end = start + itemsPerPage
+                                      return this.eyeAccessories.slice(start, end)
+                                    },
+                                    eyeAccessories: null,
+                                    isLoading: false,
+                                    async fetchEyeAccessories() {
+                                      if (this.eyeAccessories || !this.open) return
+
+                                      this.isLoading = true
+
+                                      const res = await fetch(
+                                        '/assets/eyeAccessories.json',
+                                        {
+                                          headers: {
+                                            Accept: 'application/json',
+                                            'Content-Type': 'application/json',
+                                          },
+                                        },
+                                      )
+
+                                      const json = await res.json()
+
+                                      this.eyeAccessories = json
+                                      this.isLoading = false
+                                    }
+                                  }"
+                                    @keydown.escape.stop="open = false;"
+                                    @click.away="open = false;"
+                                    class="relative inline-block text-left w-full"
+                                    x-effect="fetchEyeAccessories()"
+                                  >
+                                    <button
+                                      type="button"
+                                      class="inline-flex mt-1 w-full rounded-md border-2 border-gray-300 bg-white py-2 px-3 text-left text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                                      id="menu-button"
+                                      x-ref="button"
+                                      @click="open = true;"
+                                      @keyup.space.prevent="open = true;"
+                                      @keydown.enter.prevent="open = true;"
+                                      aria-expanded="true"
+                                      aria-haspopup="true"
+                                      x-bind:aria-expanded="open.toString()"
+                                      x-text="selectors.eyeAccessory && selectors.eyeAccessory.name || 'None'"
+                                    ></button>
+
+                                    <div
+                                      x-show="open"
+                                      x-transition:enter="transition ease-out duration-100"
+                                      x-transition:enter-start="transform opacity-0 scale-95"
+                                      x-transition:enter-end="transform opacity-100 scale-100"
+                                      x-transition:leave="transition ease-in duration-75"
+                                      x-transition:leave-start="transform opacity-100 scale-100"
+                                      x-transition:leave-end="transform opacity-0 scale-95"
+                                      class="absolute right-0 z-10 mt-2 w-80 md:w-96 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                      x-ref="menu-items"
+                                      role="menu"
+                                      aria-orientation="vertical"
+                                      aria-labelledby="menu-button"
+                                      tabindex="-1"
+                                      @keydown.tab="open = false"
+                                      @keydown.enter.prevent="open = false;"
+                                      @keyup.space.prevent="open = false;"
+                                    >
+                                      <div class="p-2 w-full" role="none">
+                                        <template x-if="isLoading">
+                                          <p>Loading eye accessories...</p>
+                                        </template>
+
+                                        <div>
+                                          <template x-if="!isLoading">
+                                            <div
+                                              id="eyeAccessories"
+                                              class="h-[300px] overflow-y-scroll grid grid-cols-5 gap-0"
+                                            >
+                                              <template
+                                                x-for="eyeAccessory in currentPageEyeAccessories"
+                                                :key="eyeAccessory.itemId"
+                                              >
+                                                <div
+                                                  class="rounded-md py-2 px-1.5 cursor-pointer hover:bg-slate-100 flex justify-center max-h-10"
+                                                  @click="selectors.eyeAccessory = eyeAccessory; fetchCharacterPreview();"
+                                                >
+                                                  <img
+                                                    crossorigin="anonymous"
+                                                    :src="`https://api.maplestory.net/item/${eyeAccessory.itemId}/iconRaw`"
+                                                    loading="lazy"
+                                                  />
+                                                </div>
+                                              </template>
+                                            </div>
+                                          </template>
+
+                                          <nav
+                                            class="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0"
+                                          >
+                                            <div class="-mt-px flex w-0 flex-1">
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pr-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="previousPage()"
+                                                :disabled="!hasPreviousPage"
+                                              >
+                                                <svg
+                                                  class="mr-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-left"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M18 10a.75.75 0 01-.75.75H4.66l2.1 1.95a.75.75 0 11-1.02 1.1l-3.5-3.25a.75.75 0 010-1.1l3.5-3.25a.75.75 0 111.02 1.1l-2.1 1.95h12.59A.75.75 0 0118 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                                Previous
+                                              </button>
+                                            </div>
+                                            <div class="flex -mt-px">
+                                              <p
+                                                class="inline-flex items-center border-t-2 border-blue-500 px-4 pt-4 text-sm font-medium text-blue-600"
+                                                aria-current="page"
+                                                x-text="page + 1"
+                                              ></p>
+                                            </div>
+                                            <div
+                                              class="-mt-px flex w-0 flex-1 justify-end"
+                                            >
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pl-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="nextPage()"
+                                                :disabled="!hasNextPage"
+                                              >
+                                                Next
+                                                <svg
+                                                  class="ml-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-right"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M2 10a.75.75 0 01.75-.75h12.59l-2.1-1.95a.75.75 0 111.02-1.1l3.5 3.25a.75.75 0 010 1.1l-3.5 3.25a.75.75 0 11-1.02-1.1l2.1-1.95H2.75A.75.75 0 012 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                              </button>
+                                            </div>
+                                          </nav>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- End Accessories selector -->
+
+                            <!-- Start Equipment selector -->
+                            <div>
+                              <p class="text-lg font-bold">Equipment</p>
+
+                              <div
+                                class="grid grid-cols-2 gap-4 bg-slate-300 p-4 rounded-md"
+                              >
+                                <div class="">
+                                  <label
+                                    for="hat"
+                                    class="block text-md font-medium text-slate-800"
+                                    >Hat</label
+                                  >
+                                  <div
+                                    x-data="{
+                                    open: false,
+                                    page: 0,
+                                    get hasPreviousPage() {
+                                      return this.page > 0
+                                    },
+                                    get hasNextPage() {
+                                      return this.hats && Math.ceil(this.hats.length / itemsPerPage) > this.page + 1
+                                    },
+                                    previousPage() {
+                                      if (!this.hasPreviousPage) return
+                                      this.page = this.page - 1
+                                      const hatsEl = document.getElementById('hats')
+                                      hatsEl.scrollTo(0, 0)
+                                    },
+                                    nextPage() {
+                                      if (!this.hasNextPage) return
+                                      this.page = this.page + 1
+                                      const hatsEl = document.getElementById('hats')
+                                      hatsEl.scrollTo(0, 0)
+                                    },
+                                    get currentPageHats() {
+                                      if (!this.hats) return
+                                      const start = this.page * itemsPerPage
+                                      const end = start + itemsPerPage
+                                      return this.hats.slice(start, end)
+                                    },
+                                    hats: null,
+                                    isLoading: false,
+                                    async fetchHats() {
+                                      if (this.hats || !this.open) return
+
+                                      this.isLoading = true
+
+                                      const res = await fetch(
+                                        '/assets/hats.json',
+                                        {
+                                          headers: {
+                                            Accept: 'application/json',
+                                            'Content-Type': 'application/json',
+                                          },
+                                        },
+                                      )
+
+                                      const json = await res.json()
+
+                                      this.hats = json
+                                      this.isLoading = false
+                                    }
+                                  }"
+                                    @keydown.escape.stop="open = false;"
+                                    @click.away="open = false;"
+                                    class="relative inline-block text-left w-full"
+                                    x-effect="fetchHats()"
+                                  >
+                                    <button
+                                      type="button"
+                                      class="inline-flex mt-1 w-full rounded-md border-2 border-gray-300 bg-white py-2 px-3 text-left text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                                      id="menu-button"
+                                      x-ref="button"
+                                      @click="open = true;"
+                                      @keyup.space.prevent="open = true;"
+                                      @keydown.enter.prevent="open = true;"
+                                      aria-expanded="true"
+                                      aria-haspopup="true"
+                                      x-bind:aria-expanded="open.toString()"
+                                      x-text="selectors.hat && selectors.hat.name || 'None'"
+                                    ></button>
+
+                                    <div
+                                      x-show="open"
+                                      x-transition:enter="transition ease-out duration-100"
+                                      x-transition:enter-start="transform opacity-0 scale-95"
+                                      x-transition:enter-end="transform opacity-100 scale-100"
+                                      x-transition:leave="transition ease-in duration-75"
+                                      x-transition:leave-start="transform opacity-100 scale-100"
+                                      x-transition:leave-end="transform opacity-0 scale-95"
+                                      class="absolute left-0 z-10 mt-2 w-80 md:w-96 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                      x-ref="menu-items"
+                                      role="menu"
+                                      aria-orientation="vertical"
+                                      aria-labelledby="menu-button"
+                                      tabindex="-1"
+                                      @keydown.tab="open = false"
+                                      @keydown.enter.prevent="open = false;"
+                                      @keyup.space.prevent="open = false;"
+                                    >
+                                      <div class="p-2 w-full" role="none">
+                                        <template x-if="isLoading">
+                                          <p>Loading hats...</p>
+                                        </template>
+
+                                        <div>
+                                          <template x-if="!isLoading">
+                                            <div
+                                              id="hats"
+                                              class="h-[300px] overflow-y-scroll grid grid-cols-5 gap-0"
+                                            >
+                                              <template
+                                                x-for="hat in currentPageHats"
+                                                :key="hat.itemId"
+                                              >
+                                                <div
+                                                  class="rounded-md py-2 px-1.5 cursor-pointer hover:bg-slate-100 flex justify-center max-h-10"
+                                                  @click="selectors.hat = hat; fetchCharacterPreview();"
+                                                >
+                                                  <img
+                                                    crossorigin="anonymous"
+                                                    :src="`https://api.maplestory.net/item/${hat.itemId}/iconRaw`"
+                                                    loading="lazy"
+                                                  />
+                                                </div>
+                                              </template>
+                                            </div>
+                                          </template>
+
+                                          <nav
+                                            class="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0"
+                                          >
+                                            <div class="-mt-px flex w-0 flex-1">
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pr-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="previousPage()"
+                                                :disabled="!hasPreviousPage"
+                                              >
+                                                <svg
+                                                  class="mr-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-left"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M18 10a.75.75 0 01-.75.75H4.66l2.1 1.95a.75.75 0 11-1.02 1.1l-3.5-3.25a.75.75 0 010-1.1l3.5-3.25a.75.75 0 111.02 1.1l-2.1 1.95h12.59A.75.75 0 0118 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                                Previous
+                                              </button>
+                                            </div>
+                                            <div class="flex -mt-px">
+                                              <p
+                                                class="inline-flex items-center border-t-2 border-blue-500 px-4 pt-4 text-sm font-medium text-blue-600"
+                                                aria-current="page"
+                                                x-text="page + 1"
+                                              ></p>
+                                            </div>
+                                            <div
+                                              class="-mt-px flex w-0 flex-1 justify-end"
+                                            >
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pl-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="nextPage()"
+                                                :disabled="!hasNextPage"
+                                              >
+                                                Next
+                                                <svg
+                                                  class="ml-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-right"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M2 10a.75.75 0 01.75-.75h12.59l-2.1-1.95a.75.75 0 111.02-1.1l3.5 3.25a.75.75 0 010 1.1l-3.5 3.25a.75.75 0 11-1.02-1.1l2.1-1.95H2.75A.75.75 0 012 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                              </button>
+                                            </div>
+                                          </nav>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="">
+                                  <label
+                                    for="earrings"
+                                    class="block text-md font-medium text-slate-800"
+                                    >Earrings</label
+                                  >
+                                  <div
+                                    x-data="{
+                                    open: false,page: 0,
+                                    get hasPreviousPage() {
+                                      return this.page > 0
+                                    },
+                                    get hasNextPage() {
+                                      return this.hats && Math.ceil(this.hats.length / itemsPerPage) > this.page + 1
+                                    },
+                                    previousPage() {
+                                      if (!this.hasPreviousPage) return
+                                      this.page = this.page - 1
+                                      const hatsEl = document.getElementById('hats')
+                                      hatsEl.scrollTo(0, 0)
+                                    },
+                                    nextPage() {
+                                      if (!this.hasNextPage) return
+                                      this.page = this.page + 1
+                                      const hatsEl = document.getElementById('hats')
+                                      hatsEl.scrollTo(0, 0)
+                                    },
+                                    get currentPageEarrings() {
+                                      if (!this.earrings) return
+                                      const start = this.page * itemsPerPage
+                                      const end = start + itemsPerPage
+                                      return this.earrings.slice(start, end)
+                                    },
+                                    earrings: null,
+                                    isLoading: false,
+                                    async fetchEarrings() {
+                                      if (this.earrings || !this.open) return
+
+                                      this.isLoading = true
+
+                                      const res = await fetch(
+                                        '/assets/earrings.json',
+                                        {
+                                          headers: {
+                                            Accept: 'application/json',
+                                            'Content-Type': 'application/json',
+                                          },
+                                        },
+                                      )
+
+                                      const json = await res.json()
+
+                                      this.earrings = json
+                                      this.isLoading = false
+                                    }
+                                  }"
+                                    @keydown.escape.stop="open = false;"
+                                    @click.away="open = false;"
+                                    class="relative inline-block text-left w-full"
+                                    x-effect="fetchEarrings()"
+                                  >
+                                    <button
+                                      type="button"
+                                      class="inline-flex mt-1 w-full rounded-md border-2 border-gray-300 bg-white py-2 px-3 text-left text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                                      id="menu-button"
+                                      x-ref="button"
+                                      @click="open = true;"
+                                      @keyup.space.prevent="open = true;"
+                                      @keydown.enter.prevent="open = true;"
+                                      aria-expanded="true"
+                                      aria-haspopup="true"
+                                      x-bind:aria-expanded="open.toString()"
+                                      x-text="selectors.earrings && selectors.earrings.name || 'None'"
+                                    ></button>
+
+                                    <div
+                                      x-show="open"
+                                      x-transition:enter="transition ease-out duration-100"
+                                      x-transition:enter-start="transform opacity-0 scale-95"
+                                      x-transition:enter-end="transform opacity-100 scale-100"
+                                      x-transition:leave="transition ease-in duration-75"
+                                      x-transition:leave-start="transform opacity-100 scale-100"
+                                      x-transition:leave-end="transform opacity-0 scale-95"
+                                      class="absolute right-0 z-10 mt-2 w-80 md:w-96 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                      x-ref="menu-items"
+                                      role="menu"
+                                      aria-orientation="vertical"
+                                      aria-labelledby="menu-button"
+                                      tabindex="-1"
+                                      @keydown.tab="open = false"
+                                      @keydown.enter.prevent="open = false;"
+                                      @keyup.space.prevent="open = false;"
+                                    >
+                                      <div class="p-2 w-full" role="none">
+                                        <template x-if="isLoading">
+                                          <p>Loading earrings...</p>
+                                        </template>
+
+                                        <div>
+                                          <template x-if="!isLoading">
+                                            <div
+                                              id="earrings"
+                                              class="h-[300px] overflow-y-scroll grid grid-cols-5 gap-0"
+                                            >
+                                              <template
+                                                x-for="earring in currentPageEarrings"
+                                                :key="earring.itemId"
+                                              >
+                                                <div
+                                                  class="rounded-md py-2 px-1.5 cursor-pointer hover:bg-slate-100 flex justify-center max-h-10"
+                                                  @click="selectors.earrings = earring; fetchCharacterPreview();"
+                                                >
+                                                  <img
+                                                    crossorigin="anonymous"
+                                                    :src="`https://api.maplestory.net/item/${earring.itemId}/iconRaw`"
+                                                    loading="lazy"
+                                                  />
+                                                </div>
+                                              </template>
+                                            </div>
+                                          </template>
+
+                                          <nav
+                                            class="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0"
+                                          >
+                                            <div class="-mt-px flex w-0 flex-1">
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pr-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="previousPage()"
+                                                :disabled="!hasPreviousPage"
+                                              >
+                                                <svg
+                                                  class="mr-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-left"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M18 10a.75.75 0 01-.75.75H4.66l2.1 1.95a.75.75 0 11-1.02 1.1l-3.5-3.25a.75.75 0 010-1.1l3.5-3.25a.75.75 0 111.02 1.1l-2.1 1.95h12.59A.75.75 0 0118 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                                Previous
+                                              </button>
+                                            </div>
+                                            <div class="flex -mt-px">
+                                              <p
+                                                class="inline-flex items-center border-t-2 border-blue-500 px-4 pt-4 text-sm font-medium text-blue-600"
+                                                aria-current="page"
+                                                x-text="page + 1"
+                                              ></p>
+                                            </div>
+                                            <div
+                                              class="-mt-px flex w-0 flex-1 justify-end"
+                                            >
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pl-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="nextPage()"
+                                                :disabled="!hasNextPage"
+                                              >
+                                                Next
+                                                <svg
+                                                  class="ml-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-right"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M2 10a.75.75 0 01.75-.75h12.59l-2.1-1.95a.75.75 0 111.02-1.1l3.5 3.25a.75.75 0 010 1.1l-3.5 3.25a.75.75 0 11-1.02-1.1l2.1-1.95H2.75A.75.75 0 012 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                              </button>
+                                            </div>
+                                          </nav>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="">
+                                  <label
+                                    for="top"
+                                    class="block text-md font-medium text-slate-800"
+                                    >Top</label
+                                  >
+                                  <div
+                                    x-data="{
+                                    open: false,
+                                    page: 0,
+                                    get hasPreviousPage() {
+                                      return this.page > 0
+                                    },
+                                    get hasNextPage() {
+                                      return this.tops && Math.ceil(this.tops.length / itemsPerPage) > this.page + 1
+                                    },
+                                    previousPage() {
+                                      if (!this.hasPreviousPage) return
+                                      this.page = this.page - 1
+                                      const topsEl = document.getElementById('tops')
+                                      topsEl.scrollTo(0, 0)
+                                    },
+                                    nextPage() {
+                                      if (!this.hasNextPage) return
+                                      this.page = this.page + 1
+                                      const topsEl = document.getElementById('tops')
+                                      topsEl.scrollTo(0, 0)
+                                    },
+                                    get currentPageTops() {
+                                      if (!this.tops) return
+                                      const start = this.page * itemsPerPage
+                                      const end = start + itemsPerPage
+                                      return this.tops.slice(start, end)
+                                    },
+                                    tops: null,
+                                    isLoading: false,
+                                    async fetchTops() {
+                                      if (this.tops || !this.open) return
+
+                                      this.isLoading = true
+
+                                      const res = await fetch(
+                                        '/assets/tops.json',
+                                        {
+                                          headers: {
+                                            Accept: 'application/json',
+                                            'Content-Type': 'application/json',
+                                          },
+                                        },
+                                      )
+
+                                      const json = await res.json()
+
+                                      this.tops = json
+                                      this.isLoading = false
+                                    }
+                                  }"
+                                    @keydown.escape.stop="open = false;"
+                                    @click.away="open = false;"
+                                    class="relative inline-block text-left w-full"
+                                    x-effect="fetchTops()"
+                                  >
+                                    <button
+                                      type="button"
+                                      class="inline-flex mt-1 w-full rounded-md border-2 border-gray-300 bg-white py-2 px-3 text-left text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                                      id="menu-button"
+                                      x-ref="button"
+                                      @click="open = true;"
+                                      @keyup.space.prevent="open = true;"
+                                      @keydown.enter.prevent="open = true;"
+                                      aria-expanded="true"
+                                      aria-haspopup="true"
+                                      x-bind:aria-expanded="open.toString()"
+                                      x-text="selectors.top && selectors.top.name || 'None'"
+                                    ></button>
+
+                                    <div
+                                      x-show="open"
+                                      x-transition:enter="transition ease-out duration-100"
+                                      x-transition:enter-start="transform opacity-0 scale-95"
+                                      x-transition:enter-end="transform opacity-100 scale-100"
+                                      x-transition:leave="transition ease-in duration-75"
+                                      x-transition:leave-start="transform opacity-100 scale-100"
+                                      x-transition:leave-end="transform opacity-0 scale-95"
+                                      class="absolute left-0 z-10 mt-2 w-80 md:w-96 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                      x-ref="menu-items"
+                                      role="menu"
+                                      aria-orientation="vertical"
+                                      aria-labelledby="menu-button"
+                                      tabindex="-1"
+                                      @keydown.tab="open = false"
+                                      @keydown.enter.prevent="open = false;"
+                                      @keyup.space.prevent="open = false;"
+                                    >
+                                      <div class="p-2 w-full" role="none">
+                                        <template x-if="isLoading">
+                                          <p>Loading tops...</p>
+                                        </template>
+
+                                        <div>
+                                          <template x-if="!isLoading">
+                                            <div
+                                              id="tops"
+                                              class="h-[300px] overflow-y-scroll grid grid-cols-5 gap-0"
+                                            >
+                                              <template
+                                                x-for="top in currentPageTops"
+                                                :key="top.itemId"
+                                              >
+                                                <div
+                                                  class="rounded-md py-2 px-1.5 cursor-pointer hover:bg-slate-100 flex justify-center max-h-10"
+                                                  @click="selectors.top = top; fetchCharacterPreview();"
+                                                >
+                                                  <img
+                                                    crossorigin="anonymous"
+                                                    :src="`https://api.maplestory.net/item/${top.itemId}/iconRaw`"
+                                                    loading="lazy"
+                                                  />
+                                                </div>
+                                              </template>
+                                            </div>
+                                          </template>
+
+                                          <nav
+                                            class="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0"
+                                          >
+                                            <div class="-mt-px flex w-0 flex-1">
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pr-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="previousPage()"
+                                                :disabled="!hasPreviousPage"
+                                              >
+                                                <svg
+                                                  class="mr-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-left"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M18 10a.75.75 0 01-.75.75H4.66l2.1 1.95a.75.75 0 11-1.02 1.1l-3.5-3.25a.75.75 0 010-1.1l3.5-3.25a.75.75 0 111.02 1.1l-2.1 1.95h12.59A.75.75 0 0118 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                                Previous
+                                              </button>
+                                            </div>
+                                            <div class="flex -mt-px">
+                                              <p
+                                                class="inline-flex items-center border-t-2 border-blue-500 px-4 pt-4 text-sm font-medium text-blue-600"
+                                                aria-current="page"
+                                                x-text="page + 1"
+                                              ></p>
+                                            </div>
+                                            <div
+                                              class="-mt-px flex w-0 flex-1 justify-end"
+                                            >
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pl-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="nextPage()"
+                                                :disabled="!hasNextPage"
+                                              >
+                                                Next
+                                                <svg
+                                                  class="ml-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-right"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M2 10a.75.75 0 01.75-.75h12.59l-2.1-1.95a.75.75 0 111.02-1.1l3.5 3.25a.75.75 0 010 1.1l-3.5 3.25a.75.75 0 11-1.02-1.1l2.1-1.95H2.75A.75.75 0 012 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                              </button>
+                                            </div>
+                                          </nav>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="">
+                                  <label
+                                    for="bottom"
+                                    class="block text-md font-medium text-slate-800"
+                                    >Bottom</label
+                                  >
+                                  <div
+                                    x-data="{
+                                    open: false,
+                                    page: 0,
+                                    get hasPreviousPage() {
+                                      return this.page > 0
+                                    },
+                                    get hasNextPage() {
+                                      return this.bottoms && Math.ceil(this.bottoms.length / itemsPerPage) > this.page + 1
+                                    },
+                                    previousPage() {
+                                      if (!this.hasPreviousPage) return
+                                      this.page = this.page - 1
+                                      const bottomsEl = document.getElementById('bottoms')
+                                      bottomsEl.scrollTo(0, 0)
+                                    },
+                                    nextPage() {
+                                      if (!this.hasNextPage) return
+                                      this.page = this.page + 1
+                                      const bottomsEl = document.getElementById('bottoms')
+                                      bottomsEl.scrollTo(0, 0)
+                                    },
+                                    get currentPageBottoms() {
+                                      if (!this.bottoms) return
+                                      const start = this.page * itemsPerPage
+                                      const end = start + itemsPerPage
+                                      return this.bottoms.slice(start, end)
+                                    },
+                                    bottoms: null,
+                                    isLoading: false,
+                                    async fetchBottoms() {
+                                      if (this.bottoms || !this.open) return
+
+                                      this.isLoading = true
+
+                                      const res = await fetch(
+                                        '/assets/bottoms.json',
+                                        {
+                                          headers: {
+                                            Accept: 'application/json',
+                                            'Content-Type': 'application/json',
+                                          },
+                                        },
+                                      )
+
+                                      const json = await res.json()
+
+                                      this.bottoms = json
+                                      this.isLoading = false
+                                    }
+                                  }"
+                                    @keydown.escape.stop="open = false;"
+                                    @click.away="open = false;"
+                                    class="relative inline-block text-left w-full"
+                                    x-effect="fetchBottoms()"
+                                  >
+                                    <button
+                                      type="button"
+                                      class="inline-flex mt-1 w-full rounded-md border-2 border-gray-300 bg-white py-2 px-3 text-left text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                                      id="menu-button"
+                                      x-ref="button"
+                                      @click="open = true;"
+                                      @keyup.space.prevent="open = true;"
+                                      @keydown.enter.prevent="open = true;"
+                                      aria-expanded="true"
+                                      aria-haspopup="true"
+                                      x-bind:aria-expanded="open.toString()"
+                                      x-text="selectors.bottom && selectors.bottom.name || 'None'"
+                                    ></button>
+
+                                    <div
+                                      x-show="open"
+                                      x-transition:enter="transition ease-out duration-100"
+                                      x-transition:enter-start="transform opacity-0 scale-95"
+                                      x-transition:enter-end="transform opacity-100 scale-100"
+                                      x-transition:leave="transition ease-in duration-75"
+                                      x-transition:leave-start="transform opacity-100 scale-100"
+                                      x-transition:leave-end="transform opacity-0 scale-95"
+                                      class="absolute right-0 z-10 mt-2 w-80 md:w-96 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                      x-ref="menu-items"
+                                      role="menu"
+                                      aria-orientation="vertical"
+                                      aria-labelledby="menu-button"
+                                      tabindex="-1"
+                                      @keydown.tab="open = false"
+                                      @keydown.enter.prevent="open = false;"
+                                      @keyup.space.prevent="open = false;"
+                                    >
+                                      <div class="p-2 w-full" role="none">
+                                        <template x-if="isLoading">
+                                          <p>Loading bottoms...</p>
+                                        </template>
+
+                                        <div>
+                                          <template x-if="!isLoading">
+                                            <div
+                                              id="bottoms"
+                                              class="h-[300px] overflow-y-scroll grid grid-cols-5 gap-0"
+                                            >
+                                              <template
+                                                x-for="bottom in currentPageBottoms"
+                                                :key="bottom.itemId"
+                                              >
+                                                <div
+                                                  class="rounded-md py-2 px-1.5 cursor-pointer hover:bg-slate-100 flex justify-center max-h-10"
+                                                  @click="selectors.bottom = bottom; fetchCharacterPreview();"
+                                                >
+                                                  <img
+                                                    crossorigin="anonymous"
+                                                    :src="`https://api.maplestory.net/item/${bottom.itemId}/iconRaw`"
+                                                    loading="lazy"
+                                                  />
+                                                </div>
+                                              </template>
+                                            </div>
+                                          </template>
+                                          <nav
+                                            class="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0"
+                                          >
+                                            <div class="-mt-px flex w-0 flex-1">
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pr-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="previousPage()"
+                                                :disabled="!hasPreviousPage"
+                                              >
+                                                <svg
+                                                  class="mr-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-left"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M18 10a.75.75 0 01-.75.75H4.66l2.1 1.95a.75.75 0 11-1.02 1.1l-3.5-3.25a.75.75 0 010-1.1l3.5-3.25a.75.75 0 111.02 1.1l-2.1 1.95h12.59A.75.75 0 0118 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                                Previous
+                                              </button>
+                                            </div>
+                                            <div class="flex -mt-px">
+                                              <p
+                                                class="inline-flex items-center border-t-2 border-blue-500 px-4 pt-4 text-sm font-medium text-blue-600"
+                                                aria-current="page"
+                                                x-text="page + 1"
+                                              ></p>
+                                            </div>
+                                            <div
+                                              class="-mt-px flex w-0 flex-1 justify-end"
+                                            >
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pl-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="nextPage()"
+                                                :disabled="!hasNextPage"
+                                              >
+                                                Next
+                                                <svg
+                                                  class="ml-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-right"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M2 10a.75.75 0 01.75-.75h12.59l-2.1-1.95a.75.75 0 111.02-1.1l3.5 3.25a.75.75 0 010 1.1l-3.5 3.25a.75.75 0 11-1.02-1.1l2.1-1.95H2.75A.75.75 0 012 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                              </button>
+                                            </div>
+                                          </nav>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="">
+                                  <label
+                                    for="overall"
+                                    class="block text-md font-medium text-slate-800"
+                                    >Overall</label
+                                  >
+                                  <div
+                                    x-data="{
+                                    open: false,
+                                    page: 0,
+                                    get hasPreviousPage() {
+                                      return this.page > 0
+                                    },
+                                    get hasNextPage() {
+                                      return this.overalls && Math.ceil(this.overalls.length / itemsPerPage) > this.page + 1
+                                    },
+                                    previousPage() {
+                                      if (!this.hasPreviousPage) return
+                                      this.page = this.page - 1
+                                      const overallsEl = document.getElementById('overalls')
+                                      overallsEl.scrollTo(0, 0)
+                                    },
+                                    nextPage() {
+                                      if (!this.hasNextPage) return
+                                      this.page = this.page + 1
+                                      const overallsEl = document.getElementById('overalls')
+                                      overallsEl.scrollTo(0, 0)
+                                    },
+                                    get currentPageOveralls() {
+                                      if (!this.overalls) return
+                                      const start = this.page * itemsPerPage
+                                      const end = start + itemsPerPage
+                                      return this.overalls.slice(start, end)
+                                    },
+                                    overalls: null,
+                                    isLoading: false,
+                                    async fetchOveralls() {
+                                      if (this.overalls || !this.open) return
+
+                                      this.isLoading = true
+
+                                      const res = await fetch(
+                                        '/assets/overalls.json',
+                                        {
+                                          headers: {
+                                            Accept: 'application/json',
+                                            'Content-Type': 'application/json',
+                                          },
+                                        },
+                                      )
+
+                                      const json = await res.json()
+
+                                      this.overalls = json
+                                      this.isLoading = false
+                                    }
+                                  }"
+                                    @keydown.escape.stop="open = false;"
+                                    @click.away="open = false;"
+                                    class="relative inline-block text-left w-full"
+                                    x-effect="fetchOveralls()"
+                                  >
+                                    <button
+                                      type="button"
+                                      class="inline-flex mt-1 w-full rounded-md border-2 border-gray-300 bg-white py-2 px-3 text-left text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                                      id="menu-button"
+                                      x-ref="button"
+                                      @click="open = true;"
+                                      @keyup.space.prevent="open = true;"
+                                      @keydown.enter.prevent="open = true;"
+                                      aria-expanded="true"
+                                      aria-haspopup="true"
+                                      x-bind:aria-expanded="open.toString()"
+                                      x-text="selectors.overall && selectors.overall.name || 'None'"
+                                    ></button>
+
+                                    <div
+                                      x-show="open"
+                                      x-transition:enter="transition ease-out duration-100"
+                                      x-transition:enter-start="transform opacity-0 scale-95"
+                                      x-transition:enter-end="transform opacity-100 scale-100"
+                                      x-transition:leave="transition ease-in duration-75"
+                                      x-transition:leave-start="transform opacity-100 scale-100"
+                                      x-transition:leave-end="transform opacity-0 scale-95"
+                                      class="absolute left-0 z-10 mt-2 w-80 md:w-96 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                      x-ref="menu-items"
+                                      role="menu"
+                                      aria-orientation="vertical"
+                                      aria-labelledby="menu-button"
+                                      tabindex="-1"
+                                      @keydown.tab="open = false"
+                                      @keydown.enter.prevent="open = false;"
+                                      @keyup.space.prevent="open = false;"
+                                    >
+                                      <div class="p-2 w-full" role="none">
+                                        <template x-if="isLoading">
+                                          <p>Loading overalls...</p>
+                                        </template>
+
+                                        <div>
+                                          <template x-if="!isLoading">
+                                            <div
+                                              id="overalls"
+                                              class="h-[300px] overflow-y-scroll grid grid-cols-5 gap-0"
+                                            >
+                                              <template
+                                                x-for="overall in currentPageOveralls"
+                                                :key="overall.itemId"
+                                              >
+                                                <div
+                                                  class="rounded-md py-2 px-1.5 cursor-pointer hover:bg-slate-100 flex justify-center max-h-10"
+                                                  @click="selectors.overall = overall; fetchCharacterPreview();"
+                                                >
+                                                  <img
+                                                    crossorigin="anonymous"
+                                                    :src="`https://api.maplestory.net/item/${overall.itemId}/iconRaw`"
+                                                    loading="lazy"
+                                                  />
+                                                </div>
+                                              </template>
+                                            </div>
+                                          </template>
+
+                                          <nav
+                                            class="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0"
+                                          >
+                                            <div class="-mt-px flex w-0 flex-1">
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pr-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="previousPage()"
+                                                :disabled="!hasPreviousPage"
+                                              >
+                                                <svg
+                                                  class="mr-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-left"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M18 10a.75.75 0 01-.75.75H4.66l2.1 1.95a.75.75 0 11-1.02 1.1l-3.5-3.25a.75.75 0 010-1.1l3.5-3.25a.75.75 0 111.02 1.1l-2.1 1.95h12.59A.75.75 0 0118 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                                Previous
+                                              </button>
+                                            </div>
+                                            <div class="flex -mt-px">
+                                              <p
+                                                class="inline-flex items-center border-t-2 border-blue-500 px-4 pt-4 text-sm font-medium text-blue-600"
+                                                aria-current="page"
+                                                x-text="page + 1"
+                                              ></p>
+                                            </div>
+                                            <div
+                                              class="-mt-px flex w-0 flex-1 justify-end"
+                                            >
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pl-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="nextPage()"
+                                                :disabled="!hasNextPage"
+                                              >
+                                                Next
+                                                <svg
+                                                  class="ml-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-right"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M2 10a.75.75 0 01.75-.75h12.59l-2.1-1.95a.75.75 0 111.02-1.1l3.5 3.25a.75.75 0 010 1.1l-3.5 3.25a.75.75 0 11-1.02-1.1l2.1-1.95H2.75A.75.75 0 012 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                              </button>
+                                            </div>
+                                          </nav>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="">
+                                  <label
+                                    for="gloves"
+                                    class="block text-md font-medium text-slate-800"
+                                    >Gloves</label
+                                  >
+                                  <div
+                                    x-data="{
+                                    open: false,
+                                    page: 0,
+                                    get hasPreviousPage() {
+                                      return this.page > 0
+                                    },
+                                    get hasNextPage() {
+                                      return this.gloves && Math.ceil(this.gloves.length / itemsPerPage) > this.page + 1
+                                    },
+                                    previousPage() {
+                                      if (!this.hasPreviousPage) return
+                                      this.page = this.page - 1
+                                      const glovesEl = document.getElementById('gloves')
+                                      glovesEl.scrollTo(0, 0)
+                                    },
+                                    nextPage() {
+                                      if (!this.hasNextPage) return
+                                      this.page = this.page + 1
+                                      const glovesEl = document.getElementById('gloves')
+                                      glovesEl.scrollTo(0, 0)
+                                    },
+                                    get currentPageGloves() {
+                                      if (!this.gloves) return
+                                      const start = this.page * itemsPerPage
+                                      const end = start + itemsPerPage
+                                      return this.gloves.slice(start, end)
+                                    },
+                                    gloves: null,
+                                    isLoading: false,
+                                    async fetchGloves() {
+                                      if (this.gloves || !this.open) return
+
+                                      this.isLoading = true
+
+                                      const res = await fetch(
+                                        '/assets/gloves.json',
+                                        {
+                                          headers: {
+                                            Accept: 'application/json',
+                                            'Content-Type': 'application/json',
+                                          },
+                                        },
+                                      )
+
+                                      const json = await res.json()
+
+                                      this.gloves = json
+                                      this.isLoading = false
+                                    }
+                                  }"
+                                    @keydown.escape.stop="open = false;"
+                                    @click.away="open = false;"
+                                    class="relative inline-block text-left w-full"
+                                    x-effect="fetchGloves()"
+                                  >
+                                    <button
+                                      type="button"
+                                      class="inline-flex mt-1 w-full rounded-md border-2 border-gray-300 bg-white py-2 px-3 text-left text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                                      id="menu-button"
+                                      x-ref="button"
+                                      @click="open = true;"
+                                      @keyup.space.prevent="open = true;"
+                                      @keydown.enter.prevent="open = true;"
+                                      aria-expanded="true"
+                                      aria-haspopup="true"
+                                      x-bind:aria-expanded="open.toString()"
+                                      x-text="selectors.gloves && selectors.gloves.name || 'None'"
+                                    ></button>
+
+                                    <div
+                                      x-show="open"
+                                      x-transition:enter="transition ease-out duration-100"
+                                      x-transition:enter-start="transform opacity-0 scale-95"
+                                      x-transition:enter-end="transform opacity-100 scale-100"
+                                      x-transition:leave="transition ease-in duration-75"
+                                      x-transition:leave-start="transform opacity-100 scale-100"
+                                      x-transition:leave-end="transform opacity-0 scale-95"
+                                      class="absolute right-0 z-10 mt-2 w-80 md:w-96 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                      x-ref="menu-items"
+                                      role="menu"
+                                      aria-orientation="vertical"
+                                      aria-labelledby="menu-button"
+                                      tabindex="-1"
+                                      @keydown.tab="open = false"
+                                      @keydown.enter.prevent="open = false;"
+                                      @keyup.space.prevent="open = false;"
+                                    >
+                                      <div class="p-2 w-full" role="none">
+                                        <template x-if="isLoading">
+                                          <p>Loading gloves...</p>
+                                        </template>
+
+                                        <template x-if="!isLoading">
+                                          <div
+                                            id="gloves"
+                                            class="h-[300px] overflow-y-scroll grid grid-cols-5 gap-0"
+                                          >
+                                            <template
+                                              x-for="glove in currentPageGloves"
+                                              :key="glove.itemId"
+                                            >
+                                              <div
+                                                class="rounded-md py-2 px-1.5 cursor-pointer hover:bg-slate-100 flex justify-center max-h-10"
+                                                @click="selectors.gloves = glove; fetchCharacterPreview();"
+                                              >
+                                                <img
+                                                  crossorigin="anonymous"
+                                                  :src="`https://api.maplestory.net/item/${glove.itemId}/iconRaw`"
+                                                  loading="lazy"
+                                                />
+                                              </div>
+                                            </template>
+                                          </div>
+                                        </template>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="">
+                                  <label
+                                    for="weapon"
+                                    class="block text-md font-medium text-slate-800"
+                                    >Weapon</label
+                                  >
+                                  <div
+                                    x-data="{
+                                    open: false,
+                                    page: 0,
+                                    get hasPreviousPage() {
+                                      return this.page > 0
+                                    },
+                                    get hasNextPage() {
+                                      return this.weapons && Math.ceil(this.weapons.length / itemsPerPage) > this.page + 1
+                                    },
+                                    previousPage() {
+                                      if (!this.hasPreviousPage) return
+                                      this.page = this.page - 1
+                                      const weaponsEl = document.getElementById('weapons')
+                                      weaponsEl.scrollTo(0, 0)
+                                    },
+                                    nextPage() {
+                                      if (!this.hasNextPage) return
+                                      this.page = this.page + 1
+                                      const weaponsEl = document.getElementById('weapons')
+                                      weaponsEl.scrollTo(0, 0)
+                                    },
+                                    get currentPageWeapons() {
+                                      if (!this.weapons) return
+                                      const start = this.page * itemsPerPage
+                                      const end = start + itemsPerPage
+                                      return this.weapons.slice(start, end)
+                                    },
+                                    weapons: null,
+                                    isLoading: false,
+                                    async fetchWeapons() {
+                                      if (this.weapons || !this.open) return
+
+                                      this.isLoading = true
+
+                                      const res = await fetch(
+                                        '/assets/weapons.json',
+                                        {
+                                          headers: {
+                                            Accept: 'application/json',
+                                            'Content-Type': 'application/json',
+                                          },
+                                        },
+                                      )
+
+                                      const json = await res.json()
+
+                                      this.weapons = json
+                                      this.isLoading = false
+                                    }
+                                  }"
+                                    @keydown.escape.stop="open = false;"
+                                    @click.away="open = false;"
+                                    class="relative inline-block text-left w-full"
+                                    x-effect="fetchWeapons()"
+                                  >
+                                    <button
+                                      type="button"
+                                      class="inline-flex mt-1 w-full rounded-md border-2 border-gray-300 bg-white py-2 px-3 text-left text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                                      id="menu-button"
+                                      x-ref="button"
+                                      @click="open = true;"
+                                      @keyup.space.prevent="open = true;"
+                                      @keydown.enter.prevent="open = true;"
+                                      aria-expanded="true"
+                                      aria-haspopup="true"
+                                      x-bind:aria-expanded="open.toString()"
+                                      x-text="selectors.weapon && selectors.weapon.name || 'None'"
+                                    ></button>
+
+                                    <div
+                                      x-show="open"
+                                      x-transition:enter="transition ease-out duration-100"
+                                      x-transition:enter-start="transform opacity-0 scale-95"
+                                      x-transition:enter-end="transform opacity-100 scale-100"
+                                      x-transition:leave="transition ease-in duration-75"
+                                      x-transition:leave-start="transform opacity-100 scale-100"
+                                      x-transition:leave-end="transform opacity-0 scale-95"
+                                      class="absolute left-0 z-10 mt-2 w-80 md:w-96 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                      x-ref="menu-items"
+                                      role="menu"
+                                      aria-orientation="vertical"
+                                      aria-labelledby="menu-button"
+                                      tabindex="-1"
+                                      @keydown.tab="open = false"
+                                      @keydown.enter.prevent="open = false;"
+                                      @keyup.space.prevent="open = false;"
+                                    >
+                                      <div class="p-2 w-full" role="none">
+                                        <template x-if="isLoading">
+                                          <p>Loading weapons...</p>
+                                        </template>
+
+                                        <div>
+                                          <template x-if="!isLoading">
+                                            <div
+                                              id="weapons"
+                                              class="h-[300px] overflow-y-scroll grid grid-cols-5 gap-0"
+                                            >
+                                              <template
+                                                x-for="weapon in currentPageWeapons"
+                                                :key="weapon.itemId"
+                                              >
+                                                <div
+                                                  class="rounded-md py-2 px-1.5 cursor-pointer hover:bg-slate-100 flex justify-center max-h-10"
+                                                  @click="selectors.weapon = weapon; fetchCharacterPreview();"
+                                                >
+                                                  <img
+                                                    crossorigin="anonymous"
+                                                    :src="`https://api.maplestory.net/item/${weapon.itemId}/iconRaw`"
+                                                    loading="lazy"
+                                                  />
+                                                </div>
+                                              </template>
+                                            </div>
+                                          </template>
+                                          <nav
+                                            class="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0"
+                                          >
+                                            <div class="-mt-px flex w-0 flex-1">
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pr-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="previousPage()"
+                                                :disabled="!hasPreviousPage"
+                                              >
+                                                <svg
+                                                  class="mr-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-left"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M18 10a.75.75 0 01-.75.75H4.66l2.1 1.95a.75.75 0 11-1.02 1.1l-3.5-3.25a.75.75 0 010-1.1l3.5-3.25a.75.75 0 111.02 1.1l-2.1 1.95h12.59A.75.75 0 0118 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                                Previous
+                                              </button>
+                                            </div>
+                                            <div class="flex -mt-px">
+                                              <p
+                                                class="inline-flex items-center border-t-2 border-blue-500 px-4 pt-4 text-sm font-medium text-blue-600"
+                                                aria-current="page"
+                                                x-text="page + 1"
+                                              ></p>
+                                            </div>
+                                            <div
+                                              class="-mt-px flex w-0 flex-1 justify-end"
+                                            >
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pl-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="nextPage()"
+                                                :disabled="!hasNextPage"
+                                              >
+                                                Next
+                                                <svg
+                                                  class="ml-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-right"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M2 10a.75.75 0 01.75-.75h12.59l-2.1-1.95a.75.75 0 111.02-1.1l3.5 3.25a.75.75 0 010 1.1l-3.5 3.25a.75.75 0 11-1.02-1.1l2.1-1.95H2.75A.75.75 0 012 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                              </button>
+                                            </div>
+                                          </nav>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="">
+                                  <label
+                                    for="shield"
+                                    class="block text-md font-medium text-slate-800"
+                                    >Shield</label
+                                  >
+                                  <div
+                                    x-data="{
+                                    open: false,
+                                    page: 0,
+                                    get hasPreviousPage() {
+                                      return this.page > 0
+                                    },
+                                    get hasNextPage() {
+                                      return this.shields && Math.ceil(this.shields.length / itemsPerPage) > this.page + 1
+                                    },
+                                    previousPage() {
+                                      if (!this.hasPreviousPage) return
+                                      this.page = this.page - 1
+                                      const shieldsEl = document.getElementById('shields')
+                                      shieldsEl.scrollTo(0, 0)
+                                    },
+                                    nextPage() {
+                                      if (!this.hasNextPage) return
+                                      this.page = this.page + 1
+                                      const shieldsEl = document.getElementById('shields')
+                                      shieldsEl.scrollTo(0, 0)
+                                    },
+                                    get currentPageShields() {
+                                      if (!this.shields) return
+                                      const start = this.page * itemsPerPage
+                                      const end = start + itemsPerPage
+                                      return this.shields.slice(start, end)
+                                    },
+                                    shields: null,
+                                    isLoading: false,
+                                    async fetchShields() {
+                                      if (this.shields || !this.open) return
+
+                                      this.isLoading = true
+
+                                      const res = await fetch(
+                                        '/assets/shields.json',
+                                        {
+                                          headers: {
+                                            Accept: 'application/json',
+                                            'Content-Type': 'application/json',
+                                          },
+                                        },
+                                      )
+
+                                      const json = await res.json()
+
+                                      this.shields = json
+                                      this.isLoading = false
+                                    }
+                                  }"
+                                    @keydown.escape.stop="open = false;"
+                                    @click.away="open = false;"
+                                    class="relative inline-block text-left w-full"
+                                    x-effect="fetchShields()"
+                                  >
+                                    <button
+                                      type="button"
+                                      class="inline-flex mt-1 w-full rounded-md border-2 border-gray-300 bg-white py-2 px-3 text-left text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                                      id="menu-button"
+                                      x-ref="button"
+                                      @click="open = true;"
+                                      @keyup.space.prevent="open = true;"
+                                      @keydown.enter.prevent="open = true;"
+                                      aria-expanded="true"
+                                      aria-haspopup="true"
+                                      x-bind:aria-expanded="open.toString()"
+                                      x-text="selectors.shield && selectors.shield.name || 'None'"
+                                    ></button>
+
+                                    <div
+                                      x-show="open"
+                                      x-transition:enter="transition ease-out duration-100"
+                                      x-transition:enter-start="transform opacity-0 scale-95"
+                                      x-transition:enter-end="transform opacity-100 scale-100"
+                                      x-transition:leave="transition ease-in duration-75"
+                                      x-transition:leave-start="transform opacity-100 scale-100"
+                                      x-transition:leave-end="transform opacity-0 scale-95"
+                                      class="absolute right-0 z-10 mt-2 w-80 md:w-96 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                      x-ref="menu-items"
+                                      role="menu"
+                                      aria-orientation="vertical"
+                                      aria-labelledby="menu-button"
+                                      tabindex="-1"
+                                      @keydown.tab="open = false"
+                                      @keydown.enter.prevent="open = false;"
+                                      @keyup.space.prevent="open = false;"
+                                    >
+                                      <div class="p-2 w-full" role="none">
+                                        <template x-if="isLoading">
+                                          <p>Loading shields...</p>
+                                        </template>
+
+                                        <div>
+                                          <template x-if="!isLoading">
+                                            <div
+                                              id="shields"
+                                              class="h-[300px] overflow-y-scroll grid grid-cols-5 gap-0"
+                                            >
+                                              <template
+                                                x-for="shield in currentPageShields"
+                                                :key="shield.itemId"
+                                              >
+                                                <div
+                                                  class="rounded-md py-2 px-1.5 cursor-pointer hover:bg-slate-100 flex justify-center max-h-10"
+                                                  @click="selectors.shield = shield; fetchCharacterPreview();"
+                                                >
+                                                  <img
+                                                    crossorigin="anonymous"
+                                                    :src="`https://api.maplestory.net/item/${shield.itemId}/iconRaw`"
+                                                    loading="lazy"
+                                                  />
+                                                </div>
+                                              </template>
+                                            </div>
+                                          </template>
+
+                                          <nav
+                                            class="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0"
+                                          >
+                                            <div class="-mt-px flex w-0 flex-1">
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pr-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="previousPage()"
+                                                :disabled="!hasPreviousPage"
+                                              >
+                                                <svg
+                                                  class="mr-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-left"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M18 10a.75.75 0 01-.75.75H4.66l2.1 1.95a.75.75 0 11-1.02 1.1l-3.5-3.25a.75.75 0 010-1.1l3.5-3.25a.75.75 0 111.02 1.1l-2.1 1.95h12.59A.75.75 0 0118 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                                Previous
+                                              </button>
+                                            </div>
+                                            <div class="flex -mt-px">
+                                              <p
+                                                class="inline-flex items-center border-t-2 border-blue-500 px-4 pt-4 text-sm font-medium text-blue-600"
+                                                aria-current="page"
+                                                x-text="page + 1"
+                                              ></p>
+                                            </div>
+                                            <div
+                                              class="-mt-px flex w-0 flex-1 justify-end"
+                                            >
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pl-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="nextPage()"
+                                                :disabled="!hasNextPage"
+                                              >
+                                                Next
+                                                <svg
+                                                  class="ml-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-right"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M2 10a.75.75 0 01.75-.75h12.59l-2.1-1.95a.75.75 0 111.02-1.1l3.5 3.25a.75.75 0 010 1.1l-3.5 3.25a.75.75 0 11-1.02-1.1l2.1-1.95H2.75A.75.75 0 012 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                              </button>
+                                            </div>
+                                          </nav>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="">
+                                  <label
+                                    for="cape"
+                                    class="block text-md font-medium text-slate-800"
+                                    >Cape</label
+                                  >
+                                  <div
+                                    x-data="{
+                                    open: false,
+                                    page: 0,
+                                    get hasPreviousPage() {
+                                      return this.page > 0
+                                    },
+                                    get hasNextPage() {
+                                      return this.capes && Math.ceil(this.capes.length / itemsPerPage) > this.page + 1
+                                    },
+                                    previousPage() {
+                                      if (!this.hasPreviousPage) return
+                                      this.page = this.page - 1
+                                      const capesEl = document.getElementById('capes')
+                                      capesEl.scrollTo(0, 0)
+                                    },
+                                    nextPage() {
+                                      if (!this.hasNextPage) return
+                                      this.page = this.page + 1
+                                      const capesEl = document.getElementById('capes')
+                                      capesEl.scrollTo(0, 0)
+                                    },
+                                    get currentPageCapes() {
+                                      if (!this.capes) return
+                                      const start = this.page * itemsPerPage
+                                      const end = start + itemsPerPage
+                                      return this.capes.slice(start, end)
+                                    },
+                                    capes: null,
+                                    isLoading: false,
+                                    async fetchCapes() {
+                                      if (this.capes || !this.open) return
+
+                                      this.isLoading = true
+
+                                      const res = await fetch(
+                                        '/assets/capes.json',
+                                        {
+                                          headers: {
+                                            Accept: 'application/json',
+                                            'Content-Type': 'application/json',
+                                          },
+                                        },
+                                      )
+
+                                      const json = await res.json()
+
+                                      this.capes = json
+                                      this.isLoading = false
+                                    }
+                                  }"
+                                    @keydown.escape.stop="open = false;"
+                                    @click.away="open = false;"
+                                    class="relative inline-block text-left w-full"
+                                    x-effect="fetchCapes()"
+                                  >
+                                    <button
+                                      type="button"
+                                      class="inline-flex mt-1 w-full rounded-md border-2 border-gray-300 bg-white py-2 px-3 text-left text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                                      id="menu-button"
+                                      x-ref="button"
+                                      @click="open = true;"
+                                      @keyup.space.prevent="open = true;"
+                                      @keydown.enter.prevent="open = true;"
+                                      aria-expanded="true"
+                                      aria-haspopup="true"
+                                      x-bind:aria-expanded="open.toString()"
+                                      x-text="selectors.cape && selectors.cape.name || 'None'"
+                                    ></button>
+
+                                    <div
+                                      x-show="open"
+                                      x-transition:enter="transition ease-out duration-100"
+                                      x-transition:enter-start="transform opacity-0 scale-95"
+                                      x-transition:enter-end="transform opacity-100 scale-100"
+                                      x-transition:leave="transition ease-in duration-75"
+                                      x-transition:leave-start="transform opacity-100 scale-100"
+                                      x-transition:leave-end="transform opacity-0 scale-95"
+                                      class="absolute left-0 z-10 mt-2 w-80 md:w-96 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                      x-ref="menu-items"
+                                      role="menu"
+                                      aria-orientation="vertical"
+                                      aria-labelledby="menu-button"
+                                      tabindex="-1"
+                                      @keydown.tab="open = false"
+                                      @keydown.enter.prevent="open = false;"
+                                      @keyup.space.prevent="open = false;"
+                                    >
+                                      <div class="p-2 w-full" role="none">
+                                        <template x-if="isLoading">
+                                          <p>Loading capes...</p>
+                                        </template>
+
+                                        <div>
+                                          <template x-if="!isLoading">
+                                            <div
+                                              id="capes"
+                                              class="h-[300px] overflow-y-scroll grid grid-cols-5 gap-0"
+                                            >
+                                              <template
+                                                x-for="cape in currentPageCapes"
+                                                :key="cape.itemId"
+                                              >
+                                                <div
+                                                  class="rounded-md py-2 px-1.5 cursor-pointer hover:bg-slate-100 flex justify-center max-h-10"
+                                                  @click="selectors.cape = cape; fetchCharacterPreview();"
+                                                >
+                                                  <img
+                                                    crossorigin="anonymous"
+                                                    :src="`https://api.maplestory.net/item/${cape.itemId}/iconRaw`"
+                                                    loading="lazy"
+                                                  />
+                                                </div>
+                                              </template>
+                                            </div>
+                                          </template>
+
+                                          <nav
+                                            class="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0"
+                                          >
+                                            <div class="-mt-px flex w-0 flex-1">
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pr-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="previousPage()"
+                                                :disabled="!hasPreviousPage"
+                                              >
+                                                <svg
+                                                  class="mr-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-left"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M18 10a.75.75 0 01-.75.75H4.66l2.1 1.95a.75.75 0 11-1.02 1.1l-3.5-3.25a.75.75 0 010-1.1l3.5-3.25a.75.75 0 111.02 1.1l-2.1 1.95h12.59A.75.75 0 0118 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                                Previous
+                                              </button>
+                                            </div>
+                                            <div class="flex -mt-px">
+                                              <p
+                                                class="inline-flex items-center border-t-2 border-blue-500 px-4 pt-4 text-sm font-medium text-blue-600"
+                                                aria-current="page"
+                                                x-text="page + 1"
+                                              ></p>
+                                            </div>
+                                            <div
+                                              class="-mt-px flex w-0 flex-1 justify-end"
+                                            >
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pl-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="nextPage()"
+                                                :disabled="!hasNextPage"
+                                              >
+                                                Next
+                                                <svg
+                                                  class="ml-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-right"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M2 10a.75.75 0 01.75-.75h12.59l-2.1-1.95a.75.75 0 111.02-1.1l3.5 3.25a.75.75 0 010 1.1l-3.5 3.25a.75.75 0 11-1.02-1.1l2.1-1.95H2.75A.75.75 0 012 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                              </button>
+                                            </div>
+                                          </nav>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="">
+                                  <label
+                                    for="shoes"
+                                    class="block text-md font-medium text-slate-800"
+                                    >Shoes</label
+                                  >
+                                  <div
+                                    x-data="{
+                                    open: false,
+                                    page: 0,
+                                    get hasPreviousPage() {
+                                      return this.page > 0
+                                    },
+                                    get hasNextPage() {
+                                      return this.shoes && Math.ceil(this.shoes.length / itemsPerPage) > this.page + 1
+                                    },
+                                    previousPage() {
+                                      if (!this.hasPreviousPage) return
+                                      this.page = this.page - 1
+                                      const shoesEl = document.getElementById('shoes')
+                                      shoesEl.scrollTo(0, 0)
+                                    },
+                                    nextPage() {
+                                      if (!this.hasNextPage) return
+                                      this.page = this.page + 1
+                                      const shoesEl = document.getElementById('shoes')
+                                      shoesEl.scrollTo(0, 0)
+                                    },
+                                    get currentPageShoes() {
+                                      if (!this.shoes) return
+                                      const start = this.page * itemsPerPage
+                                      const end = start + itemsPerPage
+                                      return this.shoes.slice(start, end)
+                                    },
+                                    shoes: null,
+                                    isLoading: false,
+                                    async fetchShoes() {
+                                      if (this.shoes || !this.open) return
+
+                                      this.isLoading = true
+
+                                      const res = await fetch(
+                                        '/assets/shoes.json',
+                                        {
+                                          headers: {
+                                            Accept: 'application/json',
+                                            'Content-Type': 'application/json',
+                                          },
+                                        },
+                                      )
+
+                                      const json = await res.json()
+
+                                      this.shoes = json
+                                      this.isLoading = false
+                                    }
+                                  }"
+                                    @keydown.escape.stop="open = false;"
+                                    @click.away="open = false;"
+                                    class="relative inline-block text-left w-full"
+                                    x-effect="fetchShoes()"
+                                  >
+                                    <button
+                                      type="button"
+                                      class="inline-flex mt-1 w-full rounded-md border-2 border-gray-300 bg-white py-2 px-3 text-left text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                                      id="menu-button"
+                                      x-ref="button"
+                                      @click="open = true;"
+                                      @keyup.space.prevent="open = true;"
+                                      @keydown.enter.prevent="open = true;"
+                                      aria-expanded="true"
+                                      aria-haspopup="true"
+                                      x-bind:aria-expanded="open.toString()"
+                                      x-text="selectors.shoes && selectors.shoes.name || 'None'"
+                                    ></button>
+
+                                    <div
+                                      x-show="open"
+                                      x-transition:enter="transition ease-out duration-100"
+                                      x-transition:enter-start="transform opacity-0 scale-95"
+                                      x-transition:enter-end="transform opacity-100 scale-100"
+                                      x-transition:leave="transition ease-in duration-75"
+                                      x-transition:leave-start="transform opacity-100 scale-100"
+                                      x-transition:leave-end="transform opacity-0 scale-95"
+                                      class="absolute right-0 z-10 mt-2 w-80 md:w-96 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                      x-ref="menu-items"
+                                      role="menu"
+                                      aria-orientation="vertical"
+                                      aria-labelledby="menu-button"
+                                      tabindex="-1"
+                                      @keydown.tab="open = false"
+                                      @keydown.enter.prevent="open = false;"
+                                      @keyup.space.prevent="open = false;"
+                                    >
+                                      <div class="p-2 w-full" role="none">
+                                        <template x-if="isLoading">
+                                          <p>Loading shoes...</p>
+                                        </template>
+
+                                        <div>
+                                          <template x-if="!isLoading">
+                                            <div
+                                              id="shoes"
+                                              class="h-[300px] overflow-y-scroll grid grid-cols-5 gap-0"
+                                            >
+                                              <template
+                                                x-for="shoe in currentPageShoes"
+                                                :key="shoe.itemId"
+                                              >
+                                                <div
+                                                  class="rounded-md py-2 px-1.5 cursor-pointer hover:bg-slate-100 flex justify-center max-h-10"
+                                                  @click="selectors.shoes = shoe; fetchCharacterPreview();"
+                                                >
+                                                  <img
+                                                    crossorigin="anonymous"
+                                                    :src="`https://api.maplestory.net/item/${shoe.itemId}/iconRaw`"
+                                                    loading="lazy"
+                                                  />
+                                                </div>
+                                              </template>
+                                            </div>
+                                          </template>
+
+                                          <nav
+                                            class="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0"
+                                          >
+                                            <div class="-mt-px flex w-0 flex-1">
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pr-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="previousPage()"
+                                                :disabled="!hasPreviousPage"
+                                              >
+                                                <svg
+                                                  class="mr-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-left"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M18 10a.75.75 0 01-.75.75H4.66l2.1 1.95a.75.75 0 11-1.02 1.1l-3.5-3.25a.75.75 0 010-1.1l3.5-3.25a.75.75 0 111.02 1.1l-2.1 1.95h12.59A.75.75 0 0118 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                                Previous
+                                              </button>
+                                            </div>
+                                            <div class="flex -mt-px">
+                                              <p
+                                                class="inline-flex items-center border-t-2 border-blue-500 px-4 pt-4 text-sm font-medium text-blue-600"
+                                                aria-current="page"
+                                                x-text="page + 1"
+                                              ></p>
+                                            </div>
+                                            <div
+                                              class="-mt-px flex w-0 flex-1 justify-end"
+                                            >
+                                              <button
+                                                class="inline-flex items-center border-t-2 border-transparent pt-4 pl-1 text-sm font-medium text-blue-500 hover:border-blue-300 hover:text-blue-700 disabled:text-gray-500"
+                                                @click="nextPage()"
+                                                :disabled="!hasNextPage"
+                                              >
+                                                Next
+                                                <svg
+                                                  class="ml-3 h-5 w-5 text-gray-400"
+                                                  x-description="Heroicon name: mini/arrow-long-right"
+                                                  xmlns="http://www.w3.org/2000/svg"
+                                                  viewBox="0 0 20 20"
+                                                  fill="currentColor"
+                                                  aria-hidden="true"
+                                                >
+                                                  <path
+                                                    fill-rule="evenodd"
+                                                    d="M2 10a.75.75 0 01.75-.75h12.59l-2.1-1.95a.75.75 0 111.02-1.1l3.5 3.25a.75.75 0 010 1.1l-3.5 3.25a.75.75 0 11-1.02-1.1l2.1-1.95H2.75A.75.75 0 012 10z"
+                                                    clip-rule="evenodd"
+                                                  ></path>
+                                                </svg>
+                                              </button>
+                                            </div>
+                                          </nav>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- End Equipment selector -->
                           </div>
-                          <!-- End list of items -->
+                          <!-- End selectors -->
                         </div>
                         <!-- End character customizer content -->
                       </div>

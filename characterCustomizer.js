@@ -2,10 +2,256 @@ function saveCharacter(selectedItems) {
   alert(JSON.stringify(selectedItems, null, 2))
 }
 
+const characterOptions = {
+  skins: [
+    {
+      value: 'light',
+      label: 'Light',
+    },
+    {
+      value: 'tanned',
+      label: 'Tanned',
+    },
+    {
+      value: 'dark',
+      label: 'Dark',
+    },
+    {
+      value: 'pale',
+      label: 'Pale',
+    },
+    {
+      value: 'ashen',
+      label: 'Ashen',
+    },
+    {
+      value: 'white',
+      label: 'White',
+    },
+    {
+      value: 'palePink',
+      label: 'Pale Pink',
+    },
+    {
+      value: 'clay',
+      label: 'Clay',
+    },
+    {
+      value: 'mercedes',
+      label: 'Mercedes',
+    },
+    {
+      value: 'ghostly',
+      label: 'Ghostly',
+    },
+    {
+      value: 'softPetal',
+      label: 'Soft Petal',
+    },
+    {
+      value: 'blushingPetal',
+      label: 'Blushing Petal',
+    },
+  ],
+  expressions: [
+    {
+      value: 'default',
+      label: 'Default',
+    },
+    {
+      value: 'hit',
+      label: 'Hit',
+    },
+    {
+      value: 'smile',
+      label: 'Smile',
+    },
+    {
+      value: 'troubled',
+      label: 'Troubled',
+    },
+    {
+      value: 'cry',
+      label: 'Cry',
+    },
+    {
+      value: 'angry',
+      label: 'Angry',
+    },
+    {
+      value: 'bewildered',
+      label: 'Bewildered',
+    },
+    {
+      value: 'stunned',
+      label: 'Stunned',
+    },
+    {
+      value: 'blaze',
+      label: 'Blaze',
+    },
+    {
+      value: 'bowing',
+      label: 'Bowing',
+    },
+    {
+      value: 'cheers',
+      label: 'Cheers',
+    },
+    {
+      value: 'chu',
+      label: 'Chu',
+    },
+    {
+      value: 'dam',
+      label: 'Dam',
+    },
+    {
+      value: 'despair',
+      label: 'Despair',
+    },
+    {
+      value: 'glitter',
+      label: 'Glitter',
+    },
+    {
+      value: 'hot',
+      label: 'Hot',
+    },
+    {
+      value: 'hum',
+      label: 'Hum',
+    },
+    {
+      value: 'love',
+      label: 'Love',
+    },
+    {
+      value: 'oops',
+      label: 'Oops',
+    },
+    {
+      value: 'pain',
+      label: 'Pain',
+    },
+    {
+      value: 'qBlue',
+      label: 'QBlue',
+    },
+    {
+      value: 'shine',
+      label: 'Shine',
+    },
+    {
+      value: 'vomit',
+      label: 'Vomit',
+    },
+    {
+      value: 'wink',
+      label: 'Wink',
+    },
+  ],
+  ears: [
+    {
+      value: 'humanEars',
+      label: 'Human',
+    },
+    {
+      value: 'elvenEars',
+      label: 'Elven',
+    },
+    {
+      value: 'lefEars',
+      label: 'Lef',
+    },
+    {
+      value: 'highLefEars',
+      label: 'High Lef',
+    },
+  ],
+}
+
+function readBlob(b) {
+  return new Promise(function (resolve, reject) {
+    const reader = new FileReader()
+
+    reader.onloadend = function () {
+      resolve(reader.result)
+    }
+
+    reader.readAsDataURL(b)
+  })
+}
+
+const defaultSelectors = {
+  skin: characterOptions.skins[0].value,
+  expression: undefined,
+  ears: characterOptions.ears[0].value,
+  hair: {
+    hairId: 30000,
+    name: 'Toben Hair',
+    requiredStats: { gender: 'any' },
+  },
+  face: {
+    faceId: 20000,
+    name: 'Motivated Look (Black)',
+    requiredStats: { gender: 'any' },
+  },
+  faceAccessory: undefined,
+  eyeAccessory: undefined,
+  hat: undefined,
+  earrings: undefined,
+  top: undefined,
+  bottom: undefined,
+  overall: undefined,
+  gloves: undefined,
+  weapon: undefined,
+  shield: undefined,
+  cape: undefined,
+  shoes: undefined,
+}
+
 const menuData = {
-  selectors: {
-    category: 'Character',
-    subcategory: 'Face',
+  selectors: defaultSelectors,
+  characterPreview: null,
+  async fetchCharacterPreview() {
+    const rawResponse = await fetch(
+      'https://api.maplestory.net/character/render',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          skin: this.selectors.skin,
+          ears: this.selectors.ears,
+          faceEmote: this.selectors.expression,
+          hairId: this.selectors.hair.hairId,
+          faceId: this.selectors.face.faceId,
+          itemIds: [
+            this.selectors.faceAccessory && this.selectors.faceAccessory.itemId,
+            this.selectors.eyeAccessory && this.selectors.eyeAccessory.itemId,
+            this.selectors.hat && this.selectors.hat.itemId,
+            this.selectors.earrings && this.selectors.earrings.itemId,
+            this.selectors.top && this.selectors.top.itemId,
+            this.selectors.bottom && this.selectors.bottom.itemId,
+            this.selectors.overall && this.selectors.overall.itemId,
+            this.selectors.gloves && this.selectors.gloves.itemId,
+            this.selectors.weapon && this.selectors.weapon.itemId,
+            this.selectors.shield && this.selectors.shield.itemId,
+            this.selectors.cape && this.selectors.cape.itemId,
+            this.selectors.shoes && this.selectors.shoes.itemId,
+          ].filter(Boolean),
+        }),
+      },
+    )
+
+    const blob = await rawResponse.blob()
+
+    const characterPreviewURI = await readBlob(blob)
+
+    this.characterPreview = characterPreviewURI
   },
   selectedItems: {},
   handleSelectItem(item) {
@@ -43,287 +289,14 @@ const menuData = {
       'Emblem',
     ],
     Clothes: [
-      'Cape',
       'Hat',
+      'Cape',
       'Top',
       'Overall',
       'Glove',
       'Bottom',
       'Shield',
       'Shoes',
-    ],
-  },
-}
-
-const items = {
-  Character: {
-    Face: [
-      { name: 1, src: '' },
-      { name: 2, src: '' },
-      { name: 3, src: '' },
-      { name: 4, src: '' },
-      { name: 5, src: '' },
-      { name: 6, src: '' },
-      { name: 7, src: '' },
-      { name: 8, src: '' },
-      { name: 9, src: '' },
-      { name: 10, src: '' },
-    ],
-    Head: [
-      { name: 11, src: '' },
-      { name: 12, src: '' },
-      { name: 13, src: '' },
-      { name: 14, src: '' },
-      { name: 15, src: '' },
-      { name: 16, src: '' },
-      { name: 17, src: '' },
-      { name: 18, src: '' },
-      { name: 19, src: '' },
-      { name: 20, src: '' },
-    ],
-    Hair: [
-      { name: 21, src: '' },
-      { name: 22, src: '' },
-      { name: 23, src: '' },
-      { name: 24, src: '' },
-      { name: 25, src: '' },
-      { name: 26, src: '' },
-      { name: 27, src: '' },
-      { name: 28, src: '' },
-      { name: 29, src: '' },
-      { name: 30, src: '' },
-    ],
-  },
-  Accessory: {
-    'Face Accessory': [
-      { name: 31, src: '' },
-      { name: 32, src: '' },
-      { name: 33, src: '' },
-      { name: 34, src: '' },
-      { name: 35, src: '' },
-      { name: 36, src: '' },
-      { name: 37, src: '' },
-      { name: 38, src: '' },
-      { name: 39, src: '' },
-      { name: 40, src: '' },
-    ],
-    'Eye Decoration': [
-      { name: 41, src: '' },
-      { name: 42, src: '' },
-      { name: 43, src: '' },
-      { name: 44, src: '' },
-      { name: 45, src: '' },
-      { name: 46, src: '' },
-      { name: 47, src: '' },
-      { name: 48, src: '' },
-      { name: 49, src: '' },
-      { name: 50, src: '' },
-    ],
-    Earrings: [
-      { name: 51, src: '' },
-      { name: 52, src: '' },
-      { name: 53, src: '' },
-      { name: 54, src: '' },
-      { name: 55, src: '' },
-      { name: 56, src: '' },
-      { name: 57, src: '' },
-      { name: 58, src: '' },
-      { name: 59, src: '' },
-      { name: 60, src: '' },
-    ],
-    Ring: [
-      { name: 61, src: '' },
-      { name: 62, src: '' },
-      { name: 63, src: '' },
-      { name: 64, src: '' },
-      { name: 65, src: '' },
-      { name: 66, src: '' },
-      { name: 67, src: '' },
-      { name: 68, src: '' },
-      { name: 69, src: '' },
-      { name: 70, src: '' },
-    ],
-    Pendant: [
-      { name: 71, src: '' },
-      { name: 72, src: '' },
-      { name: 73, src: '' },
-      { name: 74, src: '' },
-      { name: 75, src: '' },
-      { name: 76, src: '' },
-      { name: 77, src: '' },
-      { name: 78, src: '' },
-      { name: 79, src: '' },
-      { name: 80, src: '' },
-    ],
-    Belt: [
-      { name: 81, src: '' },
-      { name: 82, src: '' },
-      { name: 83, src: '' },
-      { name: 84, src: '' },
-      { name: 85, src: '' },
-      { name: 86, src: '' },
-      { name: 87, src: '' },
-      { name: 88, src: '' },
-      { name: 89, src: '' },
-      { name: 90, src: '' },
-    ],
-    Medal: [
-      { name: 91, src: '' },
-      { name: 92, src: '' },
-      { name: 93, src: '' },
-      { name: 94, src: '' },
-      { name: 95, src: '' },
-      { name: 96, src: '' },
-      { name: 97, src: '' },
-      { name: 98, src: '' },
-      { name: 99, src: '' },
-      { name: 100, src: '' },
-    ],
-    'Shoulder Accessory': [
-      { name: 101, src: '' },
-      { name: 102, src: '' },
-      { name: 103, src: '' },
-      { name: 104, src: '' },
-      { name: 105, src: '' },
-      { name: 106, src: '' },
-      { name: 107, src: '' },
-      { name: 108, src: '' },
-      { name: 109, src: '' },
-      { name: 110, src: '' },
-    ],
-    'Pocket Item': [
-      { name: 111, src: '' },
-      { name: 112, src: '' },
-      { name: 113, src: '' },
-      { name: 114, src: '' },
-      { name: 115, src: '' },
-      { name: 116, src: '' },
-      { name: 117, src: '' },
-      { name: 118, src: '' },
-      { name: 119, src: '' },
-      { name: 120, src: '' },
-    ],
-    Badge: [
-      { name: 121, src: '' },
-      { name: 122, src: '' },
-      { name: 123, src: '' },
-      { name: 124, src: '' },
-      { name: 125, src: '' },
-      { name: 126, src: '' },
-      { name: 127, src: '' },
-      { name: 128, src: '' },
-      { name: 129, src: '' },
-      { name: 130, src: '' },
-    ],
-    Emblem: [
-      { name: 131, src: '' },
-      { name: 132, src: '' },
-      { name: 133, src: '' },
-      { name: 134, src: '' },
-      { name: 135, src: '' },
-      { name: 136, src: '' },
-      { name: 137, src: '' },
-      { name: 138, src: '' },
-      { name: 139, src: '' },
-      { name: 140, src: '' },
-    ],
-  },
-  Clothes: {
-    Cape: [
-      { name: 141, src: '' },
-      { name: 142, src: '' },
-      { name: 143, src: '' },
-      { name: 144, src: '' },
-      { name: 145, src: '' },
-      { name: 146, src: '' },
-      { name: 147, src: '' },
-      { name: 148, src: '' },
-      { name: 149, src: '' },
-      { name: 150, src: '' },
-    ],
-    Hat: [
-      { name: 151, src: '' },
-      { name: 152, src: '' },
-      { name: 153, src: '' },
-      { name: 154, src: '' },
-      { name: 155, src: '' },
-      { name: 156, src: '' },
-      { name: 157, src: '' },
-      { name: 158, src: '' },
-      { name: 159, src: '' },
-      { name: 160, src: '' },
-    ],
-    Top: [
-      { name: 161, src: '' },
-      { name: 162, src: '' },
-      { name: 163, src: '' },
-      { name: 164, src: '' },
-      { name: 165, src: '' },
-      { name: 166, src: '' },
-      { name: 167, src: '' },
-      { name: 168, src: '' },
-      { name: 169, src: '' },
-      { name: 170, src: '' },
-    ],
-    Overall: [
-      { name: 171, src: '' },
-      { name: 172, src: '' },
-      { name: 173, src: '' },
-      { name: 174, src: '' },
-      { name: 175, src: '' },
-      { name: 176, src: '' },
-      { name: 177, src: '' },
-      { name: 178, src: '' },
-      { name: 179, src: '' },
-      { name: 180, src: '' },
-    ],
-    Glove: [
-      { name: 181, src: '' },
-      { name: 182, src: '' },
-      { name: 183, src: '' },
-      { name: 184, src: '' },
-      { name: 185, src: '' },
-      { name: 186, src: '' },
-      { name: 187, src: '' },
-      { name: 188, src: '' },
-      { name: 189, src: '' },
-      { name: 190, src: '' },
-    ],
-    Bottom: [
-      { name: 191, src: '' },
-      { name: 192, src: '' },
-      { name: 193, src: '' },
-      { name: 194, src: '' },
-      { name: 195, src: '' },
-      { name: 196, src: '' },
-      { name: 197, src: '' },
-      { name: 198, src: '' },
-      { name: 199, src: '' },
-      { name: 200, src: '' },
-    ],
-    Shield: [
-      { name: 201, src: '' },
-      { name: 202, src: '' },
-      { name: 203, src: '' },
-      { name: 204, src: '' },
-      { name: 205, src: '' },
-      { name: 206, src: '' },
-      { name: 207, src: '' },
-      { name: 208, src: '' },
-      { name: 209, src: '' },
-      { name: 210, src: '' },
-    ],
-    Shoes: [
-      { name: 211, src: '' },
-      { name: 212, src: '' },
-      { name: 213, src: '' },
-      { name: 214, src: '' },
-      { name: 215, src: '' },
-      { name: 216, src: '' },
-      { name: 217, src: '' },
-      { name: 218, src: '' },
-      { name: 219, src: '' },
-      { name: 220, src: '' },
     ],
   },
 }
