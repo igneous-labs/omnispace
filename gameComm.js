@@ -1,6 +1,6 @@
 /**
  * Make sure to include this file after minimalTest.js
- * since it uses:
+ * since it uses from file:
  * - `MATRIX_USER_ID` 
  */
 
