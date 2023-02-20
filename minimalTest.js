@@ -162,7 +162,6 @@ async function start() {
                 client.off("Room.timeline", appendMessageEvent);
                 setCallbacksOnPrepared();
                 setRoomList();
-                window.alert("PREPARED");
                 render();
                 break;
             case "ERROR":
