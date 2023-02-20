@@ -74,7 +74,6 @@ function render() {
     }
     else {
         document.getElementById("title").textContent = roomList.get(viewingRoom).name
-
         var messageHistoryHTML = messageHistory[viewingRoom].reduce((acc, message) => {
             // Find the room where 
             const roomId = message['event']['room_id']
@@ -145,9 +144,7 @@ function appendMessageEvent(event, room, toStartOfTimeline) {
     if (!messageHistory[room.roomId]) {
         messageHistory[room.roomId] = []
     }
-
-    const c = event.getContent();
-    messageHistory[room.roomId] += `${event.getSender()}: ${c.body} <br/>`;
+    messageHistory[room.roomId].push(event);
 }
 
 async function start() {
