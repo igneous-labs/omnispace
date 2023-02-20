@@ -26,9 +26,9 @@ function sendMessage() {
 
 function setRoomList() {
     console.log("Setting room list")
-    roomList = client.getRooms();
+    let tmp = client.getRooms();
     // console.log(roomList);
-    roomList.sort((a, b) => {
+    tmp.sort((a, b) => {
         // < 0 = a comes first (lower index) - we want high indexes = newer
         var aMsg = a.timeline[a.timeline.length - 1];
         if (!aMsg) {
@@ -45,6 +45,12 @@ function setRoomList() {
         }
         return 0;
     });
+ 
+    // making use of Map's property that it respects insertion order: that's
+    // why we create a new Map rather than just editing the old one.
+    let tmp2 = new Map();
+    tmp.map((room) => {tmp2.set(room.roomId, room)})
+    roomList = tmp2
 }
 
 function setActiveRoom(roomId) {
@@ -54,8 +60,8 @@ function setActiveRoom(roomId) {
 function printRoomList() {
     console.log("printing room list")
     let html = ''
-    for (let i = 0; i < roomList.length; i++) {
-        html += `<div onClick="setActiveRoom('${roomList[i].roomId}'); render();"> ${roomList[i].name} </div>`
+    for (const [roomId, room] of roomList) {
+        html += `<div onClick="setActiveRoom('${roomId}'); render();"> ${room.name} </div>`
     }    
     document.getElementById("view").innerHTML = html
 }
@@ -67,10 +73,43 @@ function render() {
         printRoomList();
     }
     else {
-        console.log(viewingRoom)
-        document.getElementById("title").textContent = roomList.filter((room) => room.roomId === viewingRoom)[0].name;
-        document.getElementById("view").innerHTML = messageHistory[viewingRoom];
+        document.getElementById("title").textContent = roomList.get(viewingRoom).name
+
+        var messageHistoryHTML = messageHistory[viewingRoom].reduce((acc, message) => {
+            // Find the room where 
+            const roomId = message['event']['room_id']
+            const senderId = message['event']['sender']
+            const members = roomList.get(roomId).getMembers()
+            const senderName = members.filter((member) => member.userId === senderId)[0].rawDisplayName
+            return acc + `<div><strong>${senderName}: </strong> ${message.event.content.body} </div>`
+        }, '')
+
+        document.getElementById("view").innerHTML = messageHistoryHTML
     }
+}
+
+function handleImagePaste(evt) {
+    const imageUploadDialog = document.getElementById("uploadImageDialog")
+    console.log("pasted")
+    imageUploadDialog.showModal();
+    // Handle the `paste` event
+    // Get the data of clipboard
+    const clipboardItems = evt.clipboardData.items;
+    const items = [].slice.call(clipboardItems).filter(function (item) {
+        // Filter the image items only
+        return item.type.indexOf('image') !== -1;
+    });
+    if (items.length === 0) {
+        return;
+    }   
+
+    const item = items[0];
+    console.log(item)
+    // Get the blob of image
+    const blob = item.getAsFile();
+    console.log(blob)
+    const imageEle = document.getElementById('uploadPreview');
+    imageEle.src = URL.createObjectURL(blob);
 }
 
 // Hack: matrix events are recent if localTimestamp within 60s
@@ -102,6 +141,9 @@ function appendMessageEvent(event, room, toStartOfTimeline) {
     }
     if (event.getType() !== "m.room.message") {
         return; // only print messages
+    }
+    if (!messageHistory[room.roomId]) {
+        messageHistory[room.roomId] = []
     }
 
     const c = event.getContent();
@@ -140,4 +182,5 @@ async function logout() {
     window.location.replace("login.html");
 }
 
+document.addEventListener('paste', handleImagePaste);
 start();
