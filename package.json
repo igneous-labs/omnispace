@@ -1,6 +1,9 @@
 {
-	"devDependencies": {
-		"@tailwindcss/forms": "^0.5.3",
-		"tailwindcss": "^3.2.6"
-	}
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.3",
+    "tailwindcss": "^3.2.6"
+  },
+  "scripts": {
+    "tailwind-build": "pnpx tailwindcss build ./styles.css -o ./dist/output.css"
+  }
 }

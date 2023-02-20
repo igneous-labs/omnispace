@@ -12,6 +12,18 @@
       defer
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.11.1/dist/cdn.min.js"
     ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"
+      defer
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"
+      defer
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
     <link href="/dist/output.css" rel="stylesheet" />
   </head>
@@ -39,7 +51,27 @@
         </div>
 
         <!-- Start customize character sidebar -->
-        <div x-data="{ characterMenuOpen: false }">
+        <div
+          x-data="{
+            characterMenuOpen: false,
+            isSaving: false,
+            async saveCharacter(selectors) {
+              if (this.isSaving) return;
+              this.isSaving = true;
+              try {
+                await characterSaver(selectors)
+              } catch(err) {
+                alert(err.message)
+              } finally {
+                this.isSaving = false;
+              }
+            },
+            closeCharacterMenu() {
+              if (this.isSaving) return;
+              this.characterMenuOpen = false;
+            }
+          }"
+        >
           <button
             @click="characterMenuOpen = true"
             class="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
@@ -48,7 +80,7 @@
           </button>
 
           <div
-            @keydown.window.escape="characterMenuOpen = false"
+            @keydown.window.escape="closeCharacterMenu()"
             x-show="characterMenuOpen"
             class="relative z-10"
             aria-labelledby="slide-over-title"
@@ -75,7 +107,7 @@
                     x-transition:leave-end="translate-x-full"
                     class="pointer-events-auto w-screen max-w-md"
                     x-description="Slide-over panel, show/hide based on slide-over state."
-                    @click.away="characterMenuOpen = false"
+                    @click.away="closeCharacterMenu()"
                   >
                     <div
                       class="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl"
@@ -96,7 +128,8 @@
                               <button
                                 type="button"
                                 class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                @click="characterMenuOpen = false"
+                                @click="closeCharacterMenu()"
+                                :disabled="isSaving"
                               >
                                 <span class="sr-only">Close panel</span>
                                 <svg
@@ -131,11 +164,13 @@
                               class="flex items-center justify-center h-44 w-64"
                               x-init="fetchCharacterPreview()"
                             >
-                              <img
-                                class="h-28 pixel"
-                                alt="Character preview"
-                                :src="`${characterPreview}`"
-                              />
+                              <template x-if="characterPreview">
+                                <img
+                                  class="h-28 pixel"
+                                  alt="Character preview"
+                                  :src="`${characterPreview}`"
+                                />
+                              </template>
                             </div>
                             <div
                               class="w-full"
@@ -3004,14 +3039,16 @@
                         <button
                           type="button"
                           class="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                          @click="characterMenuOpen = false"
+                          @click="closeCharacterMenu()"
+                          :disabled="isSaving"
                         >
                           Cancel
                         </button>
                         <button
                           type="submit"
-                          @click="saveCharacter(selectedItems)"
                           class="ml-4 inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                          @click="saveCharacter(selectors)"
+                          :disabled="isSaving"
                         >
                           Save
                         </button>
