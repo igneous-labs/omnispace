@@ -1,22 +1,19 @@
-const MATRIX_USER_ID = "@fp:melchior.info";
-const MATRIX_PASSWORD = "123456789";
-const MATRIX_BASEURL = "https://matrix.melchior.info";
-var roomList = new Map();
+const matrixLoginStr = window.localStorage.getItem(MATRIX_LOGIN_LOCAL_STORAGE_KEY);
+if (!matrixLoginStr) {
+    window.location.replace("login.html");
+}
+
+const { accessToken: MATRIX_ACCESS_TOKEN, userId: MATRIX_USER_ID } = JSON.parse(matrixLoginStr);
+
+var roomList = [];
 var viewingRoom = null;
 var messageHistory = {}
-var accessToken = undefined;
 
 const client = matrixcs.createClient({
     baseUrl: MATRIX_BASEURL,
-    accessToken,
+    accessToken: MATRIX_ACCESS_TOKEN,
     userId : MATRIX_USER_ID,
 });
-
-if (accessToken === undefined) {
-    client.login("m.login.password", { user: MATRIX_USER_ID, password: MATRIX_PASSWORD }).then((response) => {
-        accessToken = response.access_token;
-    });
-}
 
 function sendMessage() {
     const message = document.getElementById("chat_input").value
@@ -161,4 +158,10 @@ async function start() {
 
 
 document.addEventListener('paste', handleImagePaste)
+
+function logout() {
+    window.localStorage.removeItem(MATRIX_LOGIN_LOCAL_STORAGE_KEY);
+    window.location.replace("login.html");
+}
+
 start();

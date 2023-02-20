@@ -1,0 +1,61 @@
+<!-- Login: 
+    - on login, save { userId, accessToken } to localStorage
+      under MATRIX_LOGIN_LOCAL_STORAGE_KEY
+    - NB: synapse access tokens supposedly last forever right now,
+      TODO: handle refresh and invalidation 
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <head>
+        <Title>Login</Title>
+        <meta charset="utf-8" />
+        <link rel="icon" href="data:," />
+        <script src="lib/matrix.js"></script>
+        <script src="consts.js"></script>
+        <script>
+            function onSubmit(e) {
+                e.preventDefault();
+                const inputElems = e.target.elements;
+                const username = inputElems.username.value;
+                const password = inputElems.password.value;
+                const client = matrixcs.createClient({
+                    baseUrl: MATRIX_BASEURL,
+                });
+                const userId = `@${username}:${MATRIX_DOMAIN}`;
+                client.login("m.login.password", { user: userId, password }).then((response) => {
+                    if (response.access_token) {
+                        window.localStorage.setItem(MATRIX_LOGIN_LOCAL_STORAGE_KEY, JSON.stringify({
+                            accessToken: response.access_token,
+                            userId,
+                        }));
+                        window.location.replace("index.html");
+                        return;
+                    }
+                }).catch((e) => {
+                    alert("Login failed");
+                    console.log(e);
+                });
+            }
+            document.addEventListener("DOMContentLoaded", function(event) { 
+                document.getElementById("login-form").addEventListener("submit", onSubmit)
+            });
+        </script>
+        <link href="styles/style.css" rel="stylesheet" />
+        <body>
+            <div id="wrapper">
+                <h1 id="title"> Login </h1>
+                <form id="login-form">
+                    <label for="username">Username:</label>
+                    <input type="text" name="username" /><br>
+
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" /><br>
+                    
+                    <input type="submit" value="login" />
+                </form>
+            </div>
+        </body>
+    </head>
+</html>
