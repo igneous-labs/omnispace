@@ -12,41 +12,11 @@
         <Title>Login</Title>
         <meta charset="utf-8" />
         <link rel="icon" href="data:," />
-        <script src="lib/matrix.js"></script>
-        <script src="consts.js"></script>
-        <script>
-            async function onSubmit(e) {
-                e.preventDefault();
-                const inputElems = e.target.elements;
-                const username = inputElems.username.value;
-                const password = inputElems.password.value;
-
-                const client = await createMatrixClient();
-                const userId = `@${username}:${MATRIX_DOMAIN}`;
-                client.login("m.login.password", { user: userId, password }).then((response) => {
-                    if (response.access_token) {
-                        window.localStorage.setItem(MATRIX_LOGIN_LOCAL_STORAGE_KEY, JSON.stringify({
-                            accessToken: response.access_token,
-                            userId,
-                        }));
-                        window.location.replace("index.html");
-                        return;
-                    }
-                    throw new Error("no access token");
-                }).catch((e) => {
-                    alert("Login failed");
-                    console.log(e);
-                });
-            }
-            document.addEventListener("DOMContentLoaded", function(event) { 
-                document.getElementById("login-form").addEventListener("submit", onSubmit)
-            });
-        </script>
         <link href="styles/style.css" rel="stylesheet" />
         <body>
             <div id="wrapper">
                 <h1 id="title"> Login </h1>
-                <form id="login-form">
+                <form id="login-form" onsubmit="onSubmit(event)">
                     <label for="username">Username:</label>
                     <input autocomplete="username" type="text" name="username" /><br>
 
@@ -56,6 +26,34 @@
                     <input type="submit" value="login" />
                 </form>
             </div>
+
+            <script defer src="lib/matrix.js"></script>
+            <script defer src="consts.js"></script>
+            <script>
+                async function onSubmit(e) {
+                    e.preventDefault();
+                    const inputElems = e.target.elements;
+                    const username = inputElems.username.value;
+                    const password = inputElems.password.value;
+    
+                    const client = await createMatrixClient();
+                    const userId = `@${username}:${MATRIX_DOMAIN}`;
+                    client.login("m.login.password", { user: userId, password }).then((response) => {
+                        if (response.access_token) {
+                            window.localStorage.setItem(MATRIX_LOGIN_LOCAL_STORAGE_KEY, JSON.stringify({
+                                accessToken: response.access_token,
+                                userId,
+                            }));
+                            window.location.replace("index.html");
+                            return;
+                        }
+                        throw new Error("no access token");
+                    }).catch((e) => {
+                        alert("Login failed");
+                        console.log(e);
+                    });
+                }
+            </script>
         </body>
     </head>
 </html>

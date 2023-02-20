@@ -130,7 +130,6 @@ async function start() {
         }
     });
 
-    console.log("STARTYING");
     await client.startClient();
 }
 
