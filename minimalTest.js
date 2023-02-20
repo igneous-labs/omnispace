@@ -1,19 +1,15 @@
-const matrixLoginStr = window.localStorage.getItem(MATRIX_LOGIN_LOCAL_STORAGE_KEY);
-if (!matrixLoginStr) {
+const matrixLoginStoredStr = window.localStorage.getItem(MATRIX_LOGIN_LOCAL_STORAGE_KEY);
+if (!matrixLoginStoredStr) {
     window.location.replace("login.html");
 }
 
-const { accessToken: MATRIX_ACCESS_TOKEN, userId: MATRIX_USER_ID } = JSON.parse(matrixLoginStr);
+const MATRIX_LOGIN_STORED = JSON.parse(matrixLoginStoredStr);
+const { accessToken: MATRIX_ACCESS_TOKEN, userId: MATRIX_USER_ID } = MATRIX_LOGIN_STORED;
 
 var roomList = [];
 var viewingRoom = null;
-var messageHistory = {}
-
-const client = matrixcs.createClient({
-    baseUrl: MATRIX_BASEURL,
-    accessToken: MATRIX_ACCESS_TOKEN,
-    userId : MATRIX_USER_ID,
-});
+var messageHistory = {};
+var client = null;
 
 function sendMessage() {
     const message = document.getElementById("chat_input").value
@@ -112,7 +108,9 @@ function appendMessageEvent(event, room, toStartOfTimeline) {
     messageHistory[room.roomId] += `${event.getSender()}: ${c.body} <br/>`;
 }
 
-async function start() { 
+async function start() {
+    client = await createMatrixClient(MATRIX_LOGIN_STORED);
+
     client.on("Room.timeline", appendMessageEvent);
     
     // See matrix-js-sdk src/client.ts comment:
@@ -132,11 +130,14 @@ async function start() {
         }
     });
 
+    console.log("STARTYING");
     await client.startClient();
 }
 
-function logout() {
+async function logout() {
+    const logoutPromise = client.logout();
     window.localStorage.removeItem(MATRIX_LOGIN_LOCAL_STORAGE_KEY);
+    await logoutPromise;
     window.location.replace("login.html");
 }
 

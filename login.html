@@ -15,14 +15,13 @@
         <script src="lib/matrix.js"></script>
         <script src="consts.js"></script>
         <script>
-            function onSubmit(e) {
+            async function onSubmit(e) {
                 e.preventDefault();
                 const inputElems = e.target.elements;
                 const username = inputElems.username.value;
                 const password = inputElems.password.value;
-                const client = matrixcs.createClient({
-                    baseUrl: MATRIX_BASEURL,
-                });
+
+                const client = await createMatrixClient();
                 const userId = `@${username}:${MATRIX_DOMAIN}`;
                 client.login("m.login.password", { user: userId, password }).then((response) => {
                     if (response.access_token) {
@@ -33,6 +32,7 @@
                         window.location.replace("index.html");
                         return;
                     }
+                    throw new Error("no access token");
                 }).catch((e) => {
                     alert("Login failed");
                     console.log(e);
@@ -48,10 +48,10 @@
                 <h1 id="title"> Login </h1>
                 <form id="login-form">
                     <label for="username">Username:</label>
-                    <input type="text" name="username" /><br>
+                    <input autocomplete="username" type="text" name="username" /><br>
 
                     <label for="password">Password:</label>
-                    <input type="password" name="password" /><br>
+                    <input autocomplete="current-password" type="password" name="password" /><br>
                     
                     <input type="submit" value="login" />
                 </form>
