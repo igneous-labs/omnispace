@@ -163,7 +163,7 @@ async function start() {
                 setCallbacksOnPrepared();
                 setRoomList();
                 window.alert("PREPARED");
-                //render();
+                render();
                 break;
             case "ERROR":
                 throw new Error("Error syncing matrix");
