@@ -83,7 +83,7 @@ Game.setInitialState = function () {
         world_state_data: {
             0: {
                 position: [200, 150],
-                direction: "left",
+                direction: "right",
                 status: "standing",
             },
         },
@@ -150,18 +150,44 @@ Game.render = function (tFrame) {
         }
 
         const sx = playerSpriteSheet[playerCurrentStatus][player.currentAnimationFrame][0]; // start x-coord of the slice of the spritesheet to draw
+        const sy = 0;
         const sWidth = playerSpriteSheet[playerCurrentStatus][player.currentAnimationFrame][1] - sx; // width of the slice of the spritesheet to draw
         const char = Loader.getImage(spriteSheetName) // which spritesheet to use 
         const sHeight = char.height; // height of the spritesheet
-        Game.ctx.drawImage(char, 
-            sx, 
-            0,
-            sWidth, 
-            sHeight, 
-            Game.worldState.world_state_data[playerId].position[0], // FIXME: note this needs to be fixed because global position =/= position on canvas
-            Game.worldState.world_state_data[playerId].position[1],
-            sWidth, 
-            sHeight)  
+        const [x, y] = [...Game.worldState.world_state_data[playerId].position] // FIXME: note this needs to be fixed because global position =/= position on canvas
+
+        // flip or don't flip
+        if (Game.worldState.world_state_data[playerId].direction === "right") {
+
+            // https://stackoverflow.com/a/35973879 flipping sprite
+            Game.ctx.translate(x + sWidth, y);
+            Game.ctx.scale(-1, 1);            
+            Game.ctx.drawImage(
+                char, 
+                sx, 
+                sy,
+                sWidth, 
+                sHeight, 
+                0, 
+                0,
+                sWidth, 
+                sHeight
+            )
+            Game.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        }
+        else {
+            Game.ctx.drawImage(
+                char, 
+                sx, 
+                sy,
+                sWidth, 
+                sHeight, 
+                x, 
+                y,
+                sWidth, 
+                sHeight
+            )
+        }
     } 
 }
 
