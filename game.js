@@ -47,6 +47,10 @@ let SpriteSheetFrameMap = {
     "char_default": {
         "standing": [[0, 40], [41, 81]],
         "walking": [[82, 122], [123, 163], [164, 204], [205, 245]],
+    },
+    "char_fp": {
+        "standing": [[0, 55], [56, 116]],
+        "walking": [[118, 172], [173, 235], [236, 296], [297, 354]],
     }
 }
 
@@ -84,16 +88,26 @@ Game.setInitialState = function () {
             0: {
                 position: [200, 150],
                 direction: "right",
+                status: "walking",
+            },
+            1: {
+                position: [120, 120],
+                direction: "left",
                 status: "standing",
             },
         },
         client_chat_user_ids: {
             0: "default",
+            1: "@fp:melchior.info",
         }, 
     };
 
     Game.renderState = {
         0: {
+            currentAnimationFrame: 0,
+            lastAnimationChangeTime: Game.lastRender,
+        },
+        1: {
             currentAnimationFrame: 0,
             lastAnimationChangeTime: Game.lastRender,
         }
