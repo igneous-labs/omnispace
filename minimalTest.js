@@ -1,19 +1,15 @@
-const matrixLoginStr = window.localStorage.getItem(MATRIX_LOGIN_LOCAL_STORAGE_KEY);
-if (!matrixLoginStr) {
+const matrixLoginStoredStr = window.localStorage.getItem(MATRIX_LOGIN_LOCAL_STORAGE_KEY);
+if (!matrixLoginStoredStr) {
     window.location.replace("login.html");
 }
 
-const { accessToken: MATRIX_ACCESS_TOKEN, userId: MATRIX_USER_ID } = JSON.parse(matrixLoginStr);
+const MATRIX_LOGIN_STORED = JSON.parse(matrixLoginStoredStr);
+const { accessToken: MATRIX_ACCESS_TOKEN, userId: MATRIX_USER_ID } = MATRIX_LOGIN_STORED;
 
 var roomList = [];
 var viewingRoom = null;
-var messageHistory = {}
-
-const client = matrixcs.createClient({
-    baseUrl: MATRIX_BASEURL,
-    accessToken: MATRIX_ACCESS_TOKEN,
-    userId : MATRIX_USER_ID,
-});
+var messageHistory = {};
+var client = null;
 
 function sendMessage() {
     const message = document.getElementById("chat_input").value
@@ -78,7 +74,6 @@ function render() {
     }
     else {
         document.getElementById("title").textContent = roomList.get(viewingRoom).name
-
         var messageHistoryHTML = messageHistory[viewingRoom].reduce((acc, message) => {
             // Find the room where 
             const roomId = message['event']['room_id']
@@ -121,49 +116,68 @@ function isRecentEvent(event) {
     return Math.abs(event.localTimestamp - Date.now()) < 60_000;
 }
 
-async function start() {
-    await client.startClient();
-    
-    client.once('sync', function(state, prevState, res) {
-        console.log(state); // state will be 'PREPARED' when the client is ready to use
-        switch (state) {
-            case "PREPARED":
-                setRoomList();
-                render();
-                break;
-        }
-    });
-
+function setCallbacksOnPrepared() {
     client.on("Room", () => {
         setRoomList();
-    })
+        render();
+    });
 
     client.on("Room.timeline", (event, room, toStartOfTimeline) => {
-        if (toStartOfTimeline) {
-            return; // don't print paginated results
-        }
-        if (event.getType() !== "m.room.message") {
-            return; // only print messages
-        }
-        if (!messageHistory[room.roomId]) {
-            messageHistory[room.roomId] = []
-        }
-        messageHistory[room.roomId].push(event)
-
+        appendMessageEvent(event, room, toStartOfTimeline);
+        // only send recent/new messages to game
         if (gameCommOnMatrixMsg && isRecentEvent(event)) {
             gameCommOnMatrixMsg(event);
         }
+        // so that most recent appears first
         setRoomList();
         render();
     });
 }
 
+function appendMessageEvent(event, room, toStartOfTimeline) {
+    if (toStartOfTimeline) {
+        return; // don't print paginated results
+    }
+    if (event.getType() !== "m.room.message") {
+        return; // only print messages
+    }
+    if (!messageHistory[room.roomId]) {
+        messageHistory[room.roomId] = []
+    }
+    messageHistory[room.roomId].push(event);
+}
 
-document.addEventListener('paste', handleImagePaste)
+async function start() {
+    client = await createMatrixClient(MATRIX_LOGIN_STORED);
 
-function logout() {
+    client.on("Room.timeline", appendMessageEvent);
+    
+    // See matrix-js-sdk src/client.ts comment:
+    // initial state can only transition to either "PREPARED" or "ERROR",
+    // so once() is safe
+    client.once("sync", function (state, _prevState, _res) {
+        console.log(state); // state will be 'PREPARED' when the client is ready to use
+        switch (state) {
+            case "PREPARED":
+                client.off("Room.timeline", appendMessageEvent);
+                setCallbacksOnPrepared();
+                setRoomList();
+                render();
+                break;
+            case "ERROR":
+                throw new Error("Error syncing matrix");
+        }
+    });
+
+    await client.startClient();
+}
+
+async function logout() {
+    const logoutPromise = client.logout();
     window.localStorage.removeItem(MATRIX_LOGIN_LOCAL_STORAGE_KEY);
+    await logoutPromise;
     window.location.replace("login.html");
 }
 
+document.addEventListener('paste', handleImagePaste);
 start();
