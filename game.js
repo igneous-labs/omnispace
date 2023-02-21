@@ -29,6 +29,29 @@ Loader.getImage = function (key) {
 };
 
 /*
+* Spritesheet mapping object
+* Maps each matrix ID to their corresponding character spritesheet
+*/
+
+let PlayerSpriteSheetMap = {
+    "default": "char_default",
+    "@fp:melchior.info": "char_fp"
+}
+
+/*
+* SpriteSheetFrameMap
+* Splits up a spritesheet into its individual frames
+*/
+
+let SpriteSheetFrameMap = {
+    "char_default": {
+        "standing": [[0, 40], [41, 81]],
+        "walking": [[82, 122], [123, 163], [164, 204], [205, 245]],
+    }
+}
+
+
+/*
 * Game object
 *
 */ 
@@ -37,6 +60,7 @@ let Game = {
     ctx: null,
     lastRender: null,
     worldState: null,
+    renderState: null,
 
     load: () => {},
     setInitialState: () => {},
@@ -55,9 +79,25 @@ Game.load = function () {
 };
 
 Game.setInitialState = function () {
-    player.currentAnimationState = "standing"
-    player.currentAnimationFrame = 0;
-    player.lastAnimationChangeTime = Game.lastRender;
+    Game.worldState = {
+        world_state_data: {
+            0: {
+                position: [200, 150],
+                direction: "left",
+                status: "standing",
+            },
+        },
+        client_chat_user_ids: {
+            0: "default",
+        }, 
+    };
+
+    Game.renderState = {
+        0: {
+            currentAnimationFrame: 0,
+            lastAnimationChangeTime: Game.lastRender,
+        }
+    }
 };
 
 Game.run = function () {
@@ -80,48 +120,55 @@ Game.main = function (tFrame) {
 
 Game.render = function (tFrame) {
     // Render characters and map
-    console.log(`Rendering at tFrame ${tFrame}. Last render: ${Game.lastRender}`)
+    // console.log(`Rendering at tFrame ${tFrame}. Last render: ${Game.lastRender}`)
     // 
     // In what frame should characters be rendered?
     // Standing0, Standing1, Walking0, Walking1, Walking2 or Walking3?
 
     const room = Loader.getImage("room")
-    const char0 = Loader.getImage("char_default")
     Game.ctx.drawImage(room, 0, 0, 383, 300)
 
-    console.log(player)
-    switch(player.currentAnimationState) {
-        case ("standing"):
-            if (tFrame - player.lastAnimationChangeTime > 500) {
-                player.currentAnimationFrame = (player.currentAnimationFrame + 1) % (player.spriteMapping[player.currentAnimationState].length)
-                player.lastAnimationChangeTime = tFrame;
-            }
-            break;
-        case ("walking"):
-            if (tFrame - player.lastAnimationChangeTime > 150) {
-                player.currentAnimationFrame = (player.currentAnimationFrame + 1) % (player.spriteMapping[player.currentAnimationState].length)
-                player.lastAnimationChangeTime = tFrame;
-            }
-            break;
-    }
-    const sx = player.spriteMapping[player.currentAnimationState][player.currentAnimationFrame][0];
-    const sWidth = player.spriteMapping[player.currentAnimationState][player.currentAnimationFrame][1] - sx;
-    const sHeight = char0.height;
-    Game.ctx.drawImage(char0, 
-        sx, 
-        0,
-        sWidth, 
-        sHeight, 
-        200, 
-        150, 
-        sWidth, 
-        sHeight)    
+    for (let playerId in Game.renderState) {
+        let player = Game.renderState[playerId] // currentAnimationFrame, lastAnimationChangeTime
+        const spriteSheetName = PlayerSpriteSheetMap[Game.worldState.client_chat_user_ids[playerId]] // this gives e.g. "char_default"
+        const playerSpriteSheet = SpriteSheetFrameMap[spriteSheetName] // this gives {walking: [[]], standing: [[]]}
+        let playerCurrentStatus = Game.worldState.world_state_data[playerId].status // this gives "walking" or "standing"
+        
+        switch(playerCurrentStatus) {
+            case ("standing"):
+                if (tFrame - player.lastAnimationChangeTime > 500) {
+                    player.currentAnimationFrame = (player.currentAnimationFrame + 1) % (playerSpriteSheet[playerCurrentStatus].length)
+                    player.lastAnimationChangeTime = tFrame;
+                }
+                break;
+            case ("walking"):
+                if (tFrame - player.lastAnimationChangeTime > 150) {
+                    player.currentAnimationFrame = (player.currentAnimationFrame + 1) % (playerSpriteSheet[playerCurrentStatus].length)
+                    player.lastAnimationChangeTime = tFrame;
+                }
+                break;
+        }
+
+        const sx = playerSpriteSheet[playerCurrentStatus][player.currentAnimationFrame][0]; // start x-coord of the slice of the spritesheet to draw
+        const sWidth = playerSpriteSheet[playerCurrentStatus][player.currentAnimationFrame][1] - sx; // width of the slice of the spritesheet to draw
+        const char = Loader.getImage(spriteSheetName) // which spritesheet to use 
+        const sHeight = char.height; // height of the spritesheet
+        Game.ctx.drawImage(char, 
+            sx, 
+            0,
+            sWidth, 
+            sHeight, 
+            Game.worldState.world_state_data[playerId].position[0], // FIXME: note this needs to be fixed because global position =/= position on canvas
+            Game.worldState.world_state_data[playerId].position[1],
+            sWidth, 
+            sHeight)  
+    } 
 }
 
 Game.update = function () {
     // Update map and character status
     // Updating should be event-driven, not time/frame driven, since the server is authoritative.
-    console.log(`Updating game state.`)
+    // console.log(`Updating game state.`)
 }
 
 /* 
@@ -140,10 +187,31 @@ let player = {
     }
 }
 
+/*
+* Touch handler
+*
+*
+*/
+
+const canvas = document.getElementById('canvas');
+
+function touchHandler(e) {
+    if (e.touches) {
+      const playerX = e.touches[0].pageX - canvas.offsetLeft;
+      const playerY = e.touches[0].pageY - canvas.offsetTop;
+      console.log(`Touch:  x: ${playerX}, y: ${playerY}`);
+    }
+  }
+
+// 
 // Let's start the game!
+//
+
+document.addEventListener("touchstart", touchHandler);
+document.addEventListener("touchmove", touchHandler);
 
 window.onload = function () {
-    Game.ctx = document.getElementById('canvas').getContext('2d');
+    Game.ctx = canvas.getContext('2d');
     Game.run();
 };
 
