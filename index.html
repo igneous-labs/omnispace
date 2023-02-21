@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script defer src="lib/matrix.js"></script>
+    <script defer src="consts.js"></script>
+    <script defer src="minimalTest.js"></script>
+    <script defer src="gameComm.js"></script>
     <title>Test</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta charset="utf-8" />
     <link rel="icon" href="data:," />
-    <script src="/lib/matrix.js"></script>
-    <script src="/minimalTest.js"></script>
+    <link href="styles/style.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="manifest" href="omnispace.webmanifest" />
     <script src="/characterCustomizer.js"></script>
     <script
       defer
@@ -28,27 +32,9 @@
     <link href="/dist/output.css" rel="stylesheet" />
   </head>
   <body>
-    <div class="px-4 py-10">
-      <h1 class="text-xl font-bold">Omnispace</h1>
-      <button
-        onClick="setActiveRoom(null); render();"
-        class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
-      >
-        Back
-      </button>
-      <div class="flex justify-between">
-        <div>
-          <div id="game" class="mt-4">
-            <iframe
-              allow="cross-origin-isolated"
-              src="https://telegram-space-4glp3pnhm-igneous-labs.vercel.app/"
-            >
-            </iframe>
-          </div>
-          <div id="view"></div>
-          <div id="rooms"></div>
-          <div id="room_history"></div>
-        </div>
+    <div id="wrapper" class="px-4 py-10">
+      <div class="flex justify-between items-center">
+        <h1 class="text-xl font-bold title">Omnispace</h1>
 
         <!-- Start customize character sidebar -->
         <div
@@ -76,7 +62,7 @@
             @click="characterMenuOpen = true"
             class="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
-            Open menu
+            Customize character
           </button>
 
           <div
@@ -3434,6 +3420,48 @@
         </div>
         <!-- End customize character sidebar -->
       </div>
+
+      <!-- Start game -->
+      <div id="game" class="mt-4">
+        <iframe
+          id="game_frame"
+          allow="cross-origin-isolated"
+          src="https://telegram-space-4glp3pnhm-igneous-labs.vercel.app/"
+        >
+        </iframe>
+      </div>
+      <!-- End game -->
+
+      <!-- Start matrix -->
+      <button
+        onClick="setActiveRoom(null); render();"
+        class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+      >
+        Back
+      </button>
+      <button
+        onClick="logout()"
+        class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+      >
+        Logout
+      </button>
+      <div id="view"></div>
+      <dialog id="uploadImageDialog">
+        <form method="dialog">
+          <strong> Send an image </strong>
+          <div>
+            <img id="uploadPreview" />
+          </div>
+          <div>
+            <button value="cancel">Cancel</button>
+            <button id="confirmBtn" value="default">Send</button>
+          </div>
+        </form>
+      </dialog>
+      <form id="TextForm" onsubmit="event.preventDefault(); sendMessage();">
+        <input type="text" id="chat_input" />
+      </form>
+      <!-- End matrix -->
     </div>
   </body>
 </html>
