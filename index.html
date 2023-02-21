@@ -159,121 +159,17 @@
                           x-data="characterOptions"
                         >
                           <!-- Start character preview -->
-                          <div class="flex justify-between space-x-8">
-                            <div
-                              class="flex items-center justify-center h-44 w-64"
-                              x-init="fetchCharacterPreview()"
-                            >
-                              <template x-if="characterPreview">
-                                <img
-                                  class="h-28 pixel"
-                                  alt="Character preview"
-                                  :src="`${characterPreview}`"
-                                />
-                              </template>
-                            </div>
-                            <div
-                              class="w-full"
-                              x-data="{
-                                get parsedSelectedItems() {
-                                  return Object.entries(selectedItems)
-                                    .map((item) => {
-                                      return Object.entries(item[1]).map((i) => ({
-                                        category: item[0],
-                                        subcategory: i[0],
-                                        data: i[1],
-                                      }))
-                                    })
-                                    .flat()
-                                },
-                              }"
-                            >
-                              <template x-if="parsedSelectedItems.length > 0">
-                                <div>
-                                  <div
-                                    class="flex space-x-4 items-center justify-between pb-1 w-full"
-                                  >
-                                    <p>Preview</p>
-
-                                    <button
-                                      class="inline-flex justify-center rounded-md border border-transparent bg-red-600 py-1 px-2 text-sm font-medium text-white shadow-sm hover:bg-red-700"
-                                      @click="handleRemoveAllItems"
-                                    >
-                                      <svg
-                                        class="h-4 w-4"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="1.5"
-                                        viewBox="0 0 24 24"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        aria-hidden="true"
-                                      >
-                                        <path
-                                          stroke-linecap="round"
-                                          stroke-linejoin="round"
-                                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                                        ></path>
-                                      </svg>
-                                    </button>
-                                  </div>
-
-                                  <ul
-                                    role="list"
-                                    class="divide-y divide-gray-200 border-b border-b-gray-200 max-h-[180px] overflow-y-scroll"
-                                  >
-                                    <template
-                                      x-for="item in parsedSelectedItems"
-                                      :key="item.category + item.subcategory"
-                                    >
-                                      <li class="py-2">
-                                        <div class="flex items-center">
-                                          <div class="flex-shrink-0">
-                                            <img
-                                              class="h-8 w-8 mr-1 pixel"
-                                              :alt="item.data.name"
-                                              :src="`/assets/${selectors.category}/${selectors.subcategory}/${item.data.id}.png`"
-                                            />
-                                          </div>
-
-                                          <div class="min-w-0 flex-1">
-                                            <p
-                                              class="truncate font-medium text-gray-900"
-                                              x-text="item.data.name"
-                                            ></p>
-                                            <p
-                                              class="truncate text-xs text-gray-500"
-                                              x-text="item.subcategory"
-                                            ></p>
-                                          </div>
-                                          <div>
-                                            <button
-                                              class="ml-4 inline-flex items-center rounded-full bg-red px-2 py-1 text-sm font-medium leading-5 bg-red-600 text-white shadow-sm hover:bg-red-700"
-                                              @click="handleRemoveItem(item.category, item.subcategory)"
-                                            >
-                                              <svg
-                                                class="h-4 w-4"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                stroke-width="1.5"
-                                                viewBox="0 0 24 24"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                aria-hidden="true"
-                                              >
-                                                <path
-                                                  stroke-linecap="round"
-                                                  stroke-linejoin="round"
-                                                  d="M6 18L18 6M6 6l12 12"
-                                                ></path>
-                                              </svg>
-                                            </button>
-                                          </div>
-                                        </div>
-                                      </li>
-                                    </template>
-                                  </ul>
-                                </div>
-                              </template>
-                            </div>
+                          <div
+                            class="flex items-center justify-center sticky z-10 bg-white h-44 -top-6 border-dashed border-2 border-gray-300"
+                            x-init="fetchCharacterPreview()"
+                          >
+                            <template x-if="characterPreview">
+                              <img
+                                class="h-28 pixel"
+                                alt="Character preview"
+                                :src="`${characterPreview}`"
+                              />
+                            </template>
                           </div>
                           <!-- End character preview -->
 
@@ -292,11 +188,39 @@
                                 class="grid grid-cols-2 gap-4 bg-slate-300 p-4 rounded-md"
                               >
                                 <div class="">
-                                  <label
-                                    for="skin"
-                                    class="block text-md font-medium text-slate-800"
-                                    >Skin</label
-                                  >
+                                  <div class="flex justify-between">
+                                    <label
+                                      for="skin"
+                                      class="block text-md font-medium text-slate-800"
+                                      >Skin</label
+                                    >
+
+                                    <template
+                                      x-if="selectors.skin !== defaultSelectors.skin"
+                                    >
+                                      <button
+                                        class="ml-4 inline-flex items-center rounded-full bg-red px-2 py-1 text-sm font-medium leading-5 bg-red-600 text-white shadow-sm hover:bg-red-700"
+                                        @click="handleRemoveItem('skin')"
+                                      >
+                                        <svg
+                                          class="h-4 w-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          viewBox="0 0 24 24"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          aria-hidden="true"
+                                        >
+                                          <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                          ></path>
+                                        </svg>
+                                      </button>
+                                    </template>
+                                  </div>
+
                                   <select
                                     id="skin"
                                     name="skin"
@@ -318,11 +242,39 @@
                                 </div>
 
                                 <div class="">
-                                  <label
-                                    for="expression"
-                                    class="block text-md font-medium text-slate-800"
-                                    >Expression</label
-                                  >
+                                  <div class="flex justify-between">
+                                    <label
+                                      for="expression"
+                                      class="block text-md font-medium text-slate-800"
+                                      >Expression</label
+                                    >
+
+                                    <template
+                                      x-if="selectors.expression !== defaultSelectors.expression"
+                                    >
+                                      <button
+                                        class="ml-4 inline-flex items-center rounded-full bg-red px-2 py-1 text-sm font-medium leading-5 bg-red-600 text-white shadow-sm hover:bg-red-700"
+                                        @click="handleRemoveItem('expression')"
+                                      >
+                                        <svg
+                                          class="h-4 w-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          viewBox="0 0 24 24"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          aria-hidden="true"
+                                        >
+                                          <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                          ></path>
+                                        </svg>
+                                      </button>
+                                    </template>
+                                  </div>
+
                                   <select
                                     id="expression"
                                     name="expression"
@@ -344,11 +296,39 @@
                                 </div>
 
                                 <div class="">
-                                  <label
-                                    for="ears"
-                                    class="block text-md font-medium text-slate-800"
-                                    >Ears</label
-                                  >
+                                  <div class="flex justify-between">
+                                    <label
+                                      for="ears"
+                                      class="block text-md font-medium text-slate-800"
+                                      >Ears</label
+                                    >
+
+                                    <template
+                                      x-if="selectors.ears !== defaultSelectors.ears"
+                                    >
+                                      <button
+                                        class="ml-4 inline-flex items-center rounded-full bg-red px-2 py-1 text-sm font-medium leading-5 bg-red-600 text-white shadow-sm hover:bg-red-700"
+                                        @click="handleRemoveItem('ears')"
+                                      >
+                                        <svg
+                                          class="h-4 w-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          viewBox="0 0 24 24"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          aria-hidden="true"
+                                        >
+                                          <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                          ></path>
+                                        </svg>
+                                      </button>
+                                    </template>
+                                  </div>
+
                                   <select
                                     id="ears"
                                     name="ears"
@@ -370,11 +350,39 @@
                                 </div>
 
                                 <div class="">
-                                  <label
-                                    for="hair"
-                                    class="block text-md font-medium text-slate-800"
-                                    >Hair</label
-                                  >
+                                  <div class="flex justify-between">
+                                    <label
+                                      for="hair"
+                                      class="block text-md font-medium text-slate-800"
+                                      >Hair</label
+                                    >
+
+                                    <template
+                                      x-if="selectors.hair.hairId !== defaultSelectors.hair.hairId"
+                                    >
+                                      <button
+                                        class="ml-4 inline-flex items-center rounded-full bg-red px-2 py-1 text-sm font-medium leading-5 bg-red-600 text-white shadow-sm hover:bg-red-700"
+                                        @click="handleRemoveItem('hair')"
+                                      >
+                                        <svg
+                                          class="h-4 w-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          viewBox="0 0 24 24"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          aria-hidden="true"
+                                        >
+                                          <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                          ></path>
+                                        </svg>
+                                      </button>
+                                    </template>
+                                  </div>
+
                                   <div
                                     x-data="{
                                     open: false,
@@ -558,11 +566,39 @@
                                 </div>
 
                                 <div class="">
-                                  <label
-                                    for="face"
-                                    class="block text-md font-medium text-slate-800"
-                                    >Face</label
-                                  >
+                                  <div class="flex justify-between">
+                                    <label
+                                      for="face"
+                                      class="block text-md font-medium text-slate-800"
+                                      >Face</label
+                                    >
+
+                                    <template
+                                      x-if="selectors.face.faceId !== defaultSelectors.face.faceId"
+                                    >
+                                      <button
+                                        class="ml-4 inline-flex items-center rounded-full bg-red px-2 py-1 text-sm font-medium leading-5 bg-red-600 text-white shadow-sm hover:bg-red-700"
+                                        @click="handleRemoveItem('face')"
+                                      >
+                                        <svg
+                                          class="h-4 w-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          viewBox="0 0 24 24"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          aria-hidden="true"
+                                        >
+                                          <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                          ></path>
+                                        </svg>
+                                      </button>
+                                    </template>
+                                  </div>
+
                                   <div
                                     x-data="{
                                     open: false,
@@ -760,11 +796,39 @@
                                 class="grid grid-cols-2 gap-4 bg-slate-300 p-4 rounded-md"
                               >
                                 <div class="">
-                                  <label
-                                    for="faceAccessory"
-                                    class="block text-md font-medium text-slate-800"
-                                    >Face accessory</label
-                                  >
+                                  <div class="flex justify-between">
+                                    <label
+                                      for="faceAccessory"
+                                      class="block text-md font-medium text-slate-800"
+                                      >Face accessory</label
+                                    >
+
+                                    <template
+                                      x-if="selectors.faceAccessory !== defaultSelectors.faceAccessory"
+                                    >
+                                      <button
+                                        class="ml-4 inline-flex items-center rounded-full bg-red px-2 py-1 text-sm font-medium leading-5 bg-red-600 text-white shadow-sm hover:bg-red-700"
+                                        @click="handleRemoveItem('faceAccessory')"
+                                      >
+                                        <svg
+                                          class="h-4 w-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          viewBox="0 0 24 24"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          aria-hidden="true"
+                                        >
+                                          <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                          ></path>
+                                        </svg>
+                                      </button>
+                                    </template>
+                                  </div>
+
                                   <div
                                     x-data="{
                                     open: false,
@@ -952,11 +1016,39 @@
                                 </div>
 
                                 <div class="">
-                                  <label
-                                    for="eyeAccessory"
-                                    class="block text-md font-medium text-slate-800"
-                                    >Eye accessory</label
-                                  >
+                                  <div class="flex justify-between">
+                                    <label
+                                      for="eyeAccessory"
+                                      class="block text-md font-medium text-slate-800"
+                                      >Eye accessory</label
+                                    >
+
+                                    <template
+                                      x-if="selectors.eyeAccessory !== defaultSelectors.eyeAccessory"
+                                    >
+                                      <button
+                                        class="ml-4 inline-flex items-center rounded-full bg-red px-2 py-1 text-sm font-medium leading-5 bg-red-600 text-white shadow-sm hover:bg-red-700"
+                                        @click="handleRemoveItem('eyeAccessory')"
+                                      >
+                                        <svg
+                                          class="h-4 w-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          viewBox="0 0 24 24"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          aria-hidden="true"
+                                        >
+                                          <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                          ></path>
+                                        </svg>
+                                      </button>
+                                    </template>
+                                  </div>
+
                                   <div
                                     x-data="{
                                     open: false,
@@ -1150,11 +1242,39 @@
                                 class="grid grid-cols-2 gap-4 bg-slate-300 p-4 rounded-md"
                               >
                                 <div class="">
-                                  <label
-                                    for="hat"
-                                    class="block text-md font-medium text-slate-800"
-                                    >Hat</label
-                                  >
+                                  <div class="flex justify-between">
+                                    <label
+                                      for="hat"
+                                      class="block text-md font-medium text-slate-800"
+                                      >Hat</label
+                                    >
+
+                                    <template
+                                      x-if="selectors.hat !== defaultSelectors.hat"
+                                    >
+                                      <button
+                                        class="ml-4 inline-flex items-center rounded-full bg-red px-2 py-1 text-sm font-medium leading-5 bg-red-600 text-white shadow-sm hover:bg-red-700"
+                                        @click="handleRemoveItem('hat')"
+                                      >
+                                        <svg
+                                          class="h-4 w-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          viewBox="0 0 24 24"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          aria-hidden="true"
+                                        >
+                                          <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                          ></path>
+                                        </svg>
+                                      </button>
+                                    </template>
+                                  </div>
+
                                   <div
                                     x-data="{
                                     open: false,
@@ -1338,11 +1458,39 @@
                                 </div>
 
                                 <div class="">
-                                  <label
-                                    for="earrings"
-                                    class="block text-md font-medium text-slate-800"
-                                    >Earrings</label
-                                  >
+                                  <div class="flex justify-between">
+                                    <label
+                                      for="earrings"
+                                      class="block text-md font-medium text-slate-800"
+                                      >Earrings</label
+                                    >
+
+                                    <template
+                                      x-if="selectors.earrings !== defaultSelectors.earrings"
+                                    >
+                                      <button
+                                        class="ml-4 inline-flex items-center rounded-full bg-red px-2 py-1 text-sm font-medium leading-5 bg-red-600 text-white shadow-sm hover:bg-red-700"
+                                        @click="handleRemoveItem('earrings')"
+                                      >
+                                        <svg
+                                          class="h-4 w-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          viewBox="0 0 24 24"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          aria-hidden="true"
+                                        >
+                                          <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                          ></path>
+                                        </svg>
+                                      </button>
+                                    </template>
+                                  </div>
+
                                   <div
                                     x-data="{
                                     open: false,page: 0,
@@ -1525,11 +1673,39 @@
                                 </div>
 
                                 <div class="">
-                                  <label
-                                    for="top"
-                                    class="block text-md font-medium text-slate-800"
-                                    >Top</label
-                                  >
+                                  <div class="flex justify-between">
+                                    <label
+                                      for="top"
+                                      class="block text-md font-medium text-slate-800"
+                                      >Top</label
+                                    >
+
+                                    <template
+                                      x-if="selectors.top !== defaultSelectors.top"
+                                    >
+                                      <button
+                                        class="ml-4 inline-flex items-center rounded-full bg-red px-2 py-1 text-sm font-medium leading-5 bg-red-600 text-white shadow-sm hover:bg-red-700"
+                                        @click="handleRemoveItem('top')"
+                                      >
+                                        <svg
+                                          class="h-4 w-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          viewBox="0 0 24 24"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          aria-hidden="true"
+                                        >
+                                          <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                          ></path>
+                                        </svg>
+                                      </button>
+                                    </template>
+                                  </div>
+
                                   <div
                                     x-data="{
                                     open: false,
@@ -1713,11 +1889,39 @@
                                 </div>
 
                                 <div class="">
-                                  <label
-                                    for="bottom"
-                                    class="block text-md font-medium text-slate-800"
-                                    >Bottom</label
-                                  >
+                                  <div class="flex justify-between">
+                                    <label
+                                      for="bottom"
+                                      class="block text-md font-medium text-slate-800"
+                                      >Bottom</label
+                                    >
+
+                                    <template
+                                      x-if="selectors.bottom !== defaultSelectors.bottom"
+                                    >
+                                      <button
+                                        class="ml-4 inline-flex items-center rounded-full bg-red px-2 py-1 text-sm font-medium leading-5 bg-red-600 text-white shadow-sm hover:bg-red-700"
+                                        @click="handleRemoveItem('bottom')"
+                                      >
+                                        <svg
+                                          class="h-4 w-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          viewBox="0 0 24 24"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          aria-hidden="true"
+                                        >
+                                          <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                          ></path>
+                                        </svg>
+                                      </button>
+                                    </template>
+                                  </div>
+
                                   <div
                                     x-data="{
                                     open: false,
@@ -1901,11 +2105,39 @@
                                 </div>
 
                                 <div class="">
-                                  <label
-                                    for="overall"
-                                    class="block text-md font-medium text-slate-800"
-                                    >Overall</label
-                                  >
+                                  <div class="flex justify-between">
+                                    <label
+                                      for="overall"
+                                      class="block text-md font-medium text-slate-800"
+                                      >Overall</label
+                                    >
+
+                                    <template
+                                      x-if="selectors.overall !== defaultSelectors.overall"
+                                    >
+                                      <button
+                                        class="ml-4 inline-flex items-center rounded-full bg-red px-2 py-1 text-sm font-medium leading-5 bg-red-600 text-white shadow-sm hover:bg-red-700"
+                                        @click="handleRemoveItem('overall')"
+                                      >
+                                        <svg
+                                          class="h-4 w-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          viewBox="0 0 24 24"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          aria-hidden="true"
+                                        >
+                                          <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                          ></path>
+                                        </svg>
+                                      </button>
+                                    </template>
+                                  </div>
+
                                   <div
                                     x-data="{
                                     open: false,
@@ -2089,11 +2321,39 @@
                                 </div>
 
                                 <div class="">
-                                  <label
-                                    for="gloves"
-                                    class="block text-md font-medium text-slate-800"
-                                    >Gloves</label
-                                  >
+                                  <div class="flex justify-between">
+                                    <label
+                                      for="gloves"
+                                      class="block text-md font-medium text-slate-800"
+                                      >Gloves</label
+                                    >
+
+                                    <template
+                                      x-if="selectors.gloves !== defaultSelectors.gloves"
+                                    >
+                                      <button
+                                        class="ml-4 inline-flex items-center rounded-full bg-red px-2 py-1 text-sm font-medium leading-5 bg-red-600 text-white shadow-sm hover:bg-red-700"
+                                        @click="handleRemoveItem('gloves')"
+                                      >
+                                        <svg
+                                          class="h-4 w-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          viewBox="0 0 24 24"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          aria-hidden="true"
+                                        >
+                                          <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                          ></path>
+                                        </svg>
+                                      </button>
+                                    </template>
+                                  </div>
+
                                   <div
                                     x-data="{
                                     open: false,
@@ -2277,11 +2537,39 @@
                                 </div>
 
                                 <div class="">
-                                  <label
-                                    for="weapon"
-                                    class="block text-md font-medium text-slate-800"
-                                    >Weapon</label
-                                  >
+                                  <div class="flex justify-between">
+                                    <label
+                                      for="weapon"
+                                      class="block text-md font-medium text-slate-800"
+                                      >Weapon</label
+                                    >
+
+                                    <template
+                                      x-if="selectors.weapon !== defaultSelectors.weapon"
+                                    >
+                                      <button
+                                        class="ml-4 inline-flex items-center rounded-full bg-red px-2 py-1 text-sm font-medium leading-5 bg-red-600 text-white shadow-sm hover:bg-red-700"
+                                        @click="handleRemoveItem('weapon')"
+                                      >
+                                        <svg
+                                          class="h-4 w-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          viewBox="0 0 24 24"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          aria-hidden="true"
+                                        >
+                                          <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                          ></path>
+                                        </svg>
+                                      </button>
+                                    </template>
+                                  </div>
+
                                   <div
                                     x-data="{
                                     open: false,
@@ -2464,11 +2752,39 @@
                                 </div>
 
                                 <div class="">
-                                  <label
-                                    for="shield"
-                                    class="block text-md font-medium text-slate-800"
-                                    >Shield</label
-                                  >
+                                  <div class="flex justify-between">
+                                    <label
+                                      for="shield"
+                                      class="block text-md font-medium text-slate-800"
+                                      >Shield</label
+                                    >
+
+                                    <template
+                                      x-if="selectors.shield !== defaultSelectors.shield"
+                                    >
+                                      <button
+                                        class="ml-4 inline-flex items-center rounded-full bg-red px-2 py-1 text-sm font-medium leading-5 bg-red-600 text-white shadow-sm hover:bg-red-700"
+                                        @click="handleRemoveItem('shield')"
+                                      >
+                                        <svg
+                                          class="h-4 w-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          viewBox="0 0 24 24"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          aria-hidden="true"
+                                        >
+                                          <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                          ></path>
+                                        </svg>
+                                      </button>
+                                    </template>
+                                  </div>
+
                                   <div
                                     x-data="{
                                     open: false,
@@ -2652,11 +2968,39 @@
                                 </div>
 
                                 <div class="">
-                                  <label
-                                    for="cape"
-                                    class="block text-md font-medium text-slate-800"
-                                    >Cape</label
-                                  >
+                                  <div class="flex justify-between">
+                                    <label
+                                      for="cape"
+                                      class="block text-md font-medium text-slate-800"
+                                      >Cape</label
+                                    >
+
+                                    <template
+                                      x-if="selectors.cape !== defaultSelectors.cape"
+                                    >
+                                      <button
+                                        class="ml-4 inline-flex items-center rounded-full bg-red px-2 py-1 text-sm font-medium leading-5 bg-red-600 text-white shadow-sm hover:bg-red-700"
+                                        @click="handleRemoveItem('cape')"
+                                      >
+                                        <svg
+                                          class="h-4 w-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          viewBox="0 0 24 24"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          aria-hidden="true"
+                                        >
+                                          <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                          ></path>
+                                        </svg>
+                                      </button>
+                                    </template>
+                                  </div>
+
                                   <div
                                     x-data="{
                                     open: false,
@@ -2840,11 +3184,39 @@
                                 </div>
 
                                 <div class="">
-                                  <label
-                                    for="shoes"
-                                    class="block text-md font-medium text-slate-800"
-                                    >Shoes</label
-                                  >
+                                  <div class="flex justify-between">
+                                    <label
+                                      for="shoes"
+                                      class="block text-md font-medium text-slate-800"
+                                      >Shoes</label
+                                    >
+
+                                    <template
+                                      x-if="selectors.shoes !== defaultSelectors.shoes"
+                                    >
+                                      <button
+                                        class="ml-4 inline-flex items-center rounded-full bg-red px-2 py-1 text-sm font-medium leading-5 bg-red-600 text-white shadow-sm hover:bg-red-700"
+                                        @click="handleRemoveItem('shoes')"
+                                      >
+                                        <svg
+                                          class="h-4 w-4"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          stroke-width="1.5"
+                                          viewBox="0 0 24 24"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          aria-hidden="true"
+                                        >
+                                          <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                          ></path>
+                                        </svg>
+                                      </button>
+                                    </template>
+                                  </div>
+
                                   <div
                                     x-data="{
                                     open: false,

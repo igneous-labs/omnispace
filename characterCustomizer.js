@@ -316,7 +316,7 @@ const defaultSelectors = {
 }
 
 const menuData = {
-  selectors: defaultSelectors,
+  selectors: { ...defaultSelectors },
   characterPreview: null,
   async fetchCharacterPreview() {
     const blob = await characterPreviewFetcher(this.selectors)
@@ -325,50 +325,10 @@ const menuData = {
 
     this.characterPreview = characterPreviewURI
   },
-  selectedItems: {},
-  handleSelectItem(item) {
-    const { category, subcategory } = this.selectors
-    const selectedItems = this.selectedItems
-    if (!selectedItems[category]) {
-      selectedItems[category] = {}
+  handleRemoveItem(itemName) {
+    if (this.selectors[itemName] !== defaultSelectors[itemName]) {
+      this.selectors[itemName] = defaultSelectors[itemName]
+      this.fetchCharacterPreview()
     }
-    selectedItems[category][subcategory] = item
-  },
-  handleRemoveItem(category, subcategory) {
-    const selectedItems = this.selectedItems
-    delete selectedItems[category][subcategory]
-    if (Object.keys(selectedItems[category]).length === 0) {
-      delete selectedItems[category]
-    }
-  },
-  handleRemoveAllItems() {
-    this.selectedItems = {}
-  },
-  categories: ['Character', 'Accessory', 'Clothes'],
-  subcategories: {
-    Character: ['Face', 'Head', 'Hair'],
-    Accessory: [
-      'Face Accessory',
-      'Eye Decoration',
-      'Earrings',
-      'Ring',
-      'Pendant',
-      'Belt',
-      'Medal',
-      'Shoulder Accessory',
-      'Pocket Item',
-      'Badge',
-      'Emblem',
-    ],
-    Clothes: [
-      'Hat',
-      'Cape',
-      'Top',
-      'Overall',
-      'Glove',
-      'Bottom',
-      'Shield',
-      'Shoes',
-    ],
   },
 }
