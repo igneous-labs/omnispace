@@ -55,7 +55,8 @@ Game.load = function () {
 };
 
 Game.setInitialState = function () {
-    player.currentAnimationState = 0;
+    player.currentAnimationState = "standing"
+    player.currentAnimationFrame = 0;
     player.lastAnimationChangeTime = Game.lastRender;
 };
 
@@ -88,23 +89,33 @@ Game.render = function (tFrame) {
     const char0 = Loader.getImage("char_default")
     Game.ctx.drawImage(room, 0, 0, 383, 300)
 
-    // Render the player. 50 is totally arbitrary, fix this
     console.log(player)
-    if (tFrame < player.lastAnimationChangeTime + 500) {
+    switch(player.currentAnimationState) {
+        case ("standing"):
+            if (tFrame - player.lastAnimationChangeTime > 500) {
+                player.currentAnimationFrame = (player.currentAnimationFrame + 1) % (player.spriteMapping[player.currentAnimationState].length)
+                player.lastAnimationChangeTime = tFrame;
+            }
+            break;
+        case ("walking"):
+            if (tFrame - player.lastAnimationChangeTime > 150) {
+                player.currentAnimationFrame = (player.currentAnimationFrame + 1) % (player.spriteMapping[player.currentAnimationState].length)
+                player.lastAnimationChangeTime = tFrame;
+            }
+            break;
     }
-    else {
-        player.currentAnimationState = player.currentAnimationState ? 0 : 1;
-        player.lastAnimationChangeTime = tFrame;
-    }
+    const sx = player.spriteMapping[player.currentAnimationState][player.currentAnimationFrame][0];
+    const sWidth = player.spriteMapping[player.currentAnimationState][player.currentAnimationFrame][1] - sx;
+    const sHeight = char0.height;
     Game.ctx.drawImage(char0, 
-        player.spriteMapping[player.currentAnimationState][0], 
+        sx, 
         0,
-        40, 
-        68, 
+        sWidth, 
+        sHeight, 
         200, 
         150, 
-        40, 
-        68)    
+        sWidth, 
+        sHeight)    
 }
 
 Game.update = function () {
@@ -120,9 +131,13 @@ Game.update = function () {
 
 let player = {
     currentAnimationState: null,
+    currentAnimationFrame: null,
     lastAnimationChangeTime: null,
     spritesheet: "char_default",
-    spriteMapping: {0: [0, 40], 1: [41, 81]},
+    spriteMapping: {
+        "standing": [[0, 40], [41, 81]],
+        "walking": [[82, 122], [123, 163], [164, 204], [205, 245]]
+    }
 }
 
 // Let's start the game!
