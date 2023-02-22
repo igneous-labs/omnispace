@@ -398,13 +398,14 @@ Game.render = function (tFrame) {
             // Render messages only for five seconds (FIXME: pull this out into a constant somewhere)
             if (tFrame - player.messageToDisplay[1] < 5000) {
                 const boxHt = 150
+                const padding = 5
                 Game.ctx.font = "16px sans-serif";
                 Game.ctx.fillStyle = `rgba(220, 220, 220, 0.7)`
-                Game.ctx.fillRect(x, y-boxHt, 100, boxHt);
+                Game.ctx.fillRect(x, y-boxHt-padding, 100, boxHt);
                 Game.ctx.strokeStyle =  `rgba(200, 200, 200, 1.0)`;
-                Game.ctx.strokeRect(x, y-boxHt, 100, boxHt);
+                Game.ctx.strokeRect(x, y-boxHt-padding, 100, boxHt);
                 Game.ctx.fillStyle = "black";
-                CanvasTxt.drawText(Game.ctx, truncate(player.messageToDisplay[0], 100), x, y-boxHt, 100, boxHt)
+                CanvasTxt.drawText(Game.ctx, truncate(player.messageToDisplay[0], 100), x, y-boxHt-padding, 100, boxHt)
             }
         }
 
