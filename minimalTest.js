@@ -83,6 +83,10 @@ function render() {
     if (viewingRoom === null) {
         document.getElementById("title").textContent = "Omnispaces"
         printRoomList();
+
+      view.classList.add('overflow-y-scroll')
+
+      view.scrollTop = 0
     }
     else {
         document.getElementById("title").textContent = roomList.get(viewingRoom).name
@@ -97,6 +101,8 @@ function render() {
 
       
         view.innerHTML = messageHistoryHTML
+
+        view.classList.remove('overflow-y-scroll')
 
         // Autoscroll to new message, when scrollbar is at the bottom of chatbox
         const isScrolledToBottom = view.scrollHeight - view.clientHeight <= view.scrollTop + 1
