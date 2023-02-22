@@ -11,6 +11,24 @@ var viewingRoom = null;
 var messageHistory = {};
 var client = null;
 
+// This function bridges the chat client and game client
+function gameCommOnMatrixMsg(matrixEvent) {
+    // FIXME this couples the client code to the game code, and should be avoided
+    console.log("New matrix message. gameCommOnMatrixMsg called")
+    const matrixUserId = matrixEvent.getSender();
+    const idUserMapping = Game.worldState.client_chat_user_ids
+
+    const gameUserIds = Object.entries(idUserMapping).filter(([ , v]) => v === matrixUserId)
+    console.log(gameUserIds)
+    if (gameUserIds.length > 0) {
+        gameUserIds.forEach(([gameUserId, matrixUserId]) => {
+            Game.renderState[gameUserId].messageToDisplay = [matrixEvent.getContent().body, performance.now()]
+        });
+    }
+}
+
+// ============================================== //
+
 function sendMessage() {
     const message = document.getElementById("chat_input").value
     console.log(`Message received: ${message}`)
@@ -125,7 +143,7 @@ function setCallbacksOnPrepared() {
     client.on("Room.timeline", (event, room, toStartOfTimeline) => {
         appendMessageEvent(event, room, toStartOfTimeline);
         // only send recent/new messages to game
-        if (gameCommOnMatrixMsg && isRecentEvent(event)) {
+        if (isRecentEvent(event)) {
             gameCommOnMatrixMsg(event);
         }
         // so that most recent appears first
