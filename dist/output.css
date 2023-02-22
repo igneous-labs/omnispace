@@ -1173,6 +1173,10 @@ select {
   max-height: 2.5rem;
 }
 
+.max-h-\[33vh\] {
+  max-height: 33vh;
+}
+
 .min-h-0 {
   min-height: 0px;
 }
