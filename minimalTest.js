@@ -85,10 +85,15 @@ function printRoomList() {
 }
 
 function render() {
-    document.getElementById("view").innerHTML = ""
+    const view = document.getElementById("view")
+    view.innerHTML = ""
     if (viewingRoom === null) {
         document.getElementById("title").textContent = "Omnispaces"
         printRoomList();
+
+      view.classList.add('overflow-y-scroll')
+
+      view.scrollTop = 0
     }
     else {
         document.getElementById("title").textContent = roomList.get(viewingRoom).name
@@ -98,10 +103,23 @@ function render() {
             const senderId = message['event']['sender']
             const members = roomList.get(roomId).getMembers()
             const senderName = members.filter((member) => member.userId === senderId)[0].rawDisplayName
-            return acc + `<div><strong>${senderName}: </strong> ${message.event.content.body} </div>`
+            return acc + `<div>
+                <strong>${senderName}: </strong> ${message.event.content.body}
+                ${message.event.content.msgtype === "m.image" && `<img src=${client.mxcUrlToHttp(message.event.content.url)} />`}
+            </div>`
         }, '')
 
-        document.getElementById("view").innerHTML = messageHistoryHTML
+      
+        view.innerHTML = messageHistoryHTML
+      
+        view.classList.remove('overflow-y-scroll')
+        
+        // Autoscroll to new message, when scrollbar is at the bottom of chatbox
+        const isScrolledToBottom = view.scrollHeight - view.clientHeight <= view.scrollTop + 1
+      
+        if (isScrolledToBottom) {
+          view.scrollTop = view.scrollHeight - view.clientHeight
+        }
     }
 }
 

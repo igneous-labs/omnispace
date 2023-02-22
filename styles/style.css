@@ -61,11 +61,6 @@
     width: 100%;
 }
 
-#view {
-    max-height: 33vh;
-    overflow-y: scroll;
-}
-
 #chat_input {
     width: 100%;
 }
