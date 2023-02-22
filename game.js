@@ -458,8 +458,8 @@ function touchHandler(e) {
 // Let's start the game!
 //
 
-document.addEventListener("touchstart", touchHandler);
-document.addEventListener("touchmove", touchHandler);
+canvas.addEventListener("touchstart", touchHandler);
+canvas.addEventListener("touchmove", touchHandler);
 
 window.onload = function () {
     Game.ctx = canvas.getContext('2d');
