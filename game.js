@@ -195,6 +195,8 @@ Loader.getImage = function (key) {
     return (key in this.images) ? this.images[key] : null;
 };
 
+let CanvasTxt = null;
+
 /*
 * Spritesheet mapping object
 * Maps each matrix ID to their corresponding character spritesheet
@@ -307,6 +309,13 @@ Game.main = function (tFrame) {
     Game.lastTick = tFrame;
 }
 
+
+/* helper function to truncate long strings (used in bubble rendering) */
+function truncate(str, n){
+    return (str.length > n) ? str.slice(0, n-1) + '...' : str;
+};
+
+
 Game.render = function (tFrame) {
     // Render characters and map
     // console.log(`Rendering at tFrame ${tFrame}. Last render: ${Game.lastRender}`)
@@ -388,12 +397,14 @@ Game.render = function (tFrame) {
         if (player.messageToDisplay !== null) {
             // Render messages only for five seconds (FIXME: pull this out into a constant somewhere)
             if (tFrame - player.messageToDisplay[1] < 5000) {
+                const boxHt = 150
                 Game.ctx.font = "16px sans-serif";
-                const textMetrics = Game.ctx.measureText(player.messageToDisplay[0]);
-                Game.ctx.fillStyle = `rgba(220, 220, 220, 0.6)`
-                Game.ctx.fillRect(x, y-50, Math.max(textMetrics.width, 50), 50);
+                Game.ctx.fillStyle = `rgba(220, 220, 220, 0.7)`
+                Game.ctx.fillRect(x, y-boxHt, 100, boxHt);
+                Game.ctx.strokeStyle =  `rgba(200, 200, 200, 1.0)`;
+                Game.ctx.strokeRect(x, y-boxHt, 100, boxHt);
                 Game.ctx.fillStyle = "black";
-                Game.ctx.fillText(player.messageToDisplay[0], x, y);
+                CanvasTxt.drawText(Game.ctx, truncate(player.messageToDisplay[0], 100), x, y-boxHt, 100, boxHt)
             }
         }
 
@@ -482,6 +493,7 @@ canvas.addEventListener("touchmove", touchHandler);
 window.onload = function () {
     Game.ctx = canvas.getContext('2d');
     camera = new Camera(Game.ctx, {distance: 350});
+    CanvasTxt = window.canvasTxt.default;
     Game.run();
 };
 
