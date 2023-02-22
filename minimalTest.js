@@ -11,17 +11,28 @@ var viewingRoom = null;
 var messageHistory = {};
 var client = null;
 
-function sendMessage() {
-    const message = document.getElementById("chat_input").value
-    console.log(`Message received: ${message}`)
-    const content = {
-        "body": message,
-        "msgtype": "m.text"
-    };
-    client.sendEvent(viewingRoom, "m.room.message", content, "").then((result) => {
-        document.getElementById("chat_input").value = ''
-        render();
-    })
+function sendMessage(e) {
+    if (e.keyCode === 13) {
+        // Shift + enter pressed
+        if (e.shiftKey) {
+            e.stopPropagation();
+            return;
+        }
+
+        // Enter pressed
+        e.preventDefault();
+
+        const message = document.getElementById("chat_input").innerText
+        console.log(`Message received: ${message}`)
+        const content = {
+            "body": message,
+            "msgtype": "m.text"
+        };
+        client.sendEvent(viewingRoom, "m.room.message", content, "").then((result) => {
+            document.getElementById("chat_input").innerText = ''
+            render();
+        })
+    }
 }
 
 function setRoomList() {
@@ -86,7 +97,7 @@ function render() {
 
       
         view.innerHTML = messageHistoryHTML
-        
+
         // Autoscroll to new message, when scrollbar is at the bottom of chatbox
         const isScrolledToBottom = view.scrollHeight - view.clientHeight <= view.scrollTop + 1
       

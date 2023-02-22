@@ -3460,9 +3460,17 @@
           </div>
         </form>
       </dialog>
-      <form id="TextForm" onsubmit="event.preventDefault(); sendMessage();">
-        <input type="text" id="chat_input" />
-      </form>
+      <div id="message_form">
+        <div
+          id="chat_input"
+          role="textbox"
+          contenteditable
+          data-placeholder="Message"
+          class="inline-block resize-none min-h-[60px] p-2.5 mt-2 border rounded-md w-full overflow-hidden"
+          tabindex="0"
+          onkeydown="return sendMessage(event)"
+        ></div>
+      </div>
       <!-- End matrix -->
     </div>
   </body>
