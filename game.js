@@ -63,8 +63,14 @@ let SpriteSheetFrameMap = {
 let Game = {
     ctx: null,
     lastRender: null,
+    lastTick: null,
     worldState: null,
     renderState: null,
+
+    // TODO find a better place to put these variables
+    ACTIVE_PLAYER: 0,
+    PLAYER_SPEED: 0.1,
+    PLAYER_TARGET_DEST: null,
 
     load: () => {},
     setInitialState: () => {},
@@ -86,12 +92,12 @@ Game.setInitialState = function () {
     Game.worldState = {
         world_state_data: {
             0: {
-                position: [200, 150],
+                position: [200, 250],
                 direction: "right",
-                status: "walking",
+                status: "standing",
             },
             1: {
-                position: [120, 120],
+                position: [130, 210],
                 direction: "left",
                 status: "standing",
             },
@@ -127,9 +133,10 @@ Game.run = function () {
 
 Game.main = function (tFrame) {
     window.requestAnimationFrame(Game.main);
-    Game.update();
+    Game.update(tFrame);
     Game.render(tFrame);
     Game.lastRender = tFrame;
+    Game.lastTick = tFrame;
 }
 
 Game.render = function (tFrame) {
@@ -140,7 +147,7 @@ Game.render = function (tFrame) {
     // Standing0, Standing1, Walking0, Walking1, Walking2 or Walking3?
 
     const room = Loader.getImage("room")
-    Game.ctx.drawImage(room, 0, 0, 383, 300)
+    Game.ctx.drawImage(room, 0, 0, 517, 400)
 
     for (let playerId in Game.renderState) {
         let player = Game.renderState[playerId] // currentAnimationFrame, lastAnimationChangeTime
@@ -205,10 +212,40 @@ Game.render = function (tFrame) {
     } 
 }
 
-Game.update = function () {
+Game.update = function (tFrame) {
     // Update map and character status
-    // Updating should be event-driven, not time/frame driven, since the server is authoritative.
     // console.log(`Updating game state.`)
+    let delta = tFrame - Game.lastTick;
+    // console.log(`Delta: ${delta}`)
+    let playerData = Game.worldState.world_state_data[Game.ACTIVE_PLAYER];
+
+    // Update position
+    if (Game.PLAYER_TARGET_DEST !==  null && playerData !== null && playerData.position !== null) {
+        // console.log(Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position)
+        playerData.status = "walking";
+        let [dx, dy] = [Game.PLAYER_TARGET_DEST[0] - playerData.position[0], Game.PLAYER_TARGET_DEST[1] - playerData.position[1] ]
+        console.log(dx, dy)
+        let l = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))
+        dx /= l
+        dy /= l
+        playerData.direction = dx > 0 ? "right" : "left";
+        console.log(`Normalised: ${dx}, ${dy}`)
+        playerData.position[0] += delta * Game.PLAYER_SPEED * dx
+        playerData.position[1] += delta * Game.PLAYER_SPEED * dy
+
+        // Remove the target point
+        if (distanceBetween(playerData.position, Game.PLAYER_TARGET_DEST) < 1) {
+            Game.PLAYER_TARGET_DEST = null;
+            // Reset player state to standinga
+            playerData.status = "standing";
+            Game.renderState[Game.ACTIVE_PLAYER].currentAnimationFrame = 0;
+        }
+    }
+
+    function distanceBetween(a, b) {
+        if (!a || !b) return 0;
+        return Math.sqrt(Math.pow(a[0]-b[0], 2) + Math.pow(a[1]-b[1], 2));
+    }
 }
 
 /* 
@@ -240,6 +277,7 @@ function touchHandler(e) {
       const playerX = e.touches[0].pageX - canvas.offsetLeft;
       const playerY = e.touches[0].pageY - canvas.offsetTop;
       console.log(`Touch:  x: ${playerX}, y: ${playerY}`);
+      Game.PLAYER_TARGET_DEST = [playerX, playerY];
     }
   }
 
