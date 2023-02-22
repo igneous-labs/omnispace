@@ -29,7 +29,7 @@ class Camera {
      * -Initial calculations.
      */
     init() {
-        this.addListeners();
+        // this.addListeners();
         this.updateViewport();
     }
 
@@ -221,7 +221,6 @@ let SpriteSheetFrameMap = {
     }
 }
 
-
 /*
 * Game object
 *
@@ -235,7 +234,7 @@ let Game = {
     renderState: null,
 
     // TODO find a better place to put these variables
-    ACTIVE_PLAYER: 0,
+    ACTIVE_PLAYER: 1,
     PLAYER_SPEED: 0.1,
     PLAYER_TARGET_DEST: null,
 
@@ -277,10 +276,12 @@ Game.setInitialState = function () {
 
     Game.renderState = {
         0: {
+            messageToDisplay: null,
             currentAnimationFrame: 0,
             lastAnimationChangeTime: Game.lastRender,
         },
         1: {
+            messageToDisplay: null,
             currentAnimationFrame: 0,
             lastAnimationChangeTime: Game.lastRender,
         }
@@ -309,9 +310,6 @@ Game.main = function (tFrame) {
 Game.render = function (tFrame) {
     // Render characters and map
     // console.log(`Rendering at tFrame ${tFrame}. Last render: ${Game.lastRender}`)
-    // 
-    // In what frame should characters be rendered?
-    // Standing0, Standing1, Walking0, Walking1, Walking2 or Walking3?
 
     camera.moveTo(Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position[0], Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position[1])
     camera.begin()
@@ -319,6 +317,9 @@ Game.render = function (tFrame) {
     Game.ctx.drawImage(room, 0, 0, 517, 400)
 
     for (let playerId in Game.renderState) {
+        // Render the player, then any chat bubbles
+
+        // First render the player
         let player = Game.renderState[playerId] // currentAnimationFrame, lastAnimationChangeTime
         const spriteSheetName = PlayerSpriteSheetMap[Game.worldState.client_chat_user_ids[playerId]] // this gives e.g. "char_default"
         const playerSpriteSheet = SpriteSheetFrameMap[spriteSheetName] // this gives {walking: [[]], standing: [[]]}
@@ -379,6 +380,23 @@ Game.render = function (tFrame) {
                 sHeight
             )
         }
+
+        // Render chat bubbles
+        // TODO use measureText() to get width and do like line breaks/hyphenation
+        // There should exist a library to do this
+
+        if (player.messageToDisplay !== null) {
+            // Render messages only for five seconds (FIXME: pull this out into a constant somewhere)
+            if (tFrame - player.messageToDisplay[1] < 5000) {
+                Game.ctx.font = "16px sans-serif";
+                const textMetrics = Game.ctx.measureText(player.messageToDisplay[0]);
+                Game.ctx.fillStyle = `rgba(220, 220, 220, 0.6)`
+                Game.ctx.fillRect(x, y-50, Math.max(textMetrics.width, 50), 50);
+                Game.ctx.fillStyle = "black";
+                Game.ctx.fillText(player.messageToDisplay[0], x, y);
+            }
+        }
+
     }
 
     camera.end()
