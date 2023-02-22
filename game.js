@@ -1,3 +1,170 @@
+/**
+ * Camera by @robashton returns Camera object.
+ *  constructor initial parameters:
+ *  @param {context} str *required 
+ *  @param {settings} str *optional
+  */
+
+class Camera {
+    constructor(context, settings = {}) {
+        this.distance = settings.distance || 1000.0;
+        this.lookAt = settings.initialPosition || [0, 0];
+        this.context = context;
+        this.fieldOfView = settings.fieldOfView || Math.PI / 4.0;
+        this.viewport = {
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            width: 0,
+            height: 0,
+            scale: [settings.scaleX || 1.0, settings.scaleY || 1.0]
+        };
+        this.init();
+    }
+
+    /**
+     * Camera Initialization
+     * -Add listeners.
+     * -Initial calculations.
+     */
+    init() {
+        this.addListeners();
+        this.updateViewport();
+    }
+
+    /**
+     * Applies to canvas context the parameters:
+     *  -Scale
+     *  -Translation
+     */
+    begin() {
+        this.context.save();
+        this.applyScale();
+        this.applyTranslation();
+    }
+
+    /**
+     * 2d Context restore() method
+     */
+    end() {
+        this.context.restore();
+    }
+
+    /**
+     * 2d Context scale(Camera.viewport.scale[0], Camera.viewport.scale[0]) method
+     */
+    applyScale() {
+        this.context.scale(this.viewport.scale[0], this.viewport.scale[1]);
+    }
+
+    /**
+     * 2d Context translate(-Camera.viewport.left, -Camera.viewport.top) method
+     */
+    applyTranslation() {
+        this.context.translate(-this.viewport.left, -this.viewport.top);
+    }
+
+    /**
+     * Camera.viewport data update
+     */
+    updateViewport() {
+        this.aspectRatio = this.context.canvas.width / this.context.canvas.height;
+        this.viewport.width = this.distance * Math.tan(this.fieldOfView);
+        this.viewport.height = this.viewport.width / this.aspectRatio;
+        this.viewport.left = this.lookAt[0] - (this.viewport.width / 2.0);
+        this.viewport.top = this.lookAt[1] - (this.viewport.height / 2.0);
+        this.viewport.right = this.viewport.left + this.viewport.width;
+        this.viewport.bottom = this.viewport.top + this.viewport.height;
+        this.viewport.scale[0] = this.context.canvas.width / this.viewport.width;
+        this.viewport.scale[1] = this.context.canvas.height / this.viewport.height;
+    }
+
+    /**
+     * Zooms to certain z distance
+     * @param {*z distance} z 
+     */
+    zoomTo(z) {
+        this.distance = z;
+        this.updateViewport();
+    }
+
+    /**
+     * Moves the centre of the viewport to new x, y coords (updates Camera.lookAt)
+     * @param {x axis coord} x 
+     * @param {y axis coord} y 
+     */
+    moveTo(x, y) {
+        this.lookAt[0] = x;
+        this.lookAt[1] = y;
+        this.updateViewport();
+    }
+
+    /**
+     * Transform a coordinate pair from screen coordinates (relative to the canvas) into world coordinates (useful for intersection between mouse and entities)
+     * Optional: obj can supply an object to be populated with the x/y (for object-reuse in garbage collection efficient code)
+     * @param {x axis coord} x 
+     * @param {y axis coord} y 
+     * @param {obj can supply an object to be populated with the x/y} obj 
+     * @returns 
+     */
+    screenToWorld(x, y, obj) {
+        obj = obj || {};
+        obj.x = (x / this.viewport.scale[0]) + this.viewport.left;
+        obj.y = (y / this.viewport.scale[1]) + this.viewport.top;
+        return obj;
+    }
+
+    /**
+     * Transform a coordinate pair from world coordinates into screen coordinates (relative to the canvas) - useful for placing DOM elements over the scene.
+     * Optional: obj can supply an object to be populated with the x/y (for object-reuse in garbage collection efficient code).
+     * @param {x axis coord} x 
+     * @param {y axis coord} y  
+     * @param {obj can supply an object to be populated with the x/y} obj 
+     * @returns 
+     */
+    worldToScreen(x, y, obj) {
+        obj = obj || {};
+        obj.x = (x - this.viewport.left) * (this.viewport.scale[0]);
+        obj.y = (y - this.viewport.top) * (this.viewport.scale[1]);
+        return obj;
+    }
+
+    /**
+     * Event Listeners for:
+     *  -Zoom and scroll around world
+     *  -Center camera on "R" key
+     */
+    addListeners() {
+        window.onwheel = e => {
+            if (e.ctrlKey) {
+                // Your zoom/scale factor
+                let zoomLevel = this.distance - (e.deltaY * 20);
+                if (zoomLevel <= 1) {
+                    zoomLevel = 1;
+                }
+
+                this.zoomTo(zoomLevel);
+            } else {
+                // Your track-pad X and Y positions
+                const x = this.lookAt[0] + (e.deltaX * 2);
+                const y = this.lookAt[1] + (e.deltaY * 2);
+
+                this.moveTo(x, y);
+            }
+        };
+
+        window.addEventListener('keydown', e => {
+            if (e.key === 'r') {
+                this.zoomTo(1000);
+                this.moveTo(0, 0);
+            }
+        });
+    }
+};
+
+let camera = null;
+
 //
 // Asset loader
 //
@@ -146,6 +313,8 @@ Game.render = function (tFrame) {
     // In what frame should characters be rendered?
     // Standing0, Standing1, Walking0, Walking1, Walking2 or Walking3?
 
+    camera.moveTo(Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position[0], Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position[1])
+    camera.begin()
     const room = Loader.getImage("room")
     Game.ctx.drawImage(room, 0, 0, 517, 400)
 
@@ -181,6 +350,7 @@ Game.render = function (tFrame) {
         if (Game.worldState.world_state_data[playerId].direction === "right") {
 
             // https://stackoverflow.com/a/35973879 flipping sprite
+            Game.ctx.save()
             Game.ctx.translate(x + sWidth, y);
             Game.ctx.scale(-1, 1);            
             Game.ctx.drawImage(
@@ -194,7 +364,7 @@ Game.render = function (tFrame) {
                 sWidth, 
                 sHeight
             )
-            Game.ctx.setTransform(1, 0, 0, 1, 0, 0);
+            Game.ctx.restore()
         }
         else {
             Game.ctx.drawImage(
@@ -209,7 +379,9 @@ Game.render = function (tFrame) {
                 sHeight
             )
         }
-    } 
+    }
+
+    camera.end()
 }
 
 Game.update = function (tFrame) {
@@ -224,12 +396,12 @@ Game.update = function (tFrame) {
         // console.log(Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position)
         playerData.status = "walking";
         let [dx, dy] = [Game.PLAYER_TARGET_DEST[0] - playerData.position[0], Game.PLAYER_TARGET_DEST[1] - playerData.position[1] ]
-        console.log(dx, dy)
+        // console.log(dx, dy)
         let l = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))
         dx /= l
         dy /= l
         playerData.direction = dx > 0 ? "right" : "left";
-        console.log(`Normalised: ${dx}, ${dy}`)
+        // console.log(`Normalised: ${dx}, ${dy}`)
         playerData.position[0] += delta * Game.PLAYER_SPEED * dx
         playerData.position[1] += delta * Game.PLAYER_SPEED * dy
 
@@ -277,7 +449,8 @@ function touchHandler(e) {
       const playerX = e.touches[0].pageX - canvas.offsetLeft;
       const playerY = e.touches[0].pageY - canvas.offsetTop;
       console.log(`Touch:  x: ${playerX}, y: ${playerY}`);
-      Game.PLAYER_TARGET_DEST = [playerX, playerY];
+      const coords = camera.screenToWorld(playerX, playerY)
+      Game.PLAYER_TARGET_DEST = [coords.x, coords.y];
     }
   }
 
@@ -290,6 +463,7 @@ document.addEventListener("touchmove", touchHandler);
 
 window.onload = function () {
     Game.ctx = canvas.getContext('2d');
+    camera = new Camera(Game.ctx, {distance: 350});
     Game.run();
 };
 
