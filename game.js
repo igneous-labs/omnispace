@@ -472,6 +472,133 @@ function touchHandler(e) {
     }
   }
 
+/*
+ * NetworkHandler
+ */
+const SERVER_URL = "ws://localhost:1337";
+
+// enum values from the protocol
+const ACKNOWLEDGE_MESSAGE_TYPE = 0;
+const PLAYER_STATE_MESSAGE_TYPE = 1;
+const PLAYER_INSTANCE_MESSAGE_TYPE = 5;
+const PLAYER_INSTANCE_ACKNOWLEDGE_MESSAGE_TYPE = 6;
+const PLAYER_CHAT_USER_ID_MESSAGE_TYPE = 7;
+const PLAYER_CHAT_USER_ID_ACKNOWLEDGE_MESSAGE_TYPE = 8;
+const DIRECTION_LEFT = 1;
+const DIRECTION_RIGHT = 2;
+const STATUS_IDLE = 0;
+const STATUS_WALK = 1;
+
+// from godot's binary serialization API
+const VECTOR2_TYPE_MAGIC_NUMBER = 5;
+
+class NetworkHandler {
+    constructor() {
+        // this flag is used to delay sending player state,
+        this.is_initialized = false;
+        this.encoder = new TextEncoder();
+        this.socket = new WebSocket(SERVER_URL)
+        this.socket.binaryType = "blob";
+
+        this.socket.addEventListener('open', (event) => {
+            console.log("[NetworkHandler] socket opened");
+        });
+        this.socket.addEventListener('message', (event) => {
+            event.data
+                .arrayBuffer()
+                .then((arrayBuffer) => {
+                    const payload =  new DataView(arrayBuffer);
+                    const messageType = payload.getUint8(0);
+                    console.log(`[NetworkHandler] received event type: ${messageType}`);
+                    switch (messageType) {
+                        case ACKNOWLEDGE_MESSAGE_TYPE:
+                            console.log(`[NetworkHandler::on_message] server acknowledged connection, client_id: ${payload.getUint16(1, true)}`);
+                            console.log("[NetworkHandler::on_message] sending player chat user id")
+                            this.sendPlayerChatUserId('@fp:melchior.info');
+                            break;
+                        case PLAYER_CHAT_USER_ID_ACKNOWLEDGE_MESSAGE_TYPE:
+                            console.log("[NetworkHandler::on_message] server acknowledged PLAYER_CHAT_USER_ID message");
+                            console.log("[NetworkHandler::on_message] registering player to instance")
+                            this.sendPlayerInstance(0n);
+                            break;
+                        case PLAYER_INSTANCE_ACKNOWLEDGE_MESSAGE_TYPE:
+                            console.log("[NetworkHandler::on_message] server acknowledged PLAYER_INSTANCE message");
+                            this.is_initialized = true;
+                            break;
+                        default:
+                            console.log("[NetworkHandler::on_message] received unexpected message: ", arrayBuffer);
+                    }
+                });
+        });
+        this.socket.addEventListener('close', (event) => {
+            console.log("[NetworkHandler] socket closed");
+        });
+        this.socket.addEventListener('error', (event) => {
+            console.log(`[NetworkHandler] error: ${JSON.stringify(event)}`);
+        });
+    }
+
+    /**
+     *  @param {userId} str *required
+    */
+    sendPlayerChatUserId(userId) {
+        this.sendMessage(PLAYER_CHAT_USER_ID_MESSAGE_TYPE, this.encoder.encode(userId));
+    }
+
+    /**
+     *  @param {instanceId} bigint (U64) *required
+    */
+    sendPlayerInstance(instanceId) {
+        const buffer = new ArrayBuffer(8);
+        new DataView(buffer).setBigUint64(0, instanceId, true /* littleEndian */);
+        this.sendMessage(PLAYER_INSTANCE_MESSAGE_TYPE, new Uint8Array(buffer));
+    }
+
+    /**
+     *  @param {playerState} Object *required
+     *  playerState schema: {
+     *    "position": number[2],
+     *    "direction": String of type "right" | "left"
+     *    "status": String of type "standing" | "walking"
+     *  }
+     *
+     *  NOTE: godot's Vector2 type uses 12 bytes: 4 bytes for type identifier, 4 bytes for each axis
+    */
+    sendPlayerState(playerState) {
+        if (!this.is_initialized) return;
+        const buffer = new ArrayBuffer(14);
+        const dataView = new DataView(buffer);
+
+        // pack position
+        dataView.setUint32(0, VECTOR2_TYPE_MAGIC_NUMBER, true /* littleEndian */);
+        dataView.setFloat32(4, playerState.position[0], true /* littleEndian */);
+        dataView.setFloat32(8, playerState.position[1], true /* littleEndian */);
+
+        // pack direction
+        const direction = (playerState.direction === "left") ? DIRECTION_LEFT : DIRECTION_RIGHT;
+        dataView.setUint8(12, direction, true /* littleEndian */);
+
+        // pack status
+        const status = (playerState.status === "standing") ? STATUS_IDLE : STATUS_WALK;
+        dataView.setUint8(13, direction, true /* littleEndian */);
+
+        this.sendMessage(PLAYER_STATE_MESSAGE_TYPE, new Uint8Array(buffer));
+    }
+
+    /**
+     *  @param {messageType} number *required
+     *  @param {messageData} Uint8Array *required
+    */
+    sendMessage(messageType, messageData) {
+        const payload = new Uint8Array([messageType, ...messageData]);
+        console.log("[NetworkHandler::send] sending: ", payload);
+        this.socket.send(payload);
+    }
+}
+
+const networkHandler = new NetworkHandler();
+
+
 // 
 // Let's start the game!
 //
