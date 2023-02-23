@@ -492,6 +492,7 @@ const SERVER_URL = "ws://localhost:1337";
 // enum values from the protocol
 const ACKNOWLEDGE_MESSAGE_TYPE = 0;
 const PLAYER_STATE_MESSAGE_TYPE = 1;
+const WORLD_STATE_MESSAGE_TYPE = 2;
 const PLAYER_INSTANCE_MESSAGE_TYPE = 5;
 const PLAYER_INSTANCE_ACKNOWLEDGE_MESSAGE_TYPE = 6;
 const PLAYER_CHAT_USER_ID_MESSAGE_TYPE = 7;
@@ -535,7 +536,13 @@ class NetworkHandler {
                             break;
                         case PLAYER_INSTANCE_ACKNOWLEDGE_MESSAGE_TYPE:
                             console.log("[NetworkHandler::on_message] server acknowledged PLAYER_INSTANCE message");
+                            console.log("[NetworkHandler::on_message] network handler is initialized");
                             this.is_initialized = true;
+                            break;
+                        case WORLD_STATE_MESSAGE_TYPE:
+                            console.log("[NetworkHandler::on_message] received world state");
+                            // TODO: this is going to be the most heaviest deserializing
+                            console.log("[NetworkHandler::on_message] PAYLOAD: ", new Uint8Array(arrayBuffer));
                             break;
                         default:
                             console.log("[NetworkHandler::on_message] received unexpected message: ", arrayBuffer);
