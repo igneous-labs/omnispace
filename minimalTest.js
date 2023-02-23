@@ -71,7 +71,7 @@ const messageData = {
     handleSendMessage(e) {
       // Button click
       if (!e) {
-        sendMessage();
+        sendMessage(this.replyingToMessage?.event.event_id);
         this.replyingToMessage = null;
       } else if (e.keyCode === 13) {
           // Shift + enter pressed
@@ -83,21 +83,28 @@ const messageData = {
           // Enter pressed (on mobile just add a new line)
           if (!isMobile) {
               e.preventDefault();
-
-              sendMessage();
-
+              sendMessage(this.replyingToMessage?.event.event_id);
               this.replyingToMessage = null;
           }
       }
     }
 }
 
-function sendMessage() {
+function sendMessage(replyToEventId) {
     const message = document.getElementById("chat_input").innerText
     console.log(`Message received: ${message}`)
     const content = {
         "body": message,
-        "msgtype": "m.text"
+        "msgtype": "m.text",
+        ...(replyToEventId
+            ? {
+                'm.relates_to': {
+                    'm.in_reply_to': {
+                        event_id: replyToEventId,
+                    },
+                },
+            }
+            : {}),
     };
     client.sendEvent(viewingRoom, "m.room.message", content, "").then((result) => {
         document.getElementById("chat_input").innerText = ''
