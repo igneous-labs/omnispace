@@ -1,3 +1,5 @@
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+
 const matrixLoginStoredStr = window.localStorage.getItem(MATRIX_LOGIN_LOCAL_STORAGE_KEY);
 if (!matrixLoginStoredStr) {
     window.location.replace("login.html");
@@ -11,7 +13,20 @@ var viewingRoom = null;
 var messageHistory = {};
 var client = null;
 
-function sendMessage(e) {
+function sendMessage() {
+    const message = document.getElementById("chat_input").innerText
+    console.log(`Message received: ${message}`)
+    const content = {
+        "body": message,
+        "msgtype": "m.text"
+    };
+    client.sendEvent(viewingRoom, "m.room.message", content, "").then((result) => {
+        document.getElementById("chat_input").innerText = ''
+        render();
+    })
+}
+
+function handleSendMessage(e) {
     if (e.keyCode === 13) {
         // Shift + enter pressed
         if (e.shiftKey) {
@@ -19,19 +34,12 @@ function sendMessage(e) {
             return;
         }
 
-        // Enter pressed
-        e.preventDefault();
+        // Enter pressed (on mobile just add a new line)
+        if (!isMobile) {
+            e.preventDefault();
 
-        const message = document.getElementById("chat_input").innerText
-        console.log(`Message received: ${message}`)
-        const content = {
-            "body": message,
-            "msgtype": "m.text"
-        };
-        client.sendEvent(viewingRoom, "m.room.message", content, "").then((result) => {
-            document.getElementById("chat_input").innerText = ''
-            render();
-        })
+            sendMessage();
+        }
     }
 }
 
