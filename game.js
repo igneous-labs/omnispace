@@ -507,6 +507,7 @@ const VECTOR2_TYPE_MAGIC_NUMBER = 5;
 
 const U32_BYTES = 4;
 
+// parsing utility functions for World State Sync
 /**
  * slices binary serialized PackedByteArray starting from the given offset
  *  @param {arrayBuffer} ArrayBuffer *required
@@ -519,20 +520,6 @@ function slicePackedByteArray(arrayBuffer, offset) {
     const dataOffset = offset + U32_BYTES + U32_BYTES;
     const endOffset = dataOffset + dataLength
     return [endOffset, arrayBuffer.slice(dataOffset, endOffset)];
-}
-
-function parseWorldStateData(arrayBuffer) {
-    const dataView = new DataView(arrayBuffer);
-    // number of entries
-    const n = dataView.getUint32(U32_BYTES, true);
-    const entries = [];
-    let offset = U32_BYTES * 2;
-    for (let i = 0; i < n; i ++) {
-        const [endOffset, entryBytes] = slicePackedByteArray(arrayBuffer, offset);
-        entries.push(parseWorldStateDataEntry(entryBytes));
-        offset = endOffset;
-    }
-    return entries;
 }
 
 /**
@@ -549,6 +536,31 @@ function parseWorldStateDataEntry(arrayBuffer) {
         "status": dataView.getUint8(15, true) === STATUS_IDLE ? "standing" : "walking",
     }];
 }
+
+function parseWorldStateData(arrayBuffer) {
+    const dataView = new DataView(arrayBuffer);
+    // number of entries
+    const n = dataView.getUint32(U32_BYTES, true);
+    const entries = [];
+    let offset = U32_BYTES * 2;
+    for (let i = 0; i < n; i ++) {
+        const [endOffset, entryBytes] = slicePackedByteArray(arrayBuffer, offset);
+        entries.push(parseWorldStateDataEntry(entryBytes));
+        offset = endOffset;
+    }
+    return entries;
+}
+
+function parseInstanceChatUserIds(arrayBuffer) {
+    const dataView = new DataView(arrayBuffer);
+    // number of entries
+    const n = dataView.getUint32(U32_BYTES, true);
+    // TODO: les do this
+    // instanceChat
+    console.log("LOOK AT ME: ", n);
+    console.log("LOOK HERE: ", new Uint8Array(arrayBuffer));
+}
+
 
 class NetworkHandler {
     constructor() {
@@ -591,16 +603,19 @@ class NetworkHandler {
                             break;
                         case WORLD_STATE_MESSAGE_TYPE:
                             console.log("[NetworkHandler::on_message] received world state");
-                            const worldStateOffset = 9;
-                            const [instanceChatUserIdOffset, worldStateData] = slicePackedByteArray(arrayBuffer, worldStateOffset);
-                            const [_, instanceChatUserId] = slicePackedByteArray(arrayBuffer, instanceChatUserIdOffset);
+                            const worldStateDataOffset = 9;
+                            const [instanceChatUserIdsOffset, worldStateDataBytes] = slicePackedByteArray(arrayBuffer, worldStateDataOffset);
+                            const [_, instanceChatUserIdsBytes] = slicePackedByteArray(arrayBuffer, instanceChatUserIdsOffset);
 
-                            // Parse WorldStateData
-                            const worldStateDataEntries = parseWorldStateData(worldStateData);
-                            console.log(`[NetworkHandler::on_message] world state received: ${JSON.stringify(worldStateDataEntries)}`);
+                            // Parse worldStateData
+                            const worldStateData = parseWorldStateData(worldStateDataBytes);
+                            console.log(`[NetworkHandler::on_message] world state received: ${JSON.stringify(worldStateData)}`);
                             // TODO: update client's game state with this entries
 
-                            // TODO: Parse InstanceChatUserId
+                            // Parse instanceChatUserIds
+                            const instanceChatUserIds = parseInstanceChatUserIds(instanceChatUserIdsBytes)
+                            // TODO: use this to indicate which remote player is which matrix user
+
                             break;
                         default:
                             console.log("[NetworkHandler::on_message] received unexpected message: ", arrayBuffer);
