@@ -505,6 +505,50 @@ const STATUS_WALK = 1;
 // from godot's binary serialization API
 const VECTOR2_TYPE_MAGIC_NUMBER = 5;
 
+const U32_BYTES = 4;
+
+/**
+ * slices binary serialized PackedByteArray starting from the given offset
+ *  @param {arrayBuffer} ArrayBuffer *required
+ *  @param {offset} number *required
+ *  @returns {[endOffset, array]} [number, ArrayBuffer] the offset of last byte of the array, sliced binary serialized array
+ */
+function slicePackedByteArray(arrayBuffer, offset) {
+    const dataView = new DataView(arrayBuffer, offset)
+    const dataLength = dataView.getUint32(U32_BYTES, true);
+    const dataOffset = offset + U32_BYTES + U32_BYTES;
+    const endOffset = dataOffset + dataLength
+    return [endOffset, arrayBuffer.slice(dataOffset, endOffset)];
+}
+
+function parseWorldStateData(arrayBuffer) {
+    const dataView = new DataView(arrayBuffer);
+    // number of entries
+    const n = dataView.getUint32(U32_BYTES, true);
+    const entries = [];
+    let offset = U32_BYTES * 2;
+    for (let i = 0; i < n; i ++) {
+        const [endOffset, entryBytes] = slicePackedByteArray(arrayBuffer, offset);
+        entries.push(parseWorldStateDataEntry(entryBytes));
+        offset = endOffset;
+    }
+    return entries;
+}
+
+/**
+ * parses world state data entry (player state)
+ *
+ *  @param {arrayBuffer} ArrayBuffer *required
+ *  @returns {[client_id, player_state]} [number, Object]
+ */
+function parseWorldStateDataEntry(arrayBuffer) {
+    const dataView = new DataView(arrayBuffer);
+    return [dataView.getUint16(0, true), {
+        "position": [dataView.getFloat32(6, true), dataView.getFloat32(10, true)],
+        "direction": dataView.getUint8(14, true) === DIRECTION_LEFT ? "left" : "right",
+        "status": dataView.getUint8(15, true) === STATUS_IDLE ? "standing" : "walking",
+    }];
+}
 
 class NetworkHandler {
     constructor() {
@@ -539,47 +583,24 @@ class NetworkHandler {
                             console.log("[NetworkHandler::on_message] server acknowledged PLAYER_INSTANCE message");
                             console.log("[NetworkHandler::on_message] network handler is initialized");
                             this.is_initialized = true;
+                            this.sendPlayerState({
+                                "position": [2, 1],
+                                "direction": "left",
+                                "status": "standing",
+                            });
                             break;
                         case WORLD_STATE_MESSAGE_TYPE:
                             console.log("[NetworkHandler::on_message] received world state");
-                            // TODO: this is going to be the most heaviest deserializing
-                            // NOTE:
-                            //  - not an attempt to implement full deserialization of all godot binary serialization API
-                            //  - since we know how the payload of the world state looks like, client code will just assume
-                            //    the correct format and decode the necessary information
-                            //
-                            // Array binary format:
-                            //  - magic_number: 4 bytes
-                            //  - length: 4 bytes
-                            //  - elements: (length * # of bytes for each binary serialized element) bytes
-                            //
-                            // NOTE: Serialized elements has their preceeding magic number
-                            //
-                            // PackedByteArray binary format:
-                            //  - magic_number: 4 bytes
-                            //  - byte_length: 4 bytes
-                            //  - bytes: byte_length bytes
-                            //
-                            // WORLD_STATE message starts with 1 byte message type followed by the
-                            // payload which is an Array (magic number: 28) of two PackedByteArrays (magic number: 29),
-                            // world_state_data and instance_char_user_id.
-                            // These two PackedByteArrays are also binary serialized data:
-                            //  - world_state_data:
-                            //    - a binary serialized data of an Array of PlayerState elements, which is 14 bytes long.
-                            //  - instance_chat_user_id:
-                            //    - a binary serialized data of an Array of 2 + arbitrary length string
-                            //
-                            // WORLD_STATE data binary format:
-                            //  - message_type: 1 byte
-                            //  - array_magic_number (28): 4 bytes
-                            //  - array_length (2): 4 bytes
-                            //  - element #0 (world_state_data: PackedByteArray)
-                            //  - element #1 (instance_chat_user_id: PackedByteArray)
-                            //
-                            // .......... yeah this is fukt up
+                            const worldStateOffset = 9;
+                            const [instanceChatUserIdOffset, worldStateData] = slicePackedByteArray(arrayBuffer, worldStateOffset);
+                            const [_, instanceChatUserId] = slicePackedByteArray(arrayBuffer, instanceChatUserIdOffset);
 
+                            // Parse WorldStateData
+                            const worldStateDataEntries = parseWorldStateData(worldStateData);
+                            console.log(`[NetworkHandler::on_message] world state received: ${JSON.stringify(worldStateDataEntries)}`);
+                            // TODO: update client's game state with this entries
 
-                            console.log("[NetworkHandler::on_message] PAYLOAD: ", new Uint8Array(arrayBuffer));
+                            // TODO: Parse InstanceChatUserId
                             break;
                         default:
                             console.log("[NetworkHandler::on_message] received unexpected message: ", arrayBuffer);
@@ -636,7 +657,7 @@ class NetworkHandler {
 
         // pack status
         const status = (playerState.status === "standing") ? STATUS_IDLE : STATUS_WALK;
-        dataView.setUint8(13, direction, true /* littleEndian */);
+        dataView.setUint8(13, status, true /* littleEndian */);
 
         this.sendMessage(PLAYER_STATE_MESSAGE_TYPE, new Uint8Array(buffer));
     }
