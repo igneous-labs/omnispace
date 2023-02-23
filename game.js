@@ -505,6 +505,7 @@ const STATUS_WALK = 1;
 // from godot's binary serialization API
 const VECTOR2_TYPE_MAGIC_NUMBER = 5;
 
+
 class NetworkHandler {
     constructor() {
         // this flag is used to delay sending player state,
@@ -542,6 +543,42 @@ class NetworkHandler {
                         case WORLD_STATE_MESSAGE_TYPE:
                             console.log("[NetworkHandler::on_message] received world state");
                             // TODO: this is going to be the most heaviest deserializing
+                            // NOTE:
+                            //  - not an attempt to implement full deserialization of all godot binary serialization API
+                            //  - since we know how the payload of the world state looks like, client code will just assume
+                            //    the correct format and decode the necessary information
+                            //
+                            // Array binary format:
+                            //  - magic_number: 4 bytes
+                            //  - length: 4 bytes
+                            //  - elements: (length * # of bytes for each binary serialized element) bytes
+                            //
+                            // NOTE: Serialized elements has their preceeding magic number
+                            //
+                            // PackedByteArray binary format:
+                            //  - magic_number: 4 bytes
+                            //  - byte_length: 4 bytes
+                            //  - bytes: byte_length bytes
+                            //
+                            // WORLD_STATE message starts with 1 byte message type followed by the
+                            // payload which is an Array (magic number: 28) of two PackedByteArrays (magic number: 29),
+                            // world_state_data and instance_char_user_id.
+                            // These two PackedByteArrays are also binary serialized data:
+                            //  - world_state_data:
+                            //    - a binary serialized data of an Array of PlayerState elements, which is 14 bytes long.
+                            //  - instance_chat_user_id:
+                            //    - a binary serialized data of an Array of 2 + arbitrary length string
+                            //
+                            // WORLD_STATE data binary format:
+                            //  - message_type: 1 byte
+                            //  - array_magic_number (28): 4 bytes
+                            //  - array_length (2): 4 bytes
+                            //  - element #0 (world_state_data: PackedByteArray)
+                            //  - element #1 (instance_chat_user_id: PackedByteArray)
+                            //
+                            // .......... yeah this is fukt up
+
+
                             console.log("[NetworkHandler::on_message] PAYLOAD: ", new Uint8Array(arrayBuffer));
                             break;
                         default:
