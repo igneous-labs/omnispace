@@ -96,7 +96,10 @@ function render() {
             const senderId = message['event']['sender']
             const members = roomList.get(roomId).getMembers()
             const senderName = members.filter((member) => member.userId === senderId)[0].rawDisplayName
-            return acc + `<div><strong>${senderName}: </strong> ${message.event.content.body} </div>`
+            return acc + `<div>
+                <strong>${senderName}: </strong> ${message.event.content.body}
+                ${message.event.content.msgtype === "m.image" && `<img src=${client.mxcUrlToHttp(message.event.content.url)} />`}
+            </div>`
         }, '')
 
       
