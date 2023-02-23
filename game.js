@@ -487,7 +487,7 @@ function touchHandler(e) {
 /*
  * NetworkHandler
  */
-const SERVER_URL = "ws://localhost:1337";
+const SERVER_URL = "wss://space.melchior.info:1338"
 
 // enum values from the protocol
 const ACKNOWLEDGE_MESSAGE_TYPE = 0;
