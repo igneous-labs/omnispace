@@ -23,14 +23,10 @@ const messageData = {
     openMessageMenu(e) {
         this.messageMenuOpen = true;
 
-        const clickedTop = isMobile
-            ? e.targetTouches[0].clientY - 20
-            : e.clientY + e.pageY - e.screenY - 40;
-        const clickedLeft = isMobile
-            ? e.targetTouches[0].clientX
-            : e.clientX + 30;
+        const clickedTop = isMobile ? e.targetTouches[0].clientY - 20 : e.clientY - 30;
+        const clickedLeft = isMobile ? e.targetTouches[0].clientX : e.clientX + 30;
         const messageMenuEl = document.getElementById('message_menu');
-        messageMenuEl.style.top = `${clickedTop - (isMobile ? e.target.offsetParent.offsetTop : 0)}px`;
+        messageMenuEl.style.top = `${clickedTop - e.target.offsetParent.offsetTop}px`;
         messageMenuEl.style.left = `${clickedLeft - e.target.offsetParent.offsetLeft}px`;
       
         const messageEventId = e.target.closest('div').dataset.messageEventId;
