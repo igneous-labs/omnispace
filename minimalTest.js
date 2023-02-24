@@ -200,10 +200,11 @@ function setCallbacksOnPrepared() {
     });
 
     client.on("Room.timeline", (event, room, toStartOfTimeline) => {
-        appendMessageEvent(event, room, toStartOfTimeline);
-        // only send recent/new messages to game
-        if (isRecentEvent(event)) {
-            gameCommOnMatrixMsg(event);
+        if (event.getType() === "m.room.message") {
+            appendMessageEvent(event, room, toStartOfTimeline);
+            if (isRecentEvent(event)) {
+                gameCommOnMatrixMsg(event);
+            }
         }
         // so that most recent appears first
         setRoomList();
@@ -214,9 +215,6 @@ function setCallbacksOnPrepared() {
 function appendMessageEvent(event, room, toStartOfTimeline) {
     if (toStartOfTimeline) {
         return; // don't print paginated results
-    }
-    if (event.getType() !== "m.room.message") {
-        return; // only print messages
     }
     if (!messageHistory[room.roomId]) {
         messageHistory[room.roomId] = []
