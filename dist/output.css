@@ -2394,6 +2394,10 @@ select {
   background-origin: content-box;
 }
 
+.stroke-blue-500 {
+  stroke: #3b82f6;
+}
+
 .object-contain {
   -o-object-fit: contain;
      object-fit: contain;

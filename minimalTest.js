@@ -68,6 +68,9 @@ const messageData = {
       this.replyingToMessage = this.selectedMessage;
       this.handleCloseMenu();
     },
+    handleUnselectReply() {
+      this.replyingToMessage = null;
+    },
     handleSendMessage(e) {
       // Button click
       if (!e) {
