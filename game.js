@@ -605,10 +605,9 @@ function slicePackedByteArray(arrayBuffer, offset) {
 }
 
 /**
- * parses world state data entry (player state)
- *
- *  @param {arrayBuffer} ArrayBuffer *required
- *  @returns {[client_id, player_state]} [number, Object]
+ * 
+ * @param {ArrayBufferLike} arrayBuffer 
+ * @returns {[number, { position: [number, number], direction: "left" | "right", status: "standing" | "walking"}]} [client_id, player_state]
  */
 function parseWorldStateDataEntry(arrayBuffer) {
     const dataView = new DataView(arrayBuffer);
@@ -619,11 +618,23 @@ function parseWorldStateDataEntry(arrayBuffer) {
     }];
 }
 
+/**
+ * 
+ * @param {ArrayBufferLike} arrayBuffer 
+ * @returns {[number, string]} [clientId, matrixId]
+ */
 function parseInstanceChatUserIdsEntry(arrayBuffer) {
     const dataView = new DataView(arrayBuffer);
     return [dataView.getUint16(0, true), new TextDecoder().decode(arrayBuffer.slice(2))];
 }
 
+/**
+ * 
+ * @template K, V
+ * @param {(a: ArrayBufferLike) => [K, V]} parser 
+ * @param {ArrayBufferLike} arrayBuffer 
+ * @returns {{ [k in K]: V }}
+ */
 function parseEntriesFromArrayBytes(parser, arrayBuffer) {
     const dataView = new DataView(arrayBuffer);
     // number of entries
