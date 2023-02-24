@@ -27,6 +27,7 @@ function gameCommOnMatrixMsg(matrixEvent) {
             Game.renderState[gameUserId].messageToDisplay = [matrixEvent.getContent().body, performance.now()]
         });
     }
+    
 }
 
 // ============================================== //

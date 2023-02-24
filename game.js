@@ -458,27 +458,38 @@ Game.update = function (tFrame) {
 
     // Pull worldStateData from Game.receivedWorldStateBuffer and overwrite client's copy of Game.worldState
     if (Game.receivedWorldStateBuffer !== null) {
-        Game.worldState.world_state_data = Game.receivedWorldStateBuffer
-    }
-
-    Game.worldState.world_state_data[Game.ACTIVE_PLAYER] = playerData
-
-    // As clients drop in and out, update the render state
-    let newRenderState = {}
-
-    for (const [clientId, value] of Object.entries(Game.worldState.world_state_data)) {
-        if (clientId in Game.renderState) {
-            newRenderState[clientId] = Game.renderState[clientId]
-        }
-        else {
-            newRenderState[clientId] = {
-                messageToDisplay: null,
-                currentAnimationFrame: 0,
-                lastAnimationChangeTime: Game.lastRender, // FIXME should this be tFrame?
+        let newRenderState = {}        
+        for (const [clientId, value] of Object.entries(Game.receivedWorldStateBuffer)) {
+            // Clients may drop in and out so we need to check for this
+            if (clientId in Game.renderState) {
+                // Check if there are any changes of state from the players (e.g. walking --> standing)
+                // and if there are, reset currentAnimationFrame to 0
+                let oldPlayerState = Game.worldState.world_state_data[clientId]
+                if (oldPlayerState && oldPlayerState.status !== Game.receivedWorldStateBuffer[clientId].status) {
+                    // reset the currentAnimationFrame
+                    newRenderState[clientId] = {
+                        messageToDisplay: oldPlayerState.messageToDisplay,
+                        currentAnimationFrame: 0,
+                        lastAnimationChangeTime: oldPlayerState.lastAnimationChangeTime,
+                    }
+                }
+                else {
+                    newRenderState[clientId] = Game.renderState[clientId]
+                }
+            }
+            // This is a new clientId, so just set default 
+            else {
+                newRenderState[clientId] = {
+                    messageToDisplay: null,
+                    currentAnimationFrame: 0,
+                    lastAnimationChangeTime: tFrame,
+                }
             }
         }
+        Game.worldState.world_state_data = Game.receivedWorldStateBuffer
+        Game.worldState.world_state_data[Game.ACTIVE_PLAYER] = playerData
+        Game.renderState = newRenderState    
     }
-    Game.renderState = newRenderState
 
     // Update position
     if (Game.PLAYER_TARGET_DEST !==  null && playerData !== null && playerData.position !== null) {
