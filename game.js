@@ -444,7 +444,7 @@ Game.render = function (tFrame) {
     camera.end()
 }
 
-Game.update = function (tFrame) {
+Game.update = function (tFrame) {   
     // Update map and character status
     // console.log(`Updating game state.`)
     let delta = tFrame - Game.lastTick;
@@ -488,6 +488,8 @@ Game.update = function (tFrame) {
         }
         Game.worldState.world_state_data = Game.receivedWorldStateBuffer
         Game.worldState.world_state_data[Game.ACTIVE_PLAYER] = playerData
+
+        newRenderState[Game.ACTIVE_PLAYER] = Game.renderState[Game.ACTIVE_PLAYER]
         Game.renderState = newRenderState    
     }
 
@@ -527,16 +529,16 @@ Game.update = function (tFrame) {
 *
 */
 
-let player = {
-    currentAnimationState: null,
-    currentAnimationFrame: null,
-    lastAnimationChangeTime: null,
-    spritesheet: "char_default",
-    spriteMapping: {
-        "standing": [[0, 40], [41, 81]],
-        "walking": [[82, 122], [123, 163], [164, 204], [205, 245]]
-    }
-}
+// let player = {
+//     currentAnimationState: null,
+//     currentAnimationFrame: null,
+//     lastAnimationChangeTime: null,
+//     spritesheet: "char_default",
+//     spriteMapping: {
+//         "standing": [[0, 40], [41, 81]],
+//         "walking": [[82, 122], [123, 163], [164, 204], [205, 245]]
+//     }
+// }
 
 /*
 * Touch handler
@@ -665,12 +667,19 @@ class NetworkHandler {
                             console.log(`[NetworkHandler::on_message] server acknowledged connection, client_id: ${clientId}`);
                             console.log(`[NetworkHandler::on_message] sending player chat user id: ${MATRIX_USER_ID}`);
                             Game.ACTIVE_PLAYER = clientId;
+                            // FIXME: I don't really like the fact that we mutate Game state here.
+                            // It feels like this should be done in the render loop.
                             // populating default player state
                             Game.worldState.world_state_data[clientId] = {
                                 position: [200, 250],
                                 direction: "right",
                                 status: "standing",
                             };
+                            Game.renderState[clientId] = {
+                                messageToDisplay: null,
+                                currentAnimationFrame: 0,
+                                lastAnimationChangeTime: Game.lastRender,
+                            }
                             this.sendPlayerChatUserId(MATRIX_USER_ID);
                             break;
                         case PLAYER_CHAT_USER_ID_ACKNOWLEDGE_MESSAGE_TYPE:
