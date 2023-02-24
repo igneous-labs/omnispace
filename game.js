@@ -246,7 +246,7 @@ let Game = {
     renderState: null,
 
     // TODO find a better place to put these variables
-    ACTIVE_PLAYER: 1,
+    ACTIVE_PLAYER: null,
     PLAYER_SPEED: 0.1,
     PLAYER_TARGET_DEST: null,
 
@@ -322,6 +322,10 @@ Game.setInitialState = function () {
             lastAnimationChangeTime: Game.lastRender,
         },
     }
+
+    const userIds = Object.entries(Game.worldState.client_chat_user_ids).filter(([clientId, userId]) => userId === MATRIX_USER_ID);
+    console.log(userIds)
+    Game.ACTIVE_PLAYER = userIds.length > 0 ? userIds[0][0] : 0;
 };
 
 Game.run = function () {
