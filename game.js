@@ -476,6 +476,23 @@ Game.update = function (tFrame) {
     // console.log(`Delta: ${delta}`)
     let playerData = Game.worldState.world_state_data[Game.ACTIVE_PLAYER];
 
+    // As clients drop in and out, update the render state
+    let newRenderState = {}
+
+    for (const [clientId, value] of Object.entries(Game.worldState.world_state_data)) {
+        if (clientId in Object.keys(Game.renderState)) {
+            newRenderState[clientId] = Game.renderState[clientId]
+        }
+        else {
+            newRenderState[clientId] = {
+                messageToDisplay: null,
+                currentAnimationFrame: 0,
+                lastAnimationChangeTime: Game.lastRender, // FIXME should this be tFrame?
+            }
+        }
+    }
+    Game.renderState = newRenderState
+
     // Update position
     if (Game.PLAYER_TARGET_DEST !==  null && playerData !== null && playerData.position !== null) {
         // console.log(Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position)
