@@ -32,7 +32,10 @@
     <link href="/dist/output.css" rel="stylesheet" />
   </head>
   <body>
-    <main class="max-h-full flex flex-col px-4 py-10">
+    <main
+      class="max-h-full flex flex-col px-4 py-10"
+      x-data="{ ...messageData }"
+    >
       <div class="flex justify-between items-center">
         <h1 id="title" class="text-xl font-bold">Omnispace</h1>
 
@@ -3433,88 +3436,84 @@
       <!-- End game -->
 
       <!-- Start matrix -->
-      <div>
-        <div class="py-2 flex justify-between">
-          <button
-            onClick="setActiveRoom(null); render();"
-            class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
-          >
-            Back
-          </button>
-          <button
-            onClick="logout()"
-            class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
-          >
-            Logout
-          </button>
-        </div>
+      <div class="py-2 flex justify-between">
+        <button
+          onClick="setActiveRoom(null); render();"
+          class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+        >
+          Back
+        </button>
+        <button
+          onClick="logout()"
+          class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+        >
+          Logout
+        </button>
+      </div>
 
-        <!-- Start chat/rooms list -->
-        <div x-data="{ ...messageData }">
-          <div class="relative">
-            <div
-              class="flex flex-col-reverse grow"
-              :class="{ 'overflow-auto': !messageMenuOpen, 'overflow-hidden': messageMenuOpen }"
-            >
-              <div id="view"></div>
-            </div>
+      <!-- Start chat/rooms list -->
+      <div
+        class="flex flex-col-reverse grow"
+        :class="{ 'overflow-auto': !messageMenuOpen, 'overflow-hidden': messageMenuOpen }"
+      >
+        <div id="view"></div>
+      </div>
 
-            <div
-              id="message_menu"
-              @keydown.escape.stop="handleCloseMenu();"
-              class="absolute inline-block text-left"
+      <div
+        id="message_menu"
+        @keydown.escape.stop="handleCloseMenu();"
+        class="absolute inline-block text-left"
+      >
+        <div
+          @click.outside="handleCloseMenu();"
+          x-show="messageMenuOpen"
+          x-transition:enter="transition ease-out duration-100"
+          x-transition:enter-start="transform opacity-0 scale-95"
+          x-transition:enter-end="transform opacity-100 scale-100"
+          x-transition:leave="transition ease-in duration-75"
+          x-transition:leave-start="transform opacity-100 scale-100"
+          x-transition:leave-end="transform opacity-0 scale-95"
+          class="absolute right-0 z-10 mt-2 w-fit origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+          role="menu"
+          aria-orientation="vertical"
+          tabindex="-1"
+          @keydown.tab="messageMenuOpen = false"
+          @keydown.enter.prevent="handleCloseMenu();"
+          @keyup.space.prevent="handleCloseMenu();"
+        >
+          <div class="py-1" role="none">
+            <button
+              class="text-gray-700 group flex items-center px-4 py-2 text-sm"
+              role="menuitem"
+              tabindex="-1"
+              @click="handleReply();"
             >
-              <div
-                @click.outside="handleCloseMenu();"
-                x-show="messageMenuOpen"
-                x-transition:enter="transition ease-out duration-100"
-                x-transition:enter-start="transform opacity-0 scale-95"
-                x-transition:enter-end="transform opacity-100 scale-100"
-                x-transition:leave="transition ease-in duration-75"
-                x-transition:leave-start="transform opacity-100 scale-100"
-                x-transition:leave-end="transform opacity-0 scale-95"
-                class="absolute right-0 z-10 mt-2 w-fit origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-                role="menu"
-                aria-orientation="vertical"
-                tabindex="-1"
-                @keydown.tab="messageMenuOpen = false"
-                @keydown.enter.prevent="handleCloseMenu();"
-                @keyup.space.prevent="handleCloseMenu();"
+              <svg
+                class="mr-3 min-h-[20px] min-w-[20px] text-gray-400 group-hover:text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
               >
-                <div class="py-1" role="none">
-                  <button
-                    class="text-gray-700 group flex items-center px-4 py-2 text-sm"
-                    role="menuitem"
-                    tabindex="-1"
-                    @click="handleReply();"
-                  >
-                    <svg
-                      class="mr-3 min-h-[20px] min-w-[20px] text-gray-400 group-hover:text-gray-500"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.5"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                      aria-hidden="true"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
-                      ></path>
-                    </svg>
-                    Reply
-                  </button>
-                </div>
-              </div>
-            </div>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
+                ></path>
+              </svg>
+              Reply
+            </button>
           </div>
+        </div>
+      </div>
 
-          <div class="justify-self-end mt-4 flex items-end gap-x-2">
-            <div class="w-full">
-              <template x-if="replyingToMessage">
-                <div
-                  x-data="{
+      <div class="justify-self-end mt-4 flex items-end gap-x-2">
+        <div class="w-full">
+          <template x-if="replyingToMessage">
+            <div
+              x-data="{
                   get senderName() {
                     const roomId = replyingToMessage['event']['room_id'];
                     const senderId = replyingToMessage['event']['sender'];
@@ -3533,80 +3532,79 @@
                     return msg;
                   }
                 }"
-                  class="flex items-center divide-x gap-x-2 px-2.5 py-1 border-x border-t rounded-tl-md rounded-tr-md w-full"
-                >
-                  <svg
-                    class="h-5 w-5 min-h-[20px] min-w-[20px] text-gray-400 group-hover:text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
-                    ></path>
-                  </svg>
-
-                  <div class="flex flex-col pl-2 w-[calc(100%-30px)]">
-                    <p x-text="senderName" class="font-bold"></p>
-                    <p x-text="messageContent" class="truncate"></p>
-                  </div>
-                </div>
-              </template>
-
-              <div
-                id="chat_input"
-                role="textbox"
-                contenteditable
-                data-placeholder="Message"
-                class="block resize-none min-h-[32px] px-2.5 py-0.5 border overflow-hidden outline-none"
-                :class="{ 'border rounded-md': !replyingToMessage, 'border-x border-b rounded-br-md rounded-bl-md': replyingToMessage }"
-                tabindex="0"
-                x-on:keydown="handleSendMessage(event);"
-              ></div>
-            </div>
-
-            <button
-              class="rounded-full bg-blue-600 text-white min-w-[32px] min-h-[32px] p-2"
-              @click="handleSendMessage();"
+              class="flex items-center divide-x gap-x-2 px-2.5 py-1 border-x border-t rounded-tl-md rounded-tr-md w-full"
             >
               <svg
+                class="h-5 w-5 min-h-[20px] min-w-[20px] text-gray-400 group-hover:text-gray-500"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2.5"
+                stroke-width="1.5"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
                 aria-hidden="true"
-                className="h-6 w-6"
               >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  d="M12 19.5v-15m0 0l-6.75 6.75M12 4.5l6.75 6.75"
+                  d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
                 ></path>
               </svg>
-            </button>
-          </div>
 
-          <dialog id="uploadImageDialog">
-            <form method="dialog">
-              <strong> Send an image </strong>
-              <div>
-                <img id="uploadPreview" />
+              <div class="flex flex-col pl-2 w-[calc(100%-30px)]">
+                <p x-text="senderName" class="font-bold"></p>
+                <p x-text="messageContent" class="truncate"></p>
               </div>
-              <div>
-                <button value="cancel">Cancel</button>
-                <button id="confirmBtn" value="default">Send</button>
-              </div>
-            </form>
-          </dialog>
-          <!-- End chat/rooms list -->
+            </div>
+          </template>
+
+          <div
+            id="chat_input"
+            role="textbox"
+            contenteditable
+            data-placeholder="Message"
+            class="block resize-none min-h-[32px] px-2.5 py-0.5 border overflow-hidden outline-none"
+            :class="{ 'border rounded-md': !replyingToMessage, 'border-x border-b rounded-br-md rounded-bl-md': replyingToMessage }"
+            tabindex="0"
+            x-on:keydown="handleSendMessage(event);"
+          ></div>
         </div>
+
+        <button
+          class="rounded-full bg-blue-600 text-white min-w-[32px] min-h-[32px] p-2"
+          @click="handleSendMessage();"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            className="h-6 w-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 19.5v-15m0 0l-6.75 6.75M12 4.5l6.75 6.75"
+            ></path>
+          </svg>
+        </button>
       </div>
+
+      <dialog id="uploadImageDialog">
+        <form method="dialog">
+          <strong> Send an image </strong>
+          <div>
+            <img id="uploadPreview" />
+          </div>
+          <div>
+            <button value="cancel">Cancel</button>
+            <button id="confirmBtn" value="default">Send</button>
+          </div>
+        </form>
+      </dialog>
+      <!-- End chat/rooms list -->
+
       <!-- End matrix -->
     </main>
   </body>
