@@ -207,7 +207,7 @@ let PlayerSpriteSheetMap = {
     "@fp:melchior.info": "char_fp",
     "@pixisu:melchior.info": "char_pixisu",
     "@chinkeeyong:melchior.info": "char_chinkeeyong",
-    "@boven:melchior.info": "char_boven",
+    "@Boven:melchior.info": "char_boven",
 }
 
 /*
@@ -308,7 +308,7 @@ Game.setInitialState = function () {
             1: "@fp:melchior.info",
             2: "@pixisu:melchior.info",
             3: "@chinkeeyong:melchior.info",
-            4: "@boven:melchior.info",
+            4: "@Boven:melchior.info",
         }, 
     };
 
