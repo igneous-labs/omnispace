@@ -462,6 +462,13 @@ Game.render = function (tFrame) {
             )
         }
 
+
+    }
+
+    // render bubbles separately from the players
+    // TODO: bubbles should be rendered in time order not playerId order
+    // (newer messages should take priority over older ones)
+    for (let playerId in Game.renderState) {
         // Render chat bubbles
         // TODO use measureText() to get width and do like line breaks/hyphenation
         // There should exist a library to do this
@@ -480,7 +487,6 @@ Game.render = function (tFrame) {
                 CanvasTxt.drawText(Game.ctx, truncate(player.messageToDisplay[0], 100), x, y-boxHt-padding, 100, boxHt)
             }
         }
-
     }
 
     camera.end()
