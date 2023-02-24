@@ -385,7 +385,13 @@ Game.render = function (tFrame) {
 
         // First render the player
         let player = Game.renderState[playerId] // currentAnimationFrame, lastAnimationChangeTime
-        const spriteSheetName = PlayerSpriteSheetMap[Game.worldState.client_chat_user_ids[playerId]] // this gives e.g. "char_default"
+
+        let spriteSheetName = 'char_default';
+        // Default spritesheet 
+        if (Game.worldState.client_chat_user_ids[playerId] in PlayerSpriteSheetMap) {
+            spriteSheetName = PlayerSpriteSheetMap[Game.worldState.client_chat_user_ids[playerId]] // this gives e.g. "char_default"
+        }
+        
         const playerSpriteSheet = SpriteSheetFrameMap[spriteSheetName] // this gives {walking: [[]], standing: [[]]}
         let playerCurrentStatus = Game.worldState.world_state_data[playerId].status // this gives "walking" or "standing"
         
