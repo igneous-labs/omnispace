@@ -522,6 +522,8 @@ Game.update = function (tFrame) {
         }
     }
 
+    networkHandler.sendPlayerState(playerData);
+
     function distanceBetween(a, b) {
         if (!a || !b) return 0;
         return Math.sqrt(Math.pow(a[0]-b[0], 2) + Math.pow(a[1]-b[1], 2));
@@ -664,6 +666,12 @@ class NetworkHandler {
                             console.log(`[NetworkHandler::on_message] server acknowledged connection, client_id: ${clientId}`);
                             console.log(`[NetworkHandler::on_message] sending player chat user id: ${MATRIX_USER_ID}`);
                             Game.ACTIVE_PLAYER = clientId;
+                            // populating default player state
+                            Game.worldSTate.world_state_data[clientId] = {
+                                position: [200, 250],
+                                direction: "right",
+                                status: "standing",
+                            };
                             this.sendPlayerChatUserId(MATRIX_USER_ID);
                             break;
                         case PLAYER_CHAT_USER_ID_ACKNOWLEDGE_MESSAGE_TYPE:
@@ -764,7 +772,7 @@ class NetworkHandler {
     */
     sendMessage(messageType, messageData) {
         const payload = new Uint8Array([messageType, ...messageData]);
-        console.log("[NetworkHandler::send] sending: ", payload);
+        //console.log("[NetworkHandler::send] sending: ", payload);
         this.socket.send(payload);
     }
 }
