@@ -699,7 +699,7 @@ class NetworkHandler {
                             console.log(`[NetworkHandler::on_message] sending player chat user id: ${MATRIX_USER_ID}`);
                             Game.ACTIVE_PLAYER = clientId;
                             // populating default player state
-                            Game.worldSTate.world_state_data[clientId] = {
+                            Game.worldState.world_state_data[clientId] = {
                                 position: [200, 250],
                                 direction: "right",
                                 status: "standing",
