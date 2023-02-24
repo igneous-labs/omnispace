@@ -603,7 +603,7 @@ function parseWorldStateData(arrayBuffer) {
         entries.push(parseWorldStateDataEntry(entryBytes));
         offset = endOffset;
     }
-    return entries;
+    return Object.fromEntries(entries);
 }
 
 function parseInstanceChatUserIds(arrayBuffer) {
@@ -637,9 +637,11 @@ class NetworkHandler {
                     console.log(`[NetworkHandler] received event type: ${messageType}`);
                     switch (messageType) {
                         case ACKNOWLEDGE_MESSAGE_TYPE:
-                            console.log(`[NetworkHandler::on_message] server acknowledged connection, client_id: ${payload.getUint16(1, true)}`);
-                            console.log("[NetworkHandler::on_message] sending player chat user id")
-                            this.sendPlayerChatUserId('@fp:melchior.info');
+                            const clientId = payload.getUint16(1, true);
+                            console.log(`[NetworkHandler::on_message] server acknowledged connection, client_id: ${clientId}`);
+                            console.log(`[NetworkHandler::on_message] sending player chat user id: ${MATRIX_USER_ID}`);
+                            Game.ACTIVE_PLAYER = clientId;
+                            this.sendPlayerChatUserId(MATRIX_USER_ID);
                             break;
                         case PLAYER_CHAT_USER_ID_ACKNOWLEDGE_MESSAGE_TYPE:
                             console.log("[NetworkHandler::on_message] server acknowledged PLAYER_CHAT_USER_ID message");
@@ -664,8 +666,9 @@ class NetworkHandler {
 
                             // Parse worldStateData
                             const worldStateData = parseWorldStateData(worldStateDataBytes);
-                            console.log(`[NetworkHandler::on_message] world state received: ${JSON.stringify(worldStateData)}`);
-                            // TODO: update client's game state with this entries
+                            worldStateData[Game.ACTIVE_PLAYER] = Game.worldState.world_state_data[Game.ACTIVE_PLAYER];
+                            console.log("[NetworkHandler::on_message] world state received:", worldStateData);
+                            Game.worldState.world_state_data = worldStateData;
 
                             // Parse instanceChatUserIds
                             const instanceChatUserIds = parseInstanceChatUserIds(instanceChatUserIdsBytes)
