@@ -31,6 +31,18 @@ function gameCommOnMatrixMsg(matrixEvent) {
 
 // ============================================== //
 
+// TODO 
+// FIXME find out why this function's not being called
+function sendImageMessage(e) {
+    e.preventDefault();
+    console.log("called")
+    // const imageEle = document.getElementById('uploadPreview')
+    // const content = {
+    //     "body": "Image",
+    //     "msgtype": "m.image",
+    // }
+}
+
 function sendMessage() {
     const message = document.getElementById("chat_input").innerText
     console.log(`Message received: ${message}`)
@@ -142,22 +154,29 @@ function render() {
     }
 }
 
-function handleImagePaste(evt) {
+function handlePaste(evt) {
+    const clipboardItems = evt.clipboardData.items;
+    const images = [].slice.call(clipboardItems).filter(function (item) {
+        // Filter the image items only
+        return item.type.indexOf('image') !== -1;
+    });
+    if (images.length === 0) {
+        return;
+    }
+    else {
+        console.log(images)
+        handleImagePaste(images);
+    }
+}
+
+function handleImagePaste(images) {
     const imageUploadDialog = document.getElementById("uploadImageDialog")
     console.log("pasted")
     imageUploadDialog.showModal();
     // Handle the `paste` event
     // Get the data of clipboard
-    const clipboardItems = evt.clipboardData.items;
-    const items = [].slice.call(clipboardItems).filter(function (item) {
-        // Filter the image items only
-        return item.type.indexOf('image') !== -1;
-    });
-    if (items.length === 0) {
-        return;
-    }   
-
-    const item = items[0];
+       
+    const item = images[0];
     console.log(item)
     // Get the blob of image
     const blob = item.getAsFile();
@@ -236,5 +255,5 @@ async function logout() {
     window.location.replace("login.html");
 }
 
-document.addEventListener('paste', handleImagePaste);
+document.addEventListener('paste', handlePaste);
 start();
