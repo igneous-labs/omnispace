@@ -253,6 +253,7 @@ let Game = {
     lastRender: null,
     lastTick: null,
     worldState: null,
+    receivedWorldStateBuffer: null,
     renderState: null,
     networkHandler: null,
 
@@ -296,41 +297,7 @@ Game.setInitialState = function () {
     };
 
     Game.renderState = {
-        0: {
-            messageToDisplay: null,
-            currentAnimationFrame: 0,
-            lastAnimationChangeTime: Game.lastRender,
-        },
-        1: {
-            messageToDisplay: null,
-            currentAnimationFrame: 0,
-            lastAnimationChangeTime: Game.lastRender,
-        },
-        2: {
-            messageToDisplay: null,
-            currentAnimationFrame: 0,
-            lastAnimationChangeTime: Game.lastRender,
-        },
-        3: {
-            messageToDisplay: null,
-            currentAnimationFrame: 0,
-            lastAnimationChangeTime: Game.lastRender,
-        },
-        4: {
-            messageToDisplay: null,
-            currentAnimationFrame: 0,
-            lastAnimationChangeTime: Game.lastRender,
-        },
-        5: {
-            messageToDisplay: null,
-            currentAnimationFrame: 0,
-            lastAnimationChangeTime: Game.lastRender,
-        },
     }
-
-    const userIds = Object.entries(Game.worldState.client_chat_user_ids).filter(([clientId, userId]) => userId === MATRIX_USER_ID);
-    console.log(userIds)
-    Game.ACTIVE_PLAYER = userIds.length > 0 ? userIds[0][0] : 0;
 };
 
 Game.run = function () {
@@ -481,19 +448,29 @@ Game.update = function (tFrame) {
     // Update map and character status
     // console.log(`Updating game state.`)
     let delta = tFrame - Game.lastTick;
+
+    if (!Game.networkHandler.is_initialized) {
+        return
+    }
+
     // console.log(`Delta: ${delta}`)
     let playerData = Game.worldState.world_state_data[Game.ACTIVE_PLAYER];
+
+    // Pull worldStateData from Game.receivedWorldStateBuffer and overwrite client's copy of Game.worldState
+    if (Game.receivedWorldStateBuffer !== null) {
+        Game.worldState.world_state_data = Game.receivedWorldStateBuffer
+    }
+
+    Game.worldState.world_state_data[Game.ACTIVE_PLAYER] = playerData
 
     // As clients drop in and out, update the render state
     let newRenderState = {}
 
     for (const [clientId, value] of Object.entries(Game.worldState.world_state_data)) {
         if (clientId in Game.renderState) {
-            // console.log(`clientId ${clientId} in Game.renderState, updating...`)
             newRenderState[clientId] = Game.renderState[clientId]
         }
         else {
-            // console.log(`clientId ${clientId} not in Game.renderState, creating new..`)
             newRenderState[clientId] = {
                 messageToDisplay: null,
                 currentAnimationFrame: 0,
@@ -708,9 +685,7 @@ class NetworkHandler {
 
                             // Parse worldStateData
                             const worldStateData = parseWorldStateData(worldStateDataBytes);
-                            worldStateData[Game.ACTIVE_PLAYER] = Game.worldState.world_state_data[Game.ACTIVE_PLAYER];
-                            // console.log("[NetworkHandler::on_message] world state received:", worldStateData);
-                            Game.worldState.world_state_data = worldStateData;
+                            Game.receivedWorldStateBuffer = worldStateData;
 
                             // Parse instanceChatUserIds
                             const instanceChatUserIds = parseInstanceChatUserIds(instanceChatUserIdsBytes)
