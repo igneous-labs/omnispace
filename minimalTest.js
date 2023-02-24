@@ -179,7 +179,7 @@ function render() {
                     <strong>${senderName}: </strong>
                     <span x-on:touchstart="messageTouchStart(event);" x-on:touchend="messageTouchEnd(event);" x-on:contextmenu="handleRightClick(event)">
                         ${message.event.content.body}
-                      ${message.event.content.msgtype === "m.image" && `<img src=${client.mxcUrlToHttp(message.event.content.url)} />`}
+                      ${message.event.content.msgtype === "m.image" ? `<img src=${client.mxcUrlToHttp(message.event.content.url)} />` : ''}
                     </span>
                 </span>
                 </div>
@@ -289,6 +289,8 @@ async function logout() {
     const logoutPromise = client.logout();
     window.localStorage.removeItem(MATRIX_LOGIN_LOCAL_STORAGE_KEY);
     await logoutPromise;
+    client.stopClient();
+    await client.clearStores();
     window.location.replace("login.html");
 }
 
