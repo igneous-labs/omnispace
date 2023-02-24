@@ -332,7 +332,7 @@ Game.render = function (tFrame) {
     // console.log(`Rendering at tFrame ${tFrame}. Last render: ${Game.lastRender}`)
 
     // if the networkHandler is not initialized, then there should be nothing to render
-    if (!Game.networkHandler.is_initialized) return;
+    if (!Game.networkHandler.isInitialized) return;
 
     camera.moveTo(Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position[0], Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position[1])
     camera.begin()
@@ -449,7 +449,7 @@ Game.update = function (tFrame) {
     // console.log(`Updating game state.`)
     let delta = tFrame - Game.lastTick;
 
-    if (!Game.networkHandler.is_initialized) {
+    if (!Game.networkHandler.isInitialized) {
         return
     }
 
@@ -619,7 +619,12 @@ function parseWorldStateDataEntry(arrayBuffer) {
     }];
 }
 
-function parseWorldStateData(arrayBuffer) {
+function parseInstanceChatUserIdsEntry(arrayBuffer) {
+    const dataView = new DataView(arrayBuffer);
+    return [dataView.getUint16(0, true), new TextDecoder().decode(arrayBuffer.slice(2))];
+}
+
+function parseEntriesFromArrayBytes(parser, arrayBuffer) {
     const dataView = new DataView(arrayBuffer);
     // number of entries
     const n = dataView.getUint32(U32_BYTES, true);
@@ -627,28 +632,18 @@ function parseWorldStateData(arrayBuffer) {
     let offset = U32_BYTES * 2;
     for (let i = 0; i < n; i ++) {
         const [endOffset, entryBytes] = slicePackedByteArray(arrayBuffer, offset);
-        entries.push(parseWorldStateDataEntry(entryBytes));
-        offset = endOffset;
+        // NOTE: godot's array is always padded to 4 bytes when serialized
+        const padding = (U32_BYTES - (entryBytes.byteLength % U32_BYTES)) % U32_BYTES;
+        entries.push(parser(entryBytes));
+        offset = endOffset + padding;
     }
     return Object.fromEntries(entries);
 }
 
-function parseInstanceChatUserIds(arrayBuffer) {
-    const dataView = new DataView(arrayBuffer);
-    // number of entries
-    const n = dataView.getUint32(U32_BYTES, true);
-    // TODO: les do this
-    // instanceChat
-    //console.log("LOOK AT ME: ", n);
-    //console.log("LOOK HERE: ", new Uint8Array(arrayBuffer));
-}
-
-
 class NetworkHandler {
     constructor() {
         // this flag is used to delay sending player state,
-        this.is_initialized = false;
-        this.encoder = new TextEncoder();
+        this.isInitialized = false;
         this.socket = new WebSocket(SERVER_URL)
         this.socket.binaryType = "blob";
 
@@ -691,7 +686,7 @@ class NetworkHandler {
                         case PLAYER_INSTANCE_ACKNOWLEDGE_MESSAGE_TYPE:
                             console.log("[NetworkHandler::on_message] server acknowledged PLAYER_INSTANCE message");
                             console.log("[NetworkHandler::on_message] network handler is initialized");
-                            this.is_initialized = true;
+                            this.isInitialized = true;
                             this.sendPlayerState({
                                 "position": [2, 1],
                                 "direction": "left",
@@ -705,12 +700,12 @@ class NetworkHandler {
                             const [_, instanceChatUserIdsBytes] = slicePackedByteArray(arrayBuffer, instanceChatUserIdsOffset);
 
                             // Parse worldStateData
-                            const worldStateData = parseWorldStateData(worldStateDataBytes);
+                            const worldStateData = parseEntriesFromArrayBytes(parseWorldStateDataEntry, worldStateDataBytes);
                             Game.receivedWorldStateBuffer = worldStateData;
 
                             // Parse instanceChatUserIds
-                            const instanceChatUserIds = parseInstanceChatUserIds(instanceChatUserIdsBytes)
-                            // TODO: use this to indicate which remote player is which matrix user
+                            const instanceChatUserIds = parseEntriesFromArrayBytes(parseInstanceChatUserIdsEntry, instanceChatUserIdsBytes);
+                            // TODO: use instanceChatUserIds to update Game.worldState.client_chat_user_id
 
                             break;
                         default:
@@ -730,7 +725,7 @@ class NetworkHandler {
      *  @param {userId} str *required
     */
     sendPlayerChatUserId(userId) {
-        this.sendMessage(PLAYER_CHAT_USER_ID_MESSAGE_TYPE, this.encoder.encode(userId));
+        this.sendMessage(PLAYER_CHAT_USER_ID_MESSAGE_TYPE, new TextEncoder().encode(userId));
     }
 
     /**
@@ -753,7 +748,7 @@ class NetworkHandler {
      *  NOTE: godot's Vector2 type uses 12 bytes: 4 bytes for type identifier, 4 bytes for each axis
     */
     sendPlayerState(playerState) {
-        if (!this.is_initialized) return;
+        if (!this.isInitialized) return;
         const buffer = new ArrayBuffer(14);
         const dataView = new DataView(buffer);
 
