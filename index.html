@@ -3447,14 +3447,14 @@
         <div id="view"></div>
       </div>
       <dialog id="uploadImageDialog">
-        <form method="dialog">
-          <strong> Send an image (NOT WORKING) </strong>
+        <form method="dialog" onsubmit="sendImageMessage(event)">
+          <strong> Send an image </strong>
           <div>
             <img id="uploadPreview" />
           </div>
           <div>
-            <button value="cancel">Cancel</button>
-            <button id="confirmBtn onclick="sendImageMessage(e);">Send</button>
+            <button value="cancel" type="button" onclick="document.getElementById('uploadImageDialog').close()">Cancel</button>
+            <button id="confirmBtn" type="submit">Send</button>
           </div>
         </form>
       </dialog>

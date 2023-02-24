@@ -34,16 +34,28 @@ function gameCommOnMatrixMsg(matrixEvent) {
 
 // ============================================== //
 
-// TODO 
-// FIXME find out why this function's not being called
 function sendImageMessage(e) {
     e.preventDefault();
-    console.log("called")
-    // const imageEle = document.getElementById('uploadPreview')
-    // const content = {
-    //     "body": "Image",
-    //     "msgtype": "m.image",
-    // }
+    const imageEle = document.getElementById('uploadPreview')
+    // get image blob from blob url
+    fetch(imageEle.src).then(res => res.blob().then(blob => {
+        // upload blob to matrix server and get mxc url
+        client.uploadContent(blob).then((res) => {
+            const content = {
+                "body": "Image", // file name
+                "msgtype": "m.image",
+                "url": res.content_uri,
+                "info": {
+                    "mimetype": blob.type,
+                }
+            }
+            client.sendEvent(viewingRoom, "m.room.message", content, "").then((result) => {
+                imageEle.src = ""
+                document.getElementById('uploadImageDialog').close()
+                render();
+            })
+        })
+    }));
 }
 
 function sendMessage() {
