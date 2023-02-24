@@ -24,7 +24,9 @@ function gameCommOnMatrixMsg(matrixEvent) {
     console.log(gameUserIds)
     if (gameUserIds.length > 0) {
         gameUserIds.forEach(([gameUserId, matrixUserId]) => {
-            Game.renderState[gameUserId].messageToDisplay = [matrixEvent.getContent().body, performance.now()]
+            if (gameUserId in Game.renderState) {
+                Game.renderState[gameUserId].messageToDisplay = [matrixEvent.getContent().body, performance.now()]
+            } 
         });
     }
     
