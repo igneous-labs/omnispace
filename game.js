@@ -283,36 +283,6 @@ Game.load = function () {
 Game.setInitialState = function () {
     Game.worldState = {
         world_state_data: {
-            0: {
-                position: [200, 250],
-                direction: "right",
-                status: "standing",
-            },
-            1: {
-                position: [130, 210],
-                direction: "left",
-                status: "standing",
-            },
-            2: {
-                position: [280, 250],
-                direction: "left",
-                status: "standing",
-            },
-            3: {
-                position: [400, 200],
-                direction: "right",
-                status: "standing",
-            },
-            4: {
-                position: [200, 120],
-                direction: "right",
-                status: "standing",
-            },
-            5: {
-                position: [60, 200],
-                direction: "right",
-                status: "standing",
-            },
         },
         client_chat_user_ids: {
             0: "default",
@@ -669,8 +639,8 @@ function parseInstanceChatUserIds(arrayBuffer) {
     const n = dataView.getUint32(U32_BYTES, true);
     // TODO: les do this
     // instanceChat
-    console.log("LOOK AT ME: ", n);
-    console.log("LOOK HERE: ", new Uint8Array(arrayBuffer));
+    //console.log("LOOK AT ME: ", n);
+    //console.log("LOOK HERE: ", new Uint8Array(arrayBuffer));
 }
 
 
