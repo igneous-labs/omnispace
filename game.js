@@ -554,15 +554,22 @@ let player = {
 
 const canvas = document.getElementById('canvas');
 
-function touchHandler(e) {
+function handleTouchOrClick(e) {
     if (e.touches) {
       const playerX = e.touches[0].pageX - canvas.offsetLeft;
       const playerY = e.touches[0].pageY - canvas.offsetTop;
       console.log(`Touch:  x: ${playerX}, y: ${playerY}`);
       const coords = camera.screenToWorld(playerX, playerY)
-      Game.PLAYER_TARGET_DEST = [coords.x, coords.y];
+      Game.PLAYER_TARGET_DEST = [coords.x, coords.y]; 
     }
-  }
+    if (e.type === "click" && e.button === 0) {
+        const playerX = e.pageX - canvas.offsetLeft;
+        const playerY = e.pageY - canvas.offsetTop;
+        console.log(`Click:  x: ${playerX}, y: ${playerY}`);
+        const coords = camera.screenToWorld(playerX, playerY)
+        Game.PLAYER_TARGET_DEST = [coords.x, coords.y]; 
+    }
+}
 
 /*
  * NetworkHandler
@@ -784,8 +791,9 @@ const networkHandler = new NetworkHandler();
 // Let's start the game!
 //
 
-canvas.addEventListener("touchstart", touchHandler);
-canvas.addEventListener("touchmove", touchHandler);
+canvas.addEventListener("touchstart", handleTouchOrClick);
+canvas.addEventListener("touchmove", handleTouchOrClick);
+canvas.addEventListener("click", handleTouchOrClick);
 
 window.onload = function () {
     Game.ctx = canvas.getContext('2d');
