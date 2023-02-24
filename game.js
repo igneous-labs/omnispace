@@ -700,12 +700,16 @@ class NetworkHandler {
                             const [_, instanceChatUserIdsBytes] = slicePackedByteArray(arrayBuffer, instanceChatUserIdsOffset);
 
                             // Parse worldStateData
-                            const worldStateData = parseEntriesFromArrayBytes(parseWorldStateDataEntry, worldStateDataBytes);
-                            Game.receivedWorldStateBuffer = worldStateData;
+                            Game.receivedWorldStateBuffer = parseEntriesFromArrayBytes(
+                                parseWorldStateDataEntry,
+                                worldStateDataBytes
+                            );
 
                             // Parse instanceChatUserIds
-                            const instanceChatUserIds = parseEntriesFromArrayBytes(parseInstanceChatUserIdsEntry, instanceChatUserIdsBytes);
-                            // TODO: use instanceChatUserIds to update Game.worldState.client_chat_user_id
+                            Game.worldState.client_chat_user_ids = parseEntriesFromArrayBytes(
+                                parseInstanceChatUserIdsEntry,
+                                instanceChatUserIdsBytes
+                            );
 
                             break;
                         default:
