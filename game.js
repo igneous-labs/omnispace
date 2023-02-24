@@ -465,16 +465,17 @@ Game.update = function (tFrame) {
                 // Check if there are any changes of state from the players (e.g. walking --> standing)
                 // and if there are, reset currentAnimationFrame to 0
                 let oldPlayerState = Game.worldState.world_state_data[clientId]
+                const oldPlayerRenderState = Game.renderState[clientId];
                 if (oldPlayerState && oldPlayerState.status !== Game.receivedWorldStateBuffer[clientId].status) {
                     // reset the currentAnimationFrame
                     newRenderState[clientId] = {
-                        messageToDisplay: oldPlayerState.messageToDisplay,
+                        messageToDisplay: oldPlayerRenderState.messageToDisplay,
                         currentAnimationFrame: 0,
-                        lastAnimationChangeTime: oldPlayerState.lastAnimationChangeTime,
+                        lastAnimationChangeTime: oldPlayerRenderState.lastAnimationChangeTime,
                     }
                 }
                 else {
-                    newRenderState[clientId] = Game.renderState[clientId]
+                    newRenderState[clientId] = oldPlayerRenderState
                 }
             }
             // This is a new clientId, so just set default 
