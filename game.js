@@ -472,8 +472,9 @@ Game.render = function (tFrame) {
         // Render chat bubbles
         // TODO use measureText() to get width and do like line breaks/hyphenation
         // There should exist a library to do this
+        let player = Game.renderState[playerId] // currentAnimationFrame, lastAnimationChangeTime
 
-        if (player.messageToDisplay !== null) {
+        if (player && player.messageToDisplay !== null) {
             // Render messages only for five seconds (FIXME: pull this out into a constant somewhere)
             if (tFrame - player.messageToDisplay[1] < 5000) {
                 const boxHt = 150
