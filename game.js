@@ -486,10 +486,12 @@ Game.update = function (tFrame) {
     let newRenderState = {}
 
     for (const [clientId, value] of Object.entries(Game.worldState.world_state_data)) {
-        if (clientId in Object.keys(Game.renderState)) {
+        if (clientId in Game.renderState) {
+            // console.log(`clientId ${clientId} in Game.renderState, updating...`)
             newRenderState[clientId] = Game.renderState[clientId]
         }
         else {
+            // console.log(`clientId ${clientId} not in Game.renderState, creating new..`)
             newRenderState[clientId] = {
                 messageToDisplay: null,
                 currentAnimationFrame: 0,
