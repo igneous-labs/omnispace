@@ -299,7 +299,7 @@ Game.setInitialState = function () {
             },
             4: {
                 position: [200, 120],
-                direction: "left",
+                direction: "right",
                 status: "standing",
             },
         },
