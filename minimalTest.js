@@ -1,3 +1,5 @@
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+
 const matrixLoginStoredStr = window.localStorage.getItem(MATRIX_LOGIN_LOCAL_STORAGE_KEY);
 if (!matrixLoginStoredStr) {
     window.location.replace("login.html");
@@ -29,17 +31,46 @@ function gameCommOnMatrixMsg(matrixEvent) {
 
 // ============================================== //
 
+// TODO 
+// FIXME find out why this function's not being called
+function sendImageMessage(e) {
+    e.preventDefault();
+    console.log("called")
+    // const imageEle = document.getElementById('uploadPreview')
+    // const content = {
+    //     "body": "Image",
+    //     "msgtype": "m.image",
+    // }
+}
+
 function sendMessage() {
-    const message = document.getElementById("chat_input").value
+    const message = document.getElementById("chat_input").innerText
     console.log(`Message received: ${message}`)
     const content = {
         "body": message,
         "msgtype": "m.text"
     };
     client.sendEvent(viewingRoom, "m.room.message", content, "").then((result) => {
-        document.getElementById("chat_input").value = ''
+        document.getElementById("chat_input").innerText = ''
         render();
     })
+}
+
+function handleSendMessage(e) {
+    if (e.keyCode === 13) {
+        // Shift + enter pressed
+        if (e.shiftKey) {
+            e.stopPropagation();
+            return;
+        }
+
+        // Enter pressed (on mobile just add a new line)
+        if (!isMobile) {
+            e.preventDefault();
+
+            sendMessage();
+        }
+    }
 }
 
 function setRoomList() {
@@ -105,15 +136,15 @@ function render() {
             const senderName = members.filter((member) => member.userId === senderId)[0].rawDisplayName
             return acc + `<div>
                 <strong>${senderName}: </strong> ${message.event.content.body}
-                ${message.event.content.msgtype === "m.image" && `<img src=${client.mxcUrlToHttp(message.event.content.url)} />`}
+                ${message.event.content.msgtype === "m.image" ? `<img src=${client.mxcUrlToHttp(message.event.content.url)} />` : ''}
             </div>`
         }, '')
 
       
         view.innerHTML = messageHistoryHTML
-      
+
         view.classList.remove('overflow-y-scroll')
-        
+
         // Autoscroll to new message, when scrollbar is at the bottom of chatbox
         const isScrolledToBottom = view.scrollHeight - view.clientHeight <= view.scrollTop + 1
       
@@ -123,22 +154,29 @@ function render() {
     }
 }
 
-function handleImagePaste(evt) {
+function handlePaste(evt) {
+    const clipboardItems = evt.clipboardData.items;
+    const images = [].slice.call(clipboardItems).filter(function (item) {
+        // Filter the image items only
+        return item.type.indexOf('image') !== -1;
+    });
+    if (images.length === 0) {
+        return;
+    }
+    else {
+        console.log(images)
+        handleImagePaste(images);
+    }
+}
+
+function handleImagePaste(images) {
     const imageUploadDialog = document.getElementById("uploadImageDialog")
     console.log("pasted")
     imageUploadDialog.showModal();
     // Handle the `paste` event
     // Get the data of clipboard
-    const clipboardItems = evt.clipboardData.items;
-    const items = [].slice.call(clipboardItems).filter(function (item) {
-        // Filter the image items only
-        return item.type.indexOf('image') !== -1;
-    });
-    if (items.length === 0) {
-        return;
-    }   
-
-    const item = items[0];
+       
+    const item = images[0];
     console.log(item)
     // Get the blob of image
     const blob = item.getAsFile();
@@ -212,8 +250,10 @@ async function logout() {
     const logoutPromise = client.logout();
     window.localStorage.removeItem(MATRIX_LOGIN_LOCAL_STORAGE_KEY);
     await logoutPromise;
+    client.stopClient();
+    await client.clearStores();
     window.location.replace("login.html");
 }
 
-document.addEventListener('paste', handleImagePaste);
+document.addEventListener('paste', handlePaste);
 start();

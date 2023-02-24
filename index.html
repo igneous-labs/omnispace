@@ -3448,19 +3448,47 @@
       </div>
       <dialog id="uploadImageDialog">
         <form method="dialog">
-          <strong> Send an image </strong>
+          <strong> Send an image (NOT WORKING) </strong>
           <div>
             <img id="uploadPreview" />
           </div>
           <div>
             <button value="cancel">Cancel</button>
-            <button id="confirmBtn" value="default">Send</button>
+            <button id="confirmBtn onclick="sendImageMessage(e);">Send</button>
           </div>
         </form>
       </dialog>
-      <form id="TextForm" onsubmit="event.preventDefault(); sendMessage();">
-        <input type="text" id="chat_input" />
-      </form>
+      <div id="message_form" class="flex items-end gap-x-2 mt-4">
+        <div
+          id="chat_input"
+          role="textbox"
+          contenteditable
+          data-placeholder="Message"
+          class="block resize-none min-h-[32px] px-2.5 py-0.5 border rounded-md w-full overflow-hidden"
+          tabindex="0"
+          onkeydown="return handleSendMessage(event)"
+        ></div>
+        <button
+          class="rounded-full bg-blue-600 text-white min-w-[32px] min-h-[32px] p-2"
+          onclick="sendMessage()"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            className="h-6 w-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 19.5v-15m0 0l-6.75 6.75M12 4.5l6.75 6.75"
+            ></path>
+          </svg>
+        </button>
+      </div>
       <!-- End matrix -->
     </div>
   </body>

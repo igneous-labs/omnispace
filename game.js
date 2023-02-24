@@ -204,7 +204,10 @@ let CanvasTxt = null;
 
 let PlayerSpriteSheetMap = {
     "default": "char_default",
-    "@fp:melchior.info": "char_fp"
+    "@fp:melchior.info": "char_fp",
+    "@pixisu:melchior.info": "char_pixisu",
+    "@chinkeeyong:melchior.info": "char_chinkeeyong",
+    "@Boven:melchior.info": "char_boven",
 }
 
 /*
@@ -220,7 +223,19 @@ let SpriteSheetFrameMap = {
     "char_fp": {
         "standing": [[0, 55], [56, 116]],
         "walking": [[118, 172], [173, 235], [236, 296], [297, 354]],
-    }
+    },
+    "char_pixisu": {
+        "standing": [[1, 52], [54, 101]],
+        "walking": [[103, 155], [157, 206], [208, 251], [253, 304]],
+    },
+    "char_chinkeeyong": {
+        "standing": [[1, 48], [50, 97]],
+        "walking": [[99, 146], [148, 195], [197, 244], [246, 293]],      
+    },
+    "char_boven": {
+        "standing": [[1, 47], [49, 95]],
+        "walking": [[97, 143], [145, 191], [193, 239], [241, 287]],      
+    }    
 }
 
 /*
@@ -236,7 +251,7 @@ let Game = {
     renderState: null,
 
     // TODO find a better place to put these variables
-    ACTIVE_PLAYER: 1,
+    ACTIVE_PLAYER: null,
     PLAYER_SPEED: 0.1,
     PLAYER_TARGET_DEST: null,
 
@@ -252,7 +267,10 @@ Game.load = function () {
     return [
         Loader.loadImage('room', './img/room.png'),
         Loader.loadImage('char_default', './img/char_default.png'),
-        Loader.loadImage('char_fp', './img/char_fp.png')
+        Loader.loadImage('char_fp', './img/char_fp.png'),
+        Loader.loadImage('char_pixisu', './img/char_pixisu.png'),
+        Loader.loadImage('char_chinkeeyong', './img/char_chinkeeyong.png'),
+        Loader.loadImage('char_boven', './img/char_boven.png'),
     ];
 };
 
@@ -269,10 +287,28 @@ Game.setInitialState = function () {
                 direction: "left",
                 status: "standing",
             },
+            2: {
+                position: [280, 250],
+                direction: "left",
+                status: "standing",
+            },
+            3: {
+                position: [400, 200],
+                direction: "right",
+                status: "standing",
+            },
+            4: {
+                position: [200, 120],
+                direction: "right",
+                status: "standing",
+            },
         },
         client_chat_user_ids: {
             0: "default",
             1: "@fp:melchior.info",
+            2: "@pixisu:melchior.info",
+            3: "@chinkeeyong:melchior.info",
+            4: "@Boven:melchior.info",
         }, 
     };
 
@@ -286,8 +322,27 @@ Game.setInitialState = function () {
             messageToDisplay: null,
             currentAnimationFrame: 0,
             lastAnimationChangeTime: Game.lastRender,
-        }
+        },
+        2: {
+            messageToDisplay: null,
+            currentAnimationFrame: 0,
+            lastAnimationChangeTime: Game.lastRender,
+        },
+        3: {
+            messageToDisplay: null,
+            currentAnimationFrame: 0,
+            lastAnimationChangeTime: Game.lastRender,
+        },
+        4: {
+            messageToDisplay: null,
+            currentAnimationFrame: 0,
+            lastAnimationChangeTime: Game.lastRender,
+        },
     }
+
+    const userIds = Object.entries(Game.worldState.client_chat_user_ids).filter(([clientId, userId]) => userId === MATRIX_USER_ID);
+    console.log(userIds)
+    Game.ACTIVE_PLAYER = userIds.length > 0 ? userIds[0][0] : 0;
 };
 
 Game.run = function () {
