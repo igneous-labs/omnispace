@@ -208,6 +208,7 @@ let PlayerSpriteSheetMap = {
     "@pixisu:melchior.info": "char_pixisu",
     "@chinkeeyong:melchior.info": "char_chinkeeyong",
     "@Boven:melchior.info": "char_boven",
+    "@hunter2:melchior.info": "char_hunter2",
 }
 
 /*
@@ -235,7 +236,11 @@ let SpriteSheetFrameMap = {
     "char_boven": {
         "standing": [[1, 47], [49, 95]],
         "walking": [[97, 143], [145, 191], [193, 239], [241, 287]],      
-    }    
+    },
+    "char_hunter2": {
+        "standing": [[1, 51], [53, 103]],
+        "walking": [[105, 155], [157, 207], [209, 259], [261, 302]],      
+    },
 }
 
 /*
@@ -271,6 +276,7 @@ Game.load = function () {
         Loader.loadImage('char_pixisu', './img/char_pixisu.png'),
         Loader.loadImage('char_chinkeeyong', './img/char_chinkeeyong.png'),
         Loader.loadImage('char_boven', './img/char_boven.png'),
+        Loader.loadImage('char_hunter2', './img/char_hunter2.png'),
     ];
 };
 
@@ -302,6 +308,11 @@ Game.setInitialState = function () {
                 direction: "right",
                 status: "standing",
             },
+            5: {
+                position: [60, 200],
+                direction: "right",
+                status: "standing",
+            },
         },
         client_chat_user_ids: {
             0: "default",
@@ -309,6 +320,7 @@ Game.setInitialState = function () {
             2: "@pixisu:melchior.info",
             3: "@chinkeeyong:melchior.info",
             4: "@Boven:melchior.info",
+            5: "@hunter2:melchior.info",
         }, 
     };
 
@@ -334,6 +346,11 @@ Game.setInitialState = function () {
             lastAnimationChangeTime: Game.lastRender,
         },
         4: {
+            messageToDisplay: null,
+            currentAnimationFrame: 0,
+            lastAnimationChangeTime: Game.lastRender,
+        },
+        5: {
             messageToDisplay: null,
             currentAnimationFrame: 0,
             lastAnimationChangeTime: Game.lastRender,
@@ -451,11 +468,20 @@ Game.render = function (tFrame) {
             )
         }
 
+
+    }
+
+    // render bubbles separately from the players
+    // TODO: bubbles should be rendered in time order not playerId order
+    // (newer messages should take priority over older ones)
+    for (let playerId in Game.renderState) {
         // Render chat bubbles
         // TODO use measureText() to get width and do like line breaks/hyphenation
         // There should exist a library to do this
+        let player = Game.renderState[playerId] // currentAnimationFrame, lastAnimationChangeTime
+        const [x, y] = [...Game.worldState.world_state_data[playerId].position] // FIXME: note this needs to be fixed because global position =/= position on canvas
 
-        if (player.messageToDisplay !== null) {
+        if (player && player.messageToDisplay !== null) {
             // Render messages only for five seconds (FIXME: pull this out into a constant somewhere)
             if (tFrame - player.messageToDisplay[1] < 5000) {
                 const boxHt = 150
@@ -469,7 +495,6 @@ Game.render = function (tFrame) {
                 CanvasTxt.drawText(Game.ctx, truncate(player.messageToDisplay[0], 100), x, y-boxHt-padding, 100, boxHt)
             }
         }
-
     }
 
     camera.end()
