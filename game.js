@@ -473,6 +473,7 @@ Game.render = function (tFrame) {
         // TODO use measureText() to get width and do like line breaks/hyphenation
         // There should exist a library to do this
         let player = Game.renderState[playerId] // currentAnimationFrame, lastAnimationChangeTime
+        const [x, y] = [...Game.worldState.world_state_data[playerId].position] // FIXME: note this needs to be fixed because global position =/= position on canvas
 
         if (player && player.messageToDisplay !== null) {
             // Render messages only for five seconds (FIXME: pull this out into a constant somewhere)
