@@ -3531,6 +3531,12 @@
                       return msg.replace(/> <[^>]+>\s?/, '')
                     }
                     return msg;
+                  },
+                  get messageImg() {
+                    if (replyingToMessage.event.content.msgtype === 'm.image') {
+                  return client.mxcUrlToHttp(replyingToMessage.event.content.url)
+                    }
+                    return undefined;
                   }
                 }"
                   class="flex items-center divide-x gap-x-2 px-2.5 py-1 border-x border-t rounded-tl-md rounded-tr-md w-full"
@@ -3551,9 +3557,19 @@
                     ></path>
                   </svg>
 
-                  <div class="flex flex-col pl-2 w-[calc(100%-30px)]">
-                    <p x-text="senderName" class="font-bold"></p>
-                    <p x-text="messageContent" class="truncate"></p>
+                  <div class="flex items-center pl-2 w-[calc(100%-30px)]">
+                    <template x-if="messageImg">
+                      <img
+                        alt=""
+                        :src="messageImg"
+                        class="w-8 h-8 object-cover mr-2"
+                      />
+                    </template>
+
+                    <div class="flex flex-col">
+                      <p x-text="senderName" class="font-bold"></p>
+                      <p x-text="messageContent" class="truncate"></p>
+                    </div>
                   </div>
                 </div>
               </template>
