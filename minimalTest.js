@@ -13,34 +13,103 @@ var viewingRoom = null;
 var messageHistory = {};
 var client = null;
 
-function sendMessage() {
+const messageData = {
+    messageMenuOpen: false,
+    selectedMessage: null,
+    replyingToMessage: null,
+    messageMenuTimer: null,
+    messageMenuDelay: 800, // Length of time we want the user to touch before showing menu
+    // WARNING: refresh the page whenever you enter/exit mobile simulator mode in the browser, otherwise the isMobile variable will be wrong (since we initialize it just once at the top of this file, don't want to reinitialize it every time user click)
+    openMessageMenu(e) {
+        this.messageMenuOpen = true;
+
+        const clickedTop = isMobile ? e.targetTouches[0].clientY - 20 : e.clientY - 30;
+        const clickedLeft = isMobile ? e.targetTouches[0].clientX - 15 : e.clientX + 30;
+        const messageMenuEl = document.getElementById('message_menu');
+        messageMenuEl.style.top = `${clickedTop - e.target.offsetParent.offsetTop}px`;
+        messageMenuEl.style.left = `${clickedLeft - e.target.offsetParent.offsetLeft}px`;
+
+        const messageEventId = e.target.parentElement.dataset.messageEventId;
+        const message = messageHistory[viewingRoom].find((message) => message.event.event_id === messageEventId);
+        this.selectedMessage = message;
+    },
+    handleRightClick(e) {
+          if (!isMobile) {
+            e.preventDefault();
+            this.openMessageMenu(e);
+      }
+    },
+    messageTouchStart(e) {
+        const self = this;
+        if (!this.messageMenuTimer) {
+            this.messageMenuTimer = setTimeout(function () {
+                self.messageMenuTimer = null;
+                self.openMessageMenu(e);
+              }, this.messageMenuDelay);
+          }
+    },
+    messageTouchEnd(e) {
+        // Stops short touches from firing the event
+        if (this.messageMenuTimer) {
+            clearTimeout(this.messageMenuTimer);
+            this.messageMenuTimer = null;
+        }
+    },
+    handleCloseMenu() {
+      if (this.messageMenuOpen) {
+          this.messageMenuOpen = false;
+          this.selectedMessage = null;
+          const messageMenuEl = document.getElementById('message_menu');
+          messageMenuEl.style.top = null;
+          messageMenuEl.style.left = null;
+      }
+    },
+    handleReply() {
+      this.replyingToMessage = this.selectedMessage;
+      this.handleCloseMenu();
+    },
+    handleSendMessage(e) {
+      // Button click
+      if (!e) {
+        sendMessage(this.replyingToMessage?.event.event_id);
+        this.replyingToMessage = null;
+      } else if (e.keyCode === 13) {
+          // Shift + enter pressed
+          if (e.shiftKey) {
+              e.stopPropagation();
+              return;
+          }
+
+          // Enter pressed (on mobile just add a new line)
+          if (!isMobile) {
+              e.preventDefault();
+              sendMessage(this.replyingToMessage?.event.event_id);
+              this.replyingToMessage = null;
+          }
+      }
+    }
+}
+
+function sendMessage(replyToEventId) {
     const message = document.getElementById("chat_input").innerText
     console.log(`Message received: ${message}`)
     const content = {
         "body": message,
-        "msgtype": "m.text"
+        "msgtype": "m.text",
+        ...(replyToEventId
+            ? {
+                'm.relates_to': {
+                    'm.in_reply_to': {
+                        event_id: replyToEventId,
+                    },
+                },
+            }
+            : {}),
     };
     client.sendEvent(viewingRoom, "m.room.message", content, "").then((result) => {
         document.getElementById("chat_input").innerText = ''
         render();
     })
-}
-
-function handleSendMessage(e) {
-    if (e.keyCode === 13) {
-        // Shift + enter pressed
-        if (e.shiftKey) {
-            e.stopPropagation();
-            return;
-        }
-
-        // Enter pressed (on mobile just add a new line)
-        if (!isMobile) {
-            e.preventDefault();
-
-            sendMessage();
-        }
-    }
 }
 
 function setRoomList() {
@@ -104,10 +173,17 @@ function render() {
             const senderId = message['event']['sender']
             const members = roomList.get(roomId).getMembers()
             const senderName = members.filter((member) => member.userId === senderId)[0].rawDisplayName
-            return acc + `<div>
-                <strong>${senderName}: </strong> ${message.event.content.body}
-                ${message.event.content.msgtype === "m.image" && `<img src=${client.mxcUrlToHttp(message.event.content.url)} />`}
-            </div>`
+          
+            return acc + `
+                <div :class="{'select-none': isMobile}" data-message-event-id="${message.event.event_id}">
+                    <strong>${senderName}: </strong>
+                    <span x-on:touchstart="messageTouchStart(event);" x-on:touchend="messageTouchEnd(event);" x-on:contextmenu="handleRightClick(event)">
+                        ${message.event.content.body}
+                      ${message.event.content.msgtype === "m.image" ? `<img src=${client.mxcUrlToHttp(message.event.content.url)} />` : ''}
+                    </span>
+                </span>
+                </div>
+            `
         }, '')
 
       
@@ -213,6 +289,8 @@ async function logout() {
     const logoutPromise = client.logout();
     window.localStorage.removeItem(MATRIX_LOGIN_LOCAL_STORAGE_KEY);
     await logoutPromise;
+    client.stopClient();
+    await client.clearStores();
     window.location.replace("login.html");
 }
 

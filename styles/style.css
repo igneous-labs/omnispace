@@ -51,11 +51,6 @@
     isolation: isolate;
   }
 
-#wrapper {
-    max-height: 100vh;
-    overflow: hidden;
-}
-
 #game_frame {
     height: 50vh;
     width: 100%;
