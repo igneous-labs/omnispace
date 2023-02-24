@@ -207,6 +207,7 @@ let PlayerSpriteSheetMap = {
     "@fp:melchior.info": "char_fp",
     "@pixisu:melchior.info": "char_pixisu",
     "@chinkeeyong:melchior.info": "char_chinkeeyong",
+    "@boven:melchior.info": "char_boven",
 }
 
 /*
@@ -230,7 +231,11 @@ let SpriteSheetFrameMap = {
     "char_chinkeeyong": {
         "standing": [[1, 48], [50, 97]],
         "walking": [[99, 146], [148, 195], [197, 244], [246, 293]],      
-    }
+    },
+    "char_boven": {
+        "standing": [[1, 47], [49, 95]],
+        "walking": [[97, 143], [145, 191], [193, 239], [241, 287]],      
+    }    
 }
 
 /*
@@ -265,6 +270,7 @@ Game.load = function () {
         Loader.loadImage('char_fp', './img/char_fp.png'),
         Loader.loadImage('char_pixisu', './img/char_pixisu.png'),
         Loader.loadImage('char_chinkeeyong', './img/char_chinkeeyong.png'),
+        Loader.loadImage('char_boven', './img/char_boven.png'),
     ];
 };
 
@@ -291,12 +297,18 @@ Game.setInitialState = function () {
                 direction: "right",
                 status: "standing",
             },
+            4: {
+                position: [200, 120],
+                direction: "left",
+                status: "standing",
+            },
         },
         client_chat_user_ids: {
             0: "default",
             1: "@fp:melchior.info",
             2: "@pixisu:melchior.info",
             3: "@chinkeeyong:melchior.info",
+            4: "@boven:melchior.info",
         }, 
     };
 
@@ -317,6 +329,11 @@ Game.setInitialState = function () {
             lastAnimationChangeTime: Game.lastRender,
         },
         3: {
+            messageToDisplay: null,
+            currentAnimationFrame: 0,
+            lastAnimationChangeTime: Game.lastRender,
+        },
+        4: {
             messageToDisplay: null,
             currentAnimationFrame: 0,
             lastAnimationChangeTime: Game.lastRender,
