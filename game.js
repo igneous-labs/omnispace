@@ -364,6 +364,9 @@ Game.render = function (tFrame) {
     // Render characters and map
     // console.log(`Rendering at tFrame ${tFrame}. Last render: ${Game.lastRender}`)
 
+    // if the networkHandler is not initialized, then there should be nothing to render
+    if (!Game.networkHandler.is_initialized) return;
+
     camera.moveTo(Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position[0], Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position[1])
     camera.begin()
     const room = Loader.getImage("room")
