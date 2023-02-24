@@ -1,3 +1,5 @@
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+
 const matrixLoginStoredStr = window.localStorage.getItem(MATRIX_LOGIN_LOCAL_STORAGE_KEY);
 if (!matrixLoginStoredStr) {
     window.location.replace("login.html");
@@ -30,16 +32,33 @@ function gameCommOnMatrixMsg(matrixEvent) {
 // ============================================== //
 
 function sendMessage() {
-    const message = document.getElementById("chat_input").value
+    const message = document.getElementById("chat_input").innerText
     console.log(`Message received: ${message}`)
     const content = {
         "body": message,
         "msgtype": "m.text"
     };
     client.sendEvent(viewingRoom, "m.room.message", content, "").then((result) => {
-        document.getElementById("chat_input").value = ''
+        document.getElementById("chat_input").innerText = ''
         render();
     })
+}
+
+function handleSendMessage(e) {
+    if (e.keyCode === 13) {
+        // Shift + enter pressed
+        if (e.shiftKey) {
+            e.stopPropagation();
+            return;
+        }
+
+        // Enter pressed (on mobile just add a new line)
+        if (!isMobile) {
+            e.preventDefault();
+
+            sendMessage();
+        }
+    }
 }
 
 function setRoomList() {
@@ -111,9 +130,9 @@ function render() {
 
       
         view.innerHTML = messageHistoryHTML
-      
+
         view.classList.remove('overflow-y-scroll')
-        
+
         // Autoscroll to new message, when scrollbar is at the bottom of chatbox
         const isScrolledToBottom = view.scrollHeight - view.clientHeight <= view.scrollTop + 1
       
@@ -212,6 +231,8 @@ async function logout() {
     const logoutPromise = client.logout();
     window.localStorage.removeItem(MATRIX_LOGIN_LOCAL_STORAGE_KEY);
     await logoutPromise;
+    client.stopClient();
+    await client.clearStores();
     window.location.replace("login.html");
 }
 

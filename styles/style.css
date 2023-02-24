@@ -64,3 +64,9 @@
 #chat_input {
     width: 100%;
 }
+
+#chat_input:empty::before {
+  content: attr(data-placeholder);
+  color: #a2acb4;
+  pointer-events: none;
+}
