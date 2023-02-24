@@ -24,12 +24,12 @@ const messageData = {
         this.messageMenuOpen = true;
 
         const clickedTop = isMobile ? e.targetTouches[0].clientY - 20 : e.clientY - 30;
-        const clickedLeft = isMobile ? e.targetTouches[0].clientX - 15 : e.clientX + 30;
+        const clickedLeft = isMobile ? e.targetTouches[0].clientX : e.clientX + 30;
         const messageMenuEl = document.getElementById('message_menu');
         messageMenuEl.style.top = `${clickedTop - e.target.offsetParent.offsetTop}px`;
         messageMenuEl.style.left = `${clickedLeft - e.target.offsetParent.offsetLeft}px`;
-
-        const messageEventId = e.target.parentElement.dataset.messageEventId;
+      
+        const messageEventId = e.target.closest('div').dataset.messageEventId;
         const message = messageHistory[viewingRoom].find((message) => message.event.event_id === messageEventId);
         this.selectedMessage = message;
     },
@@ -67,6 +67,9 @@ const messageData = {
     handleReply() {
       this.replyingToMessage = this.selectedMessage;
       this.handleCloseMenu();
+    },
+    handleUnselectReply() {
+      this.replyingToMessage = null;
     },
     handleSendMessage(e) {
       // Button click
