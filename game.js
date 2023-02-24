@@ -254,6 +254,7 @@ let Game = {
     lastTick: null,
     worldState: null,
     renderState: null,
+    networkHandler: null,
 
     // TODO find a better place to put these variables
     ACTIVE_PLAYER: null,
@@ -339,6 +340,7 @@ Game.run = function () {
     var p = Game.load();
     Promise.all(p).then((loaded) => {
         Game.setInitialState();
+        Game.networkHandler = new NetworkHandler();
         Game.main(performance.now());
     });
 };
@@ -517,7 +519,7 @@ Game.update = function (tFrame) {
         }
     }
 
-    networkHandler.sendPlayerState(playerData);
+    Game.networkHandler.sendPlayerState(playerData);
 
     function distanceBetween(a, b) {
         if (!a || !b) return 0;
@@ -779,10 +781,7 @@ class NetworkHandler {
     }
 }
 
-const networkHandler = new NetworkHandler();
-
-
-// 
+//
 // Let's start the game!
 //
 
