@@ -194,6 +194,8 @@ async function logout() {
     const logoutPromise = client.logout();
     window.localStorage.removeItem(MATRIX_LOGIN_LOCAL_STORAGE_KEY);
     await logoutPromise;
+    client.stopClient();
+    await client.clearStores();
     window.location.replace("login.html");
 }
 
