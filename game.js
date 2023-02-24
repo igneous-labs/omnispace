@@ -378,72 +378,72 @@ Game.render = function (tFrame) {
         // First render the player
         let player = Game.renderState[playerId] // currentAnimationFrame, lastAnimationChangeTime
 
-        let spriteSheetName = 'char_default';
-        // Default spritesheet 
-        if (Game.worldState.client_chat_user_ids[playerId] in PlayerSpriteSheetMap) {
-            spriteSheetName = PlayerSpriteSheetMap[Game.worldState.client_chat_user_ids[playerId]] // this gives e.g. "char_default"
+        if (player) {
+            // Default spritesheet 
+            let spriteSheetName = 'char_default';
+            if (Game.worldState.client_chat_user_ids[playerId] in PlayerSpriteSheetMap) {
+                spriteSheetName = PlayerSpriteSheetMap[Game.worldState.client_chat_user_ids[playerId]] // this gives e.g. "char_default"
+            }
+            
+            const playerSpriteSheet = SpriteSheetFrameMap[spriteSheetName] // this gives {walking: [[]], standing: [[]]}
+            let playerCurrentStatus = Game.worldState.world_state_data[playerId].status // this gives "walking" or "standing"
+            
+            switch(playerCurrentStatus) {
+                case ("standing"):
+                    if (tFrame - player.lastAnimationChangeTime > 500) {
+                        player.currentAnimationFrame = (player.currentAnimationFrame + 1) % (playerSpriteSheet[playerCurrentStatus].length)
+                        player.lastAnimationChangeTime = tFrame;
+                    }
+                    break;
+                case ("walking"):
+                    if (tFrame - player.lastAnimationChangeTime > 150) {
+                        player.currentAnimationFrame = (player.currentAnimationFrame + 1) % (playerSpriteSheet[playerCurrentStatus].length)
+                        player.lastAnimationChangeTime = tFrame;
+                    }
+                    break;
+            }
+
+            const sx = playerSpriteSheet[playerCurrentStatus][player.currentAnimationFrame][0]; // start x-coord of the slice of the spritesheet to draw
+            const sy = 0;
+            const sWidth = playerSpriteSheet[playerCurrentStatus][player.currentAnimationFrame][1] - sx; // width of the slice of the spritesheet to draw
+            const char = Loader.getImage(spriteSheetName) // which spritesheet to use 
+            const sHeight = char.height; // height of the spritesheet
+            const [x, y] = [...Game.worldState.world_state_data[playerId].position] // FIXME: note this needs to be fixed because global position =/= position on canvas
+
+            // flip or don't flip
+            if (Game.worldState.world_state_data[playerId].direction === "right") {
+
+                // https://stackoverflow.com/a/35973879 flipping sprite
+                Game.ctx.save()
+                Game.ctx.translate(x + sWidth, y);
+                Game.ctx.scale(-1, 1);            
+                Game.ctx.drawImage(
+                    char, 
+                    sx, 
+                    sy,
+                    sWidth, 
+                    sHeight, 
+                    0, 
+                    0,
+                    sWidth, 
+                    sHeight
+                )
+                Game.ctx.restore()
+            }
+            else {
+                Game.ctx.drawImage(
+                    char, 
+                    sx, 
+                    sy,
+                    sWidth, 
+                    sHeight, 
+                    x, 
+                    y,
+                    sWidth, 
+                    sHeight
+                )
+            }
         }
-        
-        const playerSpriteSheet = SpriteSheetFrameMap[spriteSheetName] // this gives {walking: [[]], standing: [[]]}
-        let playerCurrentStatus = Game.worldState.world_state_data[playerId].status // this gives "walking" or "standing"
-        
-        switch(playerCurrentStatus) {
-            case ("standing"):
-                if (tFrame - player.lastAnimationChangeTime > 500) {
-                    player.currentAnimationFrame = (player.currentAnimationFrame + 1) % (playerSpriteSheet[playerCurrentStatus].length)
-                    player.lastAnimationChangeTime = tFrame;
-                }
-                break;
-            case ("walking"):
-                if (tFrame - player.lastAnimationChangeTime > 150) {
-                    player.currentAnimationFrame = (player.currentAnimationFrame + 1) % (playerSpriteSheet[playerCurrentStatus].length)
-                    player.lastAnimationChangeTime = tFrame;
-                }
-                break;
-        }
-
-        const sx = playerSpriteSheet[playerCurrentStatus][player.currentAnimationFrame][0]; // start x-coord of the slice of the spritesheet to draw
-        const sy = 0;
-        const sWidth = playerSpriteSheet[playerCurrentStatus][player.currentAnimationFrame][1] - sx; // width of the slice of the spritesheet to draw
-        const char = Loader.getImage(spriteSheetName) // which spritesheet to use 
-        const sHeight = char.height; // height of the spritesheet
-        const [x, y] = [...Game.worldState.world_state_data[playerId].position] // FIXME: note this needs to be fixed because global position =/= position on canvas
-
-        // flip or don't flip
-        if (Game.worldState.world_state_data[playerId].direction === "right") {
-
-            // https://stackoverflow.com/a/35973879 flipping sprite
-            Game.ctx.save()
-            Game.ctx.translate(x + sWidth, y);
-            Game.ctx.scale(-1, 1);            
-            Game.ctx.drawImage(
-                char, 
-                sx, 
-                sy,
-                sWidth, 
-                sHeight, 
-                0, 
-                0,
-                sWidth, 
-                sHeight
-            )
-            Game.ctx.restore()
-        }
-        else {
-            Game.ctx.drawImage(
-                char, 
-                sx, 
-                sy,
-                sWidth, 
-                sHeight, 
-                x, 
-                y,
-                sWidth, 
-                sHeight
-            )
-        }
-
-
     }
 
     // render bubbles separately from the players
@@ -454,20 +454,22 @@ Game.render = function (tFrame) {
         // TODO use measureText() to get width and do like line breaks/hyphenation
         // There should exist a library to do this
         let player = Game.renderState[playerId] // currentAnimationFrame, lastAnimationChangeTime
-        const [x, y] = [...Game.worldState.world_state_data[playerId].position] // FIXME: note this needs to be fixed because global position =/= position on canvas
+        if (player) {
+            const [x, y] = [...Game.worldState.world_state_data[playerId].position] // FIXME: note this needs to be fixed because global position =/= position on canvas
 
-        if (player && player.messageToDisplay !== null) {
-            // Render messages only for five seconds (FIXME: pull this out into a constant somewhere)
-            if (tFrame - player.messageToDisplay[1] < 5000) {
-                const boxHt = 150
-                const padding = 5
-                Game.ctx.font = "16px sans-serif";
-                Game.ctx.fillStyle = `rgba(220, 220, 220, 0.7)`
-                Game.ctx.fillRect(x, y-boxHt-padding, 100, boxHt);
-                Game.ctx.strokeStyle =  `rgba(200, 200, 200, 1.0)`;
-                Game.ctx.strokeRect(x, y-boxHt-padding, 100, boxHt);
-                Game.ctx.fillStyle = "black";
-                CanvasTxt.drawText(Game.ctx, truncate(player.messageToDisplay[0], 100), x, y-boxHt-padding, 100, boxHt)
+            if (player && player.messageToDisplay !== null) {
+                // Render messages only for five seconds (FIXME: pull this out into a constant somewhere)
+                if (tFrame - player.messageToDisplay[1] < 5000) {
+                    const boxHt = 150
+                    const padding = 5
+                    Game.ctx.font = "16px sans-serif";
+                    Game.ctx.fillStyle = `rgba(220, 220, 220, 0.7)`
+                    Game.ctx.fillRect(x, y-boxHt-padding, 100, boxHt);
+                    Game.ctx.strokeStyle =  `rgba(200, 200, 200, 1.0)`;
+                    Game.ctx.strokeRect(x, y-boxHt-padding, 100, boxHt);
+                    Game.ctx.fillStyle = "black";
+                    CanvasTxt.drawText(Game.ctx, truncate(player.messageToDisplay[0], 100), x, y-boxHt-padding, 100, boxHt)
+                }
             }
         }
     }
@@ -668,7 +670,7 @@ class NetworkHandler {
                 .then((arrayBuffer) => {
                     const payload =  new DataView(arrayBuffer);
                     const messageType = payload.getUint8(0);
-                    console.log(`[NetworkHandler] received event type: ${messageType}`);
+                    // console.log(`[NetworkHandler] received event type: ${messageType}`);
                     switch (messageType) {
                         case ACKNOWLEDGE_MESSAGE_TYPE:
                             const clientId = payload.getUint16(1, true);
@@ -699,7 +701,7 @@ class NetworkHandler {
                             });
                             break;
                         case WORLD_STATE_MESSAGE_TYPE:
-                            console.log("[NetworkHandler::on_message] received world state");
+                            // console.log("[NetworkHandler::on_message] received world state");
                             const worldStateDataOffset = 9;
                             const [instanceChatUserIdsOffset, worldStateDataBytes] = slicePackedByteArray(arrayBuffer, worldStateDataOffset);
                             const [_, instanceChatUserIdsBytes] = slicePackedByteArray(arrayBuffer, instanceChatUserIdsOffset);
@@ -707,7 +709,7 @@ class NetworkHandler {
                             // Parse worldStateData
                             const worldStateData = parseWorldStateData(worldStateDataBytes);
                             worldStateData[Game.ACTIVE_PLAYER] = Game.worldState.world_state_data[Game.ACTIVE_PLAYER];
-                            console.log("[NetworkHandler::on_message] world state received:", worldStateData);
+                            // console.log("[NetworkHandler::on_message] world state received:", worldStateData);
                             Game.worldState.world_state_data = worldStateData;
 
                             // Parse instanceChatUserIds
