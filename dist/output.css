@@ -1181,6 +1181,10 @@ select {
   min-height: 0px;
 }
 
+.min-h-\[32px\] {
+  min-height: 32px;
+}
+
 .w-0 {
   width: 0px;
 }
@@ -1207,6 +1211,10 @@ select {
 
 .w-screen {
   width: 100vw;
+}
+
+.min-w-\[32px\] {
+  min-width: 32px;
 }
 
 .max-w-4xl {
@@ -1773,6 +1781,11 @@ select {
 
 .gap-6 {
   gap: 1.5rem;
+}
+
+.gap-x-2 {
+  -moz-column-gap: 0.5rem;
+       column-gap: 0.5rem;
 }
 
 .space-x-2 > :not([hidden]) ~ :not([hidden]) {
@@ -2389,6 +2402,11 @@ select {
   padding-right: 0.5rem;
 }
 
+.px-2\.5 {
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+}
+
 .px-3 {
   padding-left: 0.75rem;
   padding-right: 0.75rem;
@@ -2402,6 +2420,16 @@ select {
 .px-6 {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
+}
+
+.py-0 {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.py-0\.5 {
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
 }
 
 .py-1 {
