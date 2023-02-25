@@ -460,22 +460,49 @@ Game.render = function (tFrame) {
 
             if (player) {
                 let spriteSheetName = 'char_default';
-                if (Game.worldState.client_chat_user_ids[playerId] in PlayerSpriteSheetMap) {
+                let matrixUserId = Game.worldState.client_chat_user_ids[playerId]
+
+                if (matrixUserId in PlayerSpriteSheetMap) {
                     spriteSheetName = PlayerSpriteSheetMap[Game.worldState.client_chat_user_ids[playerId]] // this gives e.g. "char_default"
                 }
                 
                 const playerSpriteSheet = SpriteSheetFrameMap[spriteSheetName] // this gives {walking: [[]], standing: [[]]}
                 let playerCurrentStatus = Game.worldState.world_state_data[playerId].status // this gives "walking" or "standing"
+                const sx = playerSpriteSheet[playerCurrentStatus][player.currentAnimationFrame][0]; // start x-coord of the slice of the spritesheet to draw
+                const sWidth = playerSpriteSheet[playerCurrentStatus][player.currentAnimationFrame][1] - sx; // width of the slice of the spritesheet to draw    
                 const char = Loader.getImage(spriteSheetName) // which spritesheet to use 
                 const sHeight = char.height; // height of the spritesheet
                 const boxHt = 20
+                const boxWh = 80
+                const offsetX = x+sWidth/2-boxWh/2;
+                const offsetY = y+sHeight;
                 Game.ctx.font = "16px sans-serif";
                 Game.ctx.fillStyle = `rgba(220, 220, 220, 0.7)`
-                Game.ctx.fillRect(x, y+sHeight, 70, boxHt);
+                Game.ctx.fillRect(offsetX, offsetY, boxWh, boxHt);
                 Game.ctx.strokeStyle =  `rgba(100, 100, 100, 1.0)`;
-                Game.ctx.strokeRect(x, y+sHeight, 70, boxHt);
+                Game.ctx.strokeRect(offsetX, offsetY, boxWh, boxHt);
                 Game.ctx.fillStyle = "black";
-                CanvasTxt.drawText(Game.ctx, Game.worldState.client_chat_user_ids[playerId].replace(':melchior.info', '').slice(1), x, y+sHeight, 70, boxHt)
+
+                if (matrixUserId) {
+                    CanvasTxt.drawText(
+                        Game.ctx, 
+                        Game.worldState.client_chat_user_ids[playerId].replace(':melchior.info', '').slice(1), 
+                        offsetX, 
+                        offsetY, 
+                        boxWh, 
+                        boxHt
+                    )
+                }
+                else {
+                    CanvasTxt.drawText(
+                        Game.ctx, 
+                        "Guest", 
+                        offsetX,
+                        offsetY, 
+                        boxWh, 
+                        boxHt
+                    )
+                }
 
             }
 
