@@ -452,6 +452,27 @@ Game.render = function (tFrame) {
         if (player) {
             const [x, y] = [...Game.worldState.world_state_data[playerId].position] // FIXME: note this needs to be fixed because global position =/= position on canvas
 
+            if (player) {
+                let spriteSheetName = 'char_default';
+                if (Game.worldState.client_chat_user_ids[playerId] in PlayerSpriteSheetMap) {
+                    spriteSheetName = PlayerSpriteSheetMap[Game.worldState.client_chat_user_ids[playerId]] // this gives e.g. "char_default"
+                }
+                
+                const playerSpriteSheet = SpriteSheetFrameMap[spriteSheetName] // this gives {walking: [[]], standing: [[]]}
+                let playerCurrentStatus = Game.worldState.world_state_data[playerId].status // this gives "walking" or "standing"
+                const char = Loader.getImage(spriteSheetName) // which spritesheet to use 
+                const sHeight = char.height; // height of the spritesheet
+                const boxHt = 20
+                Game.ctx.font = "16px sans-serif";
+                Game.ctx.fillStyle = `rgba(220, 220, 220, 0.7)`
+                Game.ctx.fillRect(x, y+sHeight, 70, boxHt);
+                Game.ctx.strokeStyle =  `rgba(100, 100, 100, 1.0)`;
+                Game.ctx.strokeRect(x, y+sHeight, 70, boxHt);
+                Game.ctx.fillStyle = "black";
+                CanvasTxt.drawText(Game.ctx, Game.worldState.client_chat_user_ids[playerId].replace(':melchior.info', '').slice(1), x, y+sHeight, 70, boxHt)
+
+            }
+
             if (player && player.messageToDisplay !== null) {
                 // Render messages only for five seconds (FIXME: pull this out into a constant somewhere)
                 if (tFrame - player.messageToDisplay[1] < 5000) {
