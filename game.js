@@ -376,22 +376,30 @@ Game.render = function (tFrame) {
 
     Game.ctx.fillStyle = "rgb(27, 155, 152)";
     Game.ctx.fillRect(0, 0, 1500, 1500);
-    const room = Loader.getImage("floathouse")
-    // Scale down half cos source image is big
-    const rw = room.width/2;
-    const rh = room.height/2
+    // const room = Loader.getImage("floathouse")
+    // // Scale down half cos source image is big
+    // const rw = room.width/2;
+    // const rh = room.height/2
 
+    // Game.ctx.drawImage(
+    //     room, 
+    //     (1500-rw)/2, 
+    //     (1500-rh)/2,
+    //     rw,
+    //     rh,
+    // )
+
+    // overworld is big
+    const overworld = Loader.getImage("overworld")
+    const rw = overworld.width * 2
+    const rh = overworld.height * 2
     Game.ctx.drawImage(
-        room, 
+        overworld, 
         (1500-rw)/2, 
-        (1500-rh)/2,
+        (1500-rh)/2, 
         rw,
         rh,
     )
-
-
-    // const overworld = Loader.getImage("overworld")
-    // Game.ctx.drawImage(room2, (1500-overworld.width)/2, (1500-overworld.height)/2, overworld.width*2, overworld.height*2)
 
     for (let playerId in Game.renderState) {
         // Render the player, then any chat bubbles
