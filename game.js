@@ -309,6 +309,7 @@ let Game = {
 Game.load = function () {
     return [
         Loader.loadImage('room', './img/room.png'),
+        Loader.loadImage('room2', './img/room2.jpg'),
         Loader.loadImage('char_default', './img/char_default.png'),
         Loader.loadImage('char_fp', './img/char_fp.png'),
         Loader.loadImage('char_pixisu', './img/char_pixisu.png'),
@@ -318,7 +319,6 @@ Game.load = function () {
         Loader.loadImage('char_fe', './img/char_fe.png'),
         Loader.loadImage('char_lieu', './img/char_lieu.png'),
         Loader.loadImage('char_rczjian', './img/char_rczjian.png'),
-
     ];
 };
 
@@ -370,8 +370,8 @@ Game.render = function (tFrame) {
 
     camera.moveTo(Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position[0], Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position[1])
     camera.begin()
-    const room = Loader.getImage("room")
-    Game.ctx.drawImage(room, 0, 0, 517, 400)
+    const room2 = Loader.getImage("room2")
+    Game.ctx.drawImage(room2, 0, 0)
 
     for (let playerId in Game.renderState) {
         // Render the player, then any chat bubbles
@@ -871,6 +871,17 @@ canvas.addEventListener("click", handleTouchOrClick);
 window.onload = function () {
     Game.ctx = canvas.getContext('2d');
     camera = new Camera(Game.ctx, {distance: 350});
+    if (window.innerHeight > 1000 && window.innerWidth > 1000) {
+        canvas.height = 800;
+        canvas.width = 800;
+        camera.distance = 500;
+    }
+    if (window.innerHeight > 1000 && window.innerWidth > 1600) {
+        canvas.height = 800;
+        canvas.width = 1200;
+        camera.distance = 800;
+    }
+    
     CanvasTxt = window.canvasTxt.default;
     Game.run();
 };
