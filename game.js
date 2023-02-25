@@ -310,6 +310,9 @@ Game.load = function () {
     return [
         Loader.loadImage('room', './img/room.png'),
         Loader.loadImage('room2', './img/room2.jpg'),
+        Loader.loadImage('farm', './img/farm.jpg'),
+        Loader.loadImage('overworld', './img/bg.png'),
+        Loader.loadImage('floathouse', './img/floathouse.png'),
         Loader.loadImage('char_default', './img/char_default.png'),
         Loader.loadImage('char_fp', './img/char_fp.png'),
         Loader.loadImage('char_pixisu', './img/char_pixisu.png'),
@@ -370,8 +373,25 @@ Game.render = function (tFrame) {
 
     camera.moveTo(Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position[0], Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position[1])
     camera.begin()
-    const room2 = Loader.getImage("room2")
-    Game.ctx.drawImage(room2, 0, 0)
+
+    Game.ctx.fillStyle = "rgb(27, 155, 152)";
+    Game.ctx.fillRect(0, 0, 1500, 1500);
+    const room = Loader.getImage("floathouse")
+    // Scale down half cos source image is big
+    const rw = room.width/2;
+    const rh = room.height/2
+
+    Game.ctx.drawImage(
+        room, 
+        (1500-rw)/2, 
+        (1500-rh)/2,
+        rw,
+        rh,
+    )
+
+
+    // const overworld = Loader.getImage("overworld")
+    // Game.ctx.drawImage(room2, (1500-overworld.width)/2, (1500-overworld.height)/2, overworld.width*2, overworld.height*2)
 
     for (let playerId in Game.renderState) {
         // Render the player, then any chat bubbles
@@ -744,7 +764,8 @@ class NetworkHandler {
                             // It feels like this should be done in the render loop.
                             // populating default player state
                             Game.worldState.world_state_data[clientId] = {
-                                position: [200, 250],
+                                // FIXME magic number -- check other instances of 1500
+                                position: [1500/2, 1500/2],
                                 direction: "right",
                                 status: "standing",
                             };
@@ -870,11 +891,11 @@ canvas.addEventListener("click", handleTouchOrClick);
 
 window.onload = function () {
     Game.ctx = canvas.getContext('2d');
-    camera = new Camera(Game.ctx, {distance: 350});
+    camera = new Camera(Game.ctx, {distance: 500});
     if (window.innerHeight > 1000 && window.innerWidth > 1000) {
         canvas.height = 800;
         canvas.width = 800;
-        camera.distance = 500;
+        camera.distance = 600;
     }
     if (window.innerHeight > 1000 && window.innerWidth > 1600) {
         canvas.height = 800;
