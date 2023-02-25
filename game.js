@@ -891,7 +891,7 @@ canvas.addEventListener("click", handleTouchOrClick);
 
 window.onload = function () {
     Game.ctx = canvas.getContext('2d');
-    camera = new Camera(Game.ctx, {distance: 500});
+    camera = new Camera(Game.ctx, {distance: 400});
     if (window.innerHeight > 1000 && window.innerWidth > 1000) {
         canvas.height = 800;
         canvas.width = 800;
