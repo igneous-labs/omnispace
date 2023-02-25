@@ -4,7 +4,10 @@
     <script defer src="lib/matrix.js"></script>
     <script defer src="consts.js"></script>
     <script defer src="minimalTest.js"></script>
-    <script defer src="gameComm.js"></script>
+    <!-- <script defer src="gameComm.js"></script> -->
+    <script type="module" src="https://unpkg.com/canvas-txt@3.0.0/build/index.js"></script>
+    <script defer src="game.js"></script>
+
     <title>Test</title>
     <meta charset="utf-8" />
     <link rel="icon" href="data:," />
@@ -3426,12 +3429,7 @@
 
       <!-- Start game -->
       <div id="game" class="mt-4">
-        <iframe
-          id="game_frame"
-          allow="cross-origin-isolated"
-          src="https://telegram-space-4glp3pnhm-igneous-labs.vercel.app/"
-        >
-        </iframe>
+        <canvas id = "canvas" width="400" height="400"></canvas>
       </div>
       <!-- End game -->
 
@@ -3458,6 +3456,19 @@
       >
         <div id="view"></div>
       </div>
+      <dialog id="uploadImageDialog">
+        <form method="dialog" onsubmit="sendImageMessage(event)">
+          <strong> Send an image </strong>
+          <div>
+            <img id="uploadPreview" />
+          </div>
+          <div>
+            <button value="cancel" type="button" onclick="document.getElementById('uploadImageDialog').close()">Cancel</button>
+            <button id="confirmBtn" type="submit">Send</button>
+          </div>
+        </form>
+      </dialog>
+      <div id="message_form" class="flex items-end gap-x-2 mt-4">
 
       <div
         id="message_menu"

@@ -13,6 +13,51 @@ var viewingRoom = null;
 var messageHistory = {};
 var client = null;
 
+// This function bridges the chat client and game client
+function gameCommOnMatrixMsg(matrixEvent) {
+    // FIXME this couples the client code to the game code, and should be avoided
+    console.log("New matrix message. gameCommOnMatrixMsg called")
+    const matrixUserId = matrixEvent.getSender();
+    const idUserMapping = Game.worldState.client_chat_user_ids
+
+    const gameUserIds = Object.entries(idUserMapping).filter(([ , v]) => v === matrixUserId)
+    console.log(gameUserIds)
+    if (gameUserIds.length > 0) {
+        gameUserIds.forEach(([gameUserId, matrixUserId]) => {
+            if (gameUserId in Game.renderState) {
+                Game.renderState[gameUserId].messageToDisplay = [matrixEvent.getContent().body, performance.now()]
+            } 
+        });
+    }
+    
+}
+
+// ============================================== //
+
+function sendImageMessage(e) {
+    e.preventDefault();
+    const imageEle = document.getElementById('uploadPreview')
+    // get image blob from blob url
+    fetch(imageEle.src).then(res => res.blob().then(blob => {
+        // upload blob to matrix server and get mxc url
+        client.uploadContent(blob).then((res) => {
+            const content = {
+                "body": "Image", // file name
+                "msgtype": "m.image",
+                "url": res.content_uri,
+                "info": {
+                    "mimetype": blob.type,
+                }
+            }
+            client.sendEvent(viewingRoom, "m.room.message", content, "").then((result) => {
+                imageEle.src = ""
+                document.getElementById('uploadImageDialog').close()
+                render();
+            })
+        })
+    }));
+}
+
 const messageData = {
     messageMenuOpen: false,
     selectedMessage: null,
@@ -203,22 +248,29 @@ function render() {
     }
 }
 
-function handleImagePaste(evt) {
+function handlePaste(evt) {
+    const clipboardItems = evt.clipboardData.items;
+    const images = [].slice.call(clipboardItems).filter(function (item) {
+        // Filter the image items only
+        return item.type.indexOf('image') !== -1;
+    });
+    if (images.length === 0) {
+        return;
+    }
+    else {
+        console.log(images)
+        handleImagePaste(images);
+    }
+}
+
+function handleImagePaste(images) {
     const imageUploadDialog = document.getElementById("uploadImageDialog")
     console.log("pasted")
     imageUploadDialog.showModal();
     // Handle the `paste` event
     // Get the data of clipboard
-    const clipboardItems = evt.clipboardData.items;
-    const items = [].slice.call(clipboardItems).filter(function (item) {
-        // Filter the image items only
-        return item.type.indexOf('image') !== -1;
-    });
-    if (items.length === 0) {
-        return;
-    }   
-
-    const item = items[0];
+       
+    const item = images[0];
     console.log(item)
     // Get the blob of image
     const blob = item.getAsFile();
@@ -239,10 +291,11 @@ function setCallbacksOnPrepared() {
     });
 
     client.on("Room.timeline", (event, room, toStartOfTimeline) => {
-        appendMessageEvent(event, room, toStartOfTimeline);
-        // only send recent/new messages to game
-        if (gameCommOnMatrixMsg && isRecentEvent(event)) {
-            gameCommOnMatrixMsg(event);
+        if (event.getType() === "m.room.message") {
+            appendMessageEvent(event, room, toStartOfTimeline);
+            if (isRecentEvent(event)) {
+                gameCommOnMatrixMsg(event);
+            }
         }
         // so that most recent appears first
         setRoomList();
@@ -253,9 +306,6 @@ function setCallbacksOnPrepared() {
 function appendMessageEvent(event, room, toStartOfTimeline) {
     if (toStartOfTimeline) {
         return; // don't print paginated results
-    }
-    if (event.getType() !== "m.room.message") {
-        return; // only print messages
     }
     if (!messageHistory[room.roomId]) {
         messageHistory[room.roomId] = []
@@ -297,5 +347,5 @@ async function logout() {
     window.location.replace("login.html");
 }
 
-document.addEventListener('paste', handleImagePaste);
+document.addEventListener('paste', handlePaste);
 start();
