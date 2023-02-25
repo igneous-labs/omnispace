@@ -198,6 +198,26 @@ Loader.getImage = function (key) {
 let CanvasTxt = null;
 
 /*
+* Parses the spritesheet json to generate the spritesheet mapping
+*/
+function parseSpritesheetJson(j) {
+    const s0 = j["frames"]["standingOneHanded-0.png"]["frame"];
+    const s1 = j["frames"]["standingOneHanded-1.png"]["frame"];
+    const w0 = j["frames"]["walkingOneHanded-0.png"]["frame"];
+    const w1 = j["frames"]["walkingOneHanded-1.png"]["frame"];
+    const w2 = j["frames"]["walkingOneHanded-2.png"]["frame"];
+    const w3 = j["frames"]["walkingOneHanded-3.png"]["frame"];
+
+    return {
+        "standing": [[s0.x, s0.x + s0.w], [s1.x, s1.x + s1.w]],
+        "walking": [
+            [w0.x, w0.x + w0.w], [w1.x, w1.x + w1.w],
+            [w2.x, w2.x + w2.w], [w3.x, w3.x + w3.w],
+        ]
+    }
+}
+
+/*
 * Spritesheet mapping object
 * Maps each matrix ID to their corresponding character spritesheet
 */
@@ -209,6 +229,8 @@ let PlayerSpriteSheetMap = {
     "@chinkeeyong:melchior.info": "char_chinkeeyong",
     "@Boven:melchior.info": "char_boven",
     "@hunter2:melchior.info": "char_hunter2",
+    "@fe:melchior.info": "char_fe",
+    "@thesmolbeann:melchior.info": "char_fe",
 }
 
 /*
@@ -239,8 +261,12 @@ let SpriteSheetFrameMap = {
     },
     "char_hunter2": {
         "standing": [[1, 51], [53, 103]],
-        "walking": [[105, 155], [157, 207], [209, 259], [261, 302]],      
+        "walking": [[105, 155], [157, 207], [209, 259], [261, 312]],      
     },
+    "char_fe": {
+        "standing": [ [ 1, 62 ], [ 64, 125 ] ],
+        "walking": [ [ 127, 188 ], [ 190, 251 ], [ 253, 314 ], [ 316, 377 ]],
+      },
 }
 
 /*
@@ -279,6 +305,8 @@ Game.load = function () {
         Loader.loadImage('char_chinkeeyong', './img/char_chinkeeyong.png'),
         Loader.loadImage('char_boven', './img/char_boven.png'),
         Loader.loadImage('char_hunter2', './img/char_hunter2.png'),
+        Loader.loadImage('char_fe', './img/char_fe.png'),
+
     ];
 };
 
