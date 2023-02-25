@@ -287,12 +287,6 @@ Game.setInitialState = function () {
         world_state_data: {
         },
         client_chat_user_ids: {
-            0: "default",
-            1: "@fp:melchior.info",
-            2: "@pixisu:melchior.info",
-            3: "@chinkeeyong:melchior.info",
-            4: "@Boven:melchior.info",
-            5: "@hunter2:melchior.info",
         }, 
     };
 
@@ -524,22 +518,6 @@ Game.update = function (tFrame) {
         return Math.sqrt(Math.pow(a[0]-b[0], 2) + Math.pow(a[1]-b[1], 2));
     }
 }
-
-/* 
-* Player object
-*
-*/
-
-// let player = {
-//     currentAnimationState: null,
-//     currentAnimationFrame: null,
-//     lastAnimationChangeTime: null,
-//     spritesheet: "char_default",
-//     spriteMapping: {
-//         "standing": [[0, 40], [41, 81]],
-//         "walking": [[82, 122], [123, 163], [164, 204], [205, 245]]
-//     }
-// }
 
 /*
 * Touch handler
