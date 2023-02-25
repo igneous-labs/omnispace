@@ -892,6 +892,11 @@ canvas.addEventListener("click", handleTouchOrClick);
 window.onload = function () {
     Game.ctx = canvas.getContext('2d');
     camera = new Camera(Game.ctx, {distance: 400});
+    // dumb check for mobile: FIXME
+    if (window.innerWidth < 600 && window.innerHeight > window.innerWidth) {
+        canvas.height = window.innerWidth;
+        canvas.width = window.innerWidth;
+    }
     if (window.innerHeight > 1000 && window.innerWidth > 1000) {
         canvas.height = 800;
         canvas.width = 800;
