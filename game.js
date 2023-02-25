@@ -311,6 +311,7 @@ Game.load = function () {
         Loader.loadImage('room', './img/room.png'),
         Loader.loadImage('room2', './img/room2.jpg'),
         Loader.loadImage('farm', './img/farm.jpg'),
+        Loader.loadImage('town', './img/town.png'),
         Loader.loadImage('overworld', './img/bg.png'),
         Loader.loadImage('floathouse', './img/floathouse.png'),
         Loader.loadImage('char_default', './img/char_default.png'),
@@ -376,6 +377,8 @@ Game.render = function (tFrame) {
 
     Game.ctx.fillStyle = "rgb(27, 155, 152)";
     Game.ctx.fillRect(0, 0, 1500, 1500);
+
+
     // const room = Loader.getImage("floathouse")
     // // Scale down half cos source image is big
     // const rw = room.width/2;
@@ -400,6 +403,18 @@ Game.render = function (tFrame) {
         rw,
         rh,
     )
+
+    // const room = Loader.getImage("town")
+    // const rw = room.width * 2;
+    // const rh = room.height * 2;
+    // Game.ctx.drawImage(
+    //     room, 
+    //     (1500-rw)/2, 
+    //     (1500-rh)/2,
+    //     rw,
+    //     rh,
+    // )
+    
 
     for (let playerId in Game.renderState) {
         // Render the player, then any chat bubbles
@@ -901,22 +916,15 @@ window.onload = function () {
     Game.ctx = canvas.getContext('2d');
     camera = new Camera(Game.ctx, {distance: 400});
     // dumb check for mobile: FIXME
-    if (window.innerWidth < 600 && window.innerHeight > window.innerWidth) {
+    if (window.innerHeight >= window.innerWidth) {
         canvas.height = window.innerWidth;
         canvas.width = window.innerWidth;
     }
-    if (window.innerHeight > 1000 && window.innerWidth > 1000) {
+    else if (window.innerHeight > 1000 && window.innerWidth > 1000) {
         canvas.height = 800;
         canvas.width = 800;
-        camera.distance = 600;
-    }
-    if (window.innerHeight > 1000 && window.innerWidth > 1600) {
-        canvas.height = 800;
-        canvas.width = 1200;
-        camera.distance = 800;
     }
     
     CanvasTxt = window.canvasTxt.default;
     Game.run();
 };
-
