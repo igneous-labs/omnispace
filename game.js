@@ -232,6 +232,7 @@ let PlayerSpriteSheetMap = {
     "@fe:melchior.info": "char_fe",
     "@thesmolbeann:melchior.info": "char_fe",
     "@lieu:melchior.info": "char_lieu",
+    "@rczjian:melchior.info": "char_rczjian",
 }
 
 /*
@@ -271,7 +272,11 @@ let SpriteSheetFrameMap = {
       "char_lieu": {
         "standing": [ [ 1, 95 ], [ 97, 188 ] ],
         "walking": [ [ 190, 287 ], [ 289, 393 ], [ 395, 493 ], [ 495, 590 ] ],
-      }
+      },
+    "char_rczjian": {
+        "standing": [ [ 1, 154 ], [ 156, 309 ] ],
+        "walking": [ [ 311, 464 ], [ 466, 619 ], [ 621, 774 ], [ 776, 929 ] ]
+    }
 }
 
 /*
@@ -312,6 +317,7 @@ Game.load = function () {
         Loader.loadImage('char_hunter2', './img/char_hunter2.png'),
         Loader.loadImage('char_fe', './img/char_fe.png'),
         Loader.loadImage('char_lieu', './img/char_lieu.png'),
+        Loader.loadImage('char_rczjian', './img/char_rczjian.png'),
 
     ];
 };
