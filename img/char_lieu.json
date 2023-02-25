@@ -1,0 +1,135 @@
+{
+	"frames": {
+		"standingOneHanded-0.png": {
+			"frame": {
+				"x": 1,
+				"y": 1,
+				"w": 94,
+				"h": 102
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 94,
+				"h": 102
+			},
+			"sourceSize": {
+				"w": 94,
+				"h": 102
+			}
+		},
+		"standingOneHanded-1.png": {
+			"frame": {
+				"x": 97,
+				"y": 1,
+				"w": 91,
+				"h": 102
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 91,
+				"h": 102
+			},
+			"sourceSize": {
+				"w": 91,
+				"h": 102
+			}
+		},
+		"walkingOneHanded-0.png": {
+			"frame": {
+				"x": 190,
+				"y": 1,
+				"w": 97,
+				"h": 98
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 97,
+				"h": 98
+			},
+			"sourceSize": {
+				"w": 97,
+				"h": 98
+			}
+		},
+		"walkingOneHanded-1.png": {
+			"frame": {
+				"x": 289,
+				"y": 1,
+				"w": 104,
+				"h": 95
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 104,
+				"h": 95
+			},
+			"sourceSize": {
+				"w": 104,
+				"h": 95
+			}
+		},
+		"walkingOneHanded-2.png": {
+			"frame": {
+				"x": 395,
+				"y": 1,
+				"w": 98,
+				"h": 98
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 98,
+				"h": 98
+			},
+			"sourceSize": {
+				"w": 98,
+				"h": 98
+			}
+		},
+		"walkingOneHanded-3.png": {
+			"frame": {
+				"x": 495,
+				"y": 1,
+				"w": 95,
+				"h": 96
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 95,
+				"h": 96
+			},
+			"sourceSize": {
+				"w": 95,
+				"h": 96
+			}
+		}
+	},
+	"meta": {
+		"app": "http://www.codeandweb.com/texturepacker",
+		"version": "1.0",
+		"image": "spritesheet.png",
+		"format": "RGBA8888",
+		"size": {
+			"w": 591,
+			"h": 104
+		},
+		"scale": "1"
+	}
+}

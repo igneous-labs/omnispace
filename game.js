@@ -231,6 +231,7 @@ let PlayerSpriteSheetMap = {
     "@hunter2:melchior.info": "char_hunter2",
     "@fe:melchior.info": "char_fe",
     "@thesmolbeann:melchior.info": "char_fe",
+    "@lieu:melchior.info": "char_lieu",
 }
 
 /*
@@ -267,6 +268,10 @@ let SpriteSheetFrameMap = {
         "standing": [ [ 1, 62 ], [ 64, 125 ] ],
         "walking": [ [ 127, 188 ], [ 190, 251 ], [ 253, 314 ], [ 316, 377 ]],
       },
+      "char_lieu": {
+        "standing": [ [ 1, 95 ], [ 97, 188 ] ],
+        "walking": [ [ 190, 287 ], [ 289, 393 ], [ 395, 493 ], [ 495, 590 ] ],
+      }
 }
 
 /*
@@ -306,6 +311,7 @@ Game.load = function () {
         Loader.loadImage('char_boven', './img/char_boven.png'),
         Loader.loadImage('char_hunter2', './img/char_hunter2.png'),
         Loader.loadImage('char_fe', './img/char_fe.png'),
+        Loader.loadImage('char_lieu', './img/char_lieu.png'),
 
     ];
 };
