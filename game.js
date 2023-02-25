@@ -394,8 +394,8 @@ Game.render = function (tFrame) {
 
     // overworld is big
     const overworld = Loader.getImage("overworld")
-    const rw = overworld.width * 2
-    const rh = overworld.height * 2
+    const rw = overworld.width * 3
+    const rh = overworld.height * 3
     Game.ctx.drawImage(
         overworld, 
         (1500-rw)/2, 
