@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+    body {
+        background-color: white;
+        height: 100%;
+    }
+    #header {
+        position: fixed;
+        min-height: 50px;
+        max-height: 50px;
+        background-color: maroon;
+        width: 100%;
+    }
+    #chat_area {
+        overflow: scroll;
+        overflow-x: hidden;
+        background-color: teal;
+        width: 100%;
+        padding-top: 50px;
+        height: calc(100vh - 100px);
+    }
+    #chat_log {
+        display: flex;
+        flex-direction: column;
+        margin: auto;
+        --rad: 0px;
+        --rad-sm: 0px;
+    }
+    .message_bubble {
+        width: fit-content;
+        max-width: 80%;
+        overflow-wrap: break-word;
+        margin: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: var(--rad-sm) var(--rad) var(--rad) var(--rad-sm);
+    }
+
+    .other_message {
+        background-color: rgb(235, 235, 235);
+        margin-right: auto;
+    }
+
+    .self_message {
+        background: linear-gradient(30deg, #bec2ee, #a3f8ed);
+        margin-left: auto;
+        border-radius: var(--rad) var(--rad-sm) var(--rad-sm) var(--rad);
+    }
+
+    #footer {
+        position: fixed;
+        bottom: 0;
+        min-height: 50px;
+        max-height: 50px;
+        background-color: yellow;
+        width: 100%;
+    }
+
+
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<body>
+    <div id="header">Header</div>
+    <div id="chat_area">
+        <div id="chat_log">
+            <div class="message_bubble self_message select-none">
+                <span>
+                    this is a massive shame because bondee squandered its users' good will;
+                    there was absolutely nothing to do
+                </span>
+            </div>
+            <div class="message_bubble other_message select-none">
+                <span>
+                    so what should people be able to do?
+                </span>
+            </div>
+            <div class="message_bubble other_message select-none">
+                <span>
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                </span>
+            </div>
+            <div class="message_bubble self_message select-none">
+                <span>
+                    "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
+                </span>
+            </div>
+            <div class="message_bubble other_message select-none">
+                <span>
+                    "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
+                </span>
+            </div>
+            <div class="message_bubble self_message select-none">
+                <span>
+                    OK boss
+                </span>
+            </div>
+
+        </div>
+    </div>
+    <div id="footer">Footer</div>
+</body>
