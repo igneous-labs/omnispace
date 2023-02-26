@@ -21,13 +21,21 @@
     referrerpolicy="no-referrer"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js" defer crossorigin="anonymous"
     referrerpolicy="no-referrer"></script>
-  <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css" crossorigin="anonymous" />
 </head>
 
 <body>
   <main class="max-h-full flex flex-col px-4 py-10" x-data="{ ...messageData }">
-    <div class="flex justify-between items-center">
+    <div id="header" class="flex justify-between items-center">
+      <button onClick="setActiveRoom(null); render();"
+        class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
+        Back
+      </button>
       <h1 id="title" class="text-xl font-bold">Omnispace</h1>
+      <button onClick="logout()"
+        class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
+        Logout
+      </button>
     </div>
 
     <div id="app">
@@ -37,39 +45,16 @@
       </div>
       <!-- End game -->
 
-      <div id="nav_buttons" class="py-2 flex justify-between">
-        <button onClick="setActiveRoom(null); render();"
-          class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
-          Back
-        </button>
-        <button onClick="logout()"
-          class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
-          Logout
-        </button>
-      </div>
-
       <!-- Start matrix -->
       <div id="chat_area">
         <!-- Start chat/rooms list -->
-        <div class="flex flex-col-reverse grow"
+        <div id="rooms_messages_list" class="flex flex-col-reverse grow"
           :class="{ 'overflow-auto': !messageMenuOpen, 'overflow-hidden': messageMenuOpen }">
           <div id="view"></div>
         </div>
+        <!-- End chat/rooms list -->
 
-        <dialog id="uploadImageDialog">
-          <form method="dialog" onsubmit="sendImageMessage(event)">
-            <strong> Send an image </strong>
-            <div>
-              <img id="uploadPreview" />
-            </div>
-            <div>
-              <button value="cancel" type="button" onclick="document.getElementById('uploadImageDialog').close()">
-                Cancel
-              </button>
-              <button id="confirmBtn" type="submit">Send</button>
-            </div>
-          </form>
-        </dialog>
+        <!-- Start message input / reply data -->
         <div id="message_form" class="flex items-end gap-x-2 mt-4">
           <div id="message_menu" @keydown.escape.stop="handleCloseMenu();" class="absolute inline-block text-left">
             <div @click.outside="handleCloseMenu();" x-show="messageMenuOpen"
@@ -157,24 +142,38 @@
                 </div>
               </template>
             </div>
+            <div id="chat_input_wrapper">
+              <div id="chat_input" role="textbox" contenteditable data-placeholder="Message"
+                class="block resize-none min-h-[32px] px-2.5 py-0.5 border overflow-hidden outline-none"
+                :class="{ 'border rounded-md': !replyingToMessage, 'border-x border-b rounded-br-md rounded-bl-md': replyingToMessage }"
+                tabindex="0" x-on:keydown="handleSendMessage(event);"></div>
+              <button class="rounded-full bg-blue-600 text-white min-w-[32px] min-h-[32px] p-2"
+                @mousedown="event.preventDefault(); handleSendMessage();">
+                send
+              </button>
+            </div>
           </div>
         </div>
-        <!-- End chat/rooms list -->
-        <!-- End matrix -->
+        <!-- End message input / reply data -->
       </div>
-    </div>
-    
-    <div id="chat_input_wrapper">
-      <div id="chat_input" role="textbox" contenteditable data-placeholder="Message"
-        class="block resize-none min-h-[32px] px-2.5 py-0.5 border overflow-hidden outline-none"
-        :class="{ 'border rounded-md': !replyingToMessage, 'border-x border-b rounded-br-md rounded-bl-md': replyingToMessage }"
-        tabindex="0" x-on:keydown="handleSendMessage(event);"></div>
-      <button class="rounded-full bg-blue-600 text-white min-w-[32px] min-h-[32px] p-2"
-        @mousedown="event.preventDefault(); handleSendMessage();">
-        send
-      </button>
+      <!-- End matrix -->
     </div>
   </main>
+
+  <dialog id="uploadImageDialog">
+    <form method="dialog" onsubmit="sendImageMessage(event)">
+      <strong> Send an image </strong>
+      <div>
+        <img id="uploadPreview" />
+      </div>
+      <div>
+        <button value="cancel" type="button" onclick="document.getElementById('uploadImageDialog').close()">
+          Cancel
+        </button>
+        <button id="confirmBtn" type="submit">Send</button>
+      </div>
+    </form>
+  </dialog>
 </body>
 
 </html>

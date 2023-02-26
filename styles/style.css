@@ -17,6 +17,7 @@
   */
 html,
 body {
+  font-family: Inter;
   height: 100%;
 }
 /*
@@ -85,6 +86,17 @@ h6 {
   pointer-events: none;
 }
 
+#header {
+  display: flex;
+  justify-content: space-between;
+}
+
+#title {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 #app {
   display: grid;
 }
@@ -93,14 +105,14 @@ h6 {
   grid-area: 1/1;
 }
 
-#nav_buttons {
-  grid-area: 2/1;
+#view {
+  overflow: auto;
+  /* do math here */
+  max-height: calc(100vh - 48px - 100vw - 100px);
 }
 
 #chat_area {
-  grid-area: 3/1;
-  overflow: auto;
-  max-height: 25vh;
+  grid-area: 2/1;
 }
 
 #chat_input_wrapper {
@@ -110,7 +122,7 @@ h6 {
 }
 
 /* https://stackoverflow.com/questions/71154905/css-for-chat-room-speech-bubble-position */
-  
+
 #chat_log {
   display: flex;
   flex-direction: column;
@@ -130,12 +142,11 @@ h6 {
 
 .other_message {
   background-color: rgb(235, 235, 235);
-  margin-right: auto;  
+  margin-right: auto;
 }
 
 .self_message {
-  background: linear-gradient(30deg, #bec2ee, #a3f8ed );
-  margin-left: auto; 
+  background: linear-gradient(30deg, #bec2ee, #a3f8ed);
+  margin-left: auto;
   border-radius: var(--rad) var(--rad-sm) var(--rad-sm) var(--rad);
 }
-
