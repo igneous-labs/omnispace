@@ -233,6 +233,7 @@ let PlayerSpriteSheetMap = {
     "@thesmolbeann:melchior.info": "char_fe",
     "@lieu:melchior.info": "char_lieu",
     "@rczjian:melchior.info": "char_rczjian",
+    "@sf:melchior.info": "char_sf",
 }
 
 /*
@@ -276,7 +277,11 @@ let SpriteSheetFrameMap = {
     "char_rczjian": {
         "standing": [ [ 1, 154 ], [ 156, 309 ] ],
         "walking": [ [ 311, 464 ], [ 466, 619 ], [ 621, 774 ], [ 776, 929 ] ]
-    }
+    },
+    "char_sf": {
+        standing: [ [ 1, 68 ], [ 70, 137 ] ],
+        walking: [ [ 139, 206 ], [ 208, 275 ], [ 277, 344 ], [ 346, 413 ] ]
+    },
 }
 
 /*
@@ -323,6 +328,8 @@ Game.load = function () {
         Loader.loadImage('char_fe', './img/char_fe.png'),
         Loader.loadImage('char_lieu', './img/char_lieu.png'),
         Loader.loadImage('char_rczjian', './img/char_rczjian.png'),
+        Loader.loadImage('char_sf', './img/char_sf.png'),
+
     ];
 };
 
