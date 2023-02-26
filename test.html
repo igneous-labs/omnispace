@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script defer src="lib/matrix.js"></script>
+  <script defer src="consts.js"></script>
+  <script defer src="minimalTest.js"></script>
+  <!-- <script defer src="gameComm.js"></script> -->
+  <script type="module" src="https://unpkg.com/canvas-txt@3.0.0/build/index.js"></script>
+  <script defer src="game.js"></script>
+
+  <title>Test</title>
+  <meta charset="utf-8" />
+  <link rel="icon" href="data:," />
+  <link href="styles/test.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="manifest" href="omnispace.webmanifest" />
+  <script src="/characterCustomizer.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.11.1/dist/cdn.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer crossorigin="anonymous"
+    referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js" defer crossorigin="anonymous"
+    referrerpolicy="no-referrer"></script>
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+</head>
+
+<body>
+  <main class="max-h-full flex flex-col px-4 py-10" x-data="{ ...messageData }">
+    <div class="flex justify-between items-center">
+      <h1 id="title" class="text-xl font-bold">Omnispace</h1>
+    </div>
+
+    <div id="app">
+      <!-- Start game -->
+      <div id="game" class="mt-4">
+        <canvas id="canvas" width="400" height="400"></canvas>
+      </div>
+      <!-- End game -->
+
+      <!-- Start matrix -->
+      <div id="chat_area">
+        <div class="py-2 flex justify-between">
+          <button onClick="setActiveRoom(null); render();"
+            class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
+            Back
+          </button>
+          <button onClick="logout()"
+            class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
+            Logout
+          </button>
+        </div>
+
+        <!-- Start chat/rooms list -->
+        <div class="flex flex-col-reverse grow"
+          :class="{ 'overflow-auto': !messageMenuOpen, 'overflow-hidden': messageMenuOpen }">
+          <div id="view"></div>
+        </div>
+
+        <dialog id="uploadImageDialog">
+          <form method="dialog" onsubmit="sendImageMessage(event)">
+            <strong> Send an image </strong>
+            <div>
+              <img id="uploadPreview" />
+            </div>
+            <div>
+              <button value="cancel" type="button" onclick="document.getElementById('uploadImageDialog').close()">
+                Cancel
+              </button>
+              <button id="confirmBtn" type="submit">Send</button>
+            </div>
+          </form>
+        </dialog>
+        <div id="message_form" class="flex items-end gap-x-2 mt-4">
+          <div id="message_menu" @keydown.escape.stop="handleCloseMenu();" class="absolute inline-block text-left">
+            <div @click.outside="handleCloseMenu();" x-show="messageMenuOpen"
+              x-transition:enter="transition ease-out duration-100"
+              x-transition:enter-start="transform opacity-0 scale-95"
+              x-transition:enter-end="transform opacity-100 scale-100"
+              x-transition:leave="transition ease-in duration-75"
+              x-transition:leave-start="transform opacity-100 scale-100"
+              x-transition:leave-end="transform opacity-0 scale-95"
+              class="absolute right-0 z-10 mt-2 w-fit origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              role="menu" aria-orientation="vertical" tabindex="-1" @keydown.tab="messageMenuOpen = false"
+              @keydown.enter.prevent="handleCloseMenu();" @keyup.space.prevent="handleCloseMenu();">
+              <div class="py-1" role="none">
+                <button class="text-gray-700 group flex items-center px-4 py-2 text-sm" role="menuitem" tabindex="-1"
+                  @click="handleReply();">
+                  <svg class="mr-3 min-h-[20px] min-w-[20px] text-gray-400 group-hover:text-gray-500" fill="none"
+                    stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3">
+                    </path>
+                  </svg>
+                  Reply
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="w-full justify-self-end mt-4 flex items-end gap-x-2">
+            <div class="w-full">
+              <template x-if="replyingToMessage">
+                <div x-data="{
+                      get senderName() {
+                        const roomId = replyingToMessage['event']['room_id'];
+                        const senderId = replyingToMessage['event']['sender'];
+                        const members = roomList.get(roomId).getMembers();
+                        const senderName = members.filter((member) => member.userId === senderId)[0].rawDisplayName;
+                        return senderName;
+                      },
+                      get messageContent() {
+                        const isReply = replyingToMessage.event.content?.['m.relates_to']?.['m.in_reply_to'];
+                        const msg = replyingToMessage.event.content.body;
+                        if (isReply) {
+                          // remove matrix part of who you're replying to
+                          // (e.g. '> <@user:matrix.org> ')
+                          return msg.replace(/> <[^>]+>\s?/, '')
+                        }
+                        return msg;
+                      },
+                      get messageImg() {
+                        if (replyingToMessage.event.content.msgtype === 'm.image') {
+                      return client.mxcUrlToHttp(replyingToMessage.event.content.url)
+                        }
+                        return undefined;
+                      }
+                    }"
+                  class="flex items-center divide-x gap-x-2 px-2.5 py-1 border-x border-t rounded-tl-md rounded-tr-md w-full">
+                  <svg class="h-5 w-5 min-h-[20px] min-w-[20px] text-gray-400 group-hover:text-gray-500" fill="none"
+                    stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3">
+                    </path>
+                  </svg>
+
+                  <div class="flex items-center pl-2 w-[calc(100%-30px)] justify-between">
+                    <div class="flex items-center truncate">
+                      <template x-if="messageImg">
+                        <img alt="" :src="messageImg" class="w-8 h-8 object-cover mr-2" />
+                      </template>
+
+                      <div class="flex flex-col w-full">
+                        <p x-text="senderName" class="font-bold"></p>
+                        <p x-text="messageContent" class="truncate"></p>
+                      </div>
+                    </div>
+
+                    <button class="rounded-full text-white" @click="handleUnselectReply();">
+                      <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
+                        class="min-h-[32px] min-w-[32px] stroke-blue-500">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </template>
+
+            </div>
+          </div>
+        </div>
+        <!-- End chat/rooms list -->
+        <!-- End matrix -->
+      </div>
+
+      <div id="chat_input" role="textbox" contenteditable data-placeholder="Message"
+        class="block resize-none min-h-[32px] px-2.5 py-0.5 border overflow-hidden outline-none"
+        :class="{ 'border rounded-md': !replyingToMessage, 'border-x border-b rounded-br-md rounded-bl-md': replyingToMessage }"
+        tabindex="0" x-on:keydown="handleSendMessage(event);"></div>
+      <button class="rounded-full bg-blue-600 text-white min-w-[32px] min-h-[32px] p-2" @click="handleSendMessage();">
+        send
+      </button>
+  </main>
+</body>
+
+</html>
