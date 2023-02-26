@@ -93,17 +93,18 @@ h6 {
   grid-area: 1/1;
 }
 
-#chat_area {
+#nav_buttons {
   grid-area: 2/1;
-  max-height: 30vh;
-  overflow: auto;
 }
 
-@media (max-height: 700px) {
-  #chat_area {
-    grid-area: 1/1;
-    min-height: 80vh;
-    max-height: 80vh;
-    background-color: rgba(255, 255, 255, 0.7);
-  }
+#chat_area {
+  grid-area: 3/1;
+  overflow: auto;
+  max-height: 25vh;
+}
+
+#chat_input_wrapper {
+  width: 100%;
+  display: flex;
+  background: white;
 }

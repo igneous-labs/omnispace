@@ -37,19 +37,19 @@
       </div>
       <!-- End game -->
 
+      <div id="nav_buttons" class="py-2 flex justify-between">
+        <button onClick="setActiveRoom(null); render();"
+          class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
+          Back
+        </button>
+        <button onClick="logout()"
+          class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
+          Logout
+        </button>
+      </div>
+
       <!-- Start matrix -->
       <div id="chat_area">
-        <div class="py-2 flex justify-between">
-          <button onClick="setActiveRoom(null); render();"
-            class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
-            Back
-          </button>
-          <button onClick="logout()"
-            class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
-            Logout
-          </button>
-        </div>
-
         <!-- Start chat/rooms list -->
         <div class="flex flex-col-reverse grow"
           :class="{ 'overflow-auto': !messageMenuOpen, 'overflow-hidden': messageMenuOpen }">
@@ -156,21 +156,24 @@
                   </div>
                 </div>
               </template>
-
             </div>
           </div>
         </div>
         <!-- End chat/rooms list -->
         <!-- End matrix -->
       </div>
-
+    </div>
+    
+    <div id="chat_input_wrapper">
       <div id="chat_input" role="textbox" contenteditable data-placeholder="Message"
         class="block resize-none min-h-[32px] px-2.5 py-0.5 border overflow-hidden outline-none"
         :class="{ 'border rounded-md': !replyingToMessage, 'border-x border-b rounded-br-md rounded-bl-md': replyingToMessage }"
         tabindex="0" x-on:keydown="handleSendMessage(event);"></div>
-      <button class="rounded-full bg-blue-600 text-white min-w-[32px] min-h-[32px] p-2" @click="handleSendMessage();">
+      <button class="rounded-full bg-blue-600 text-white min-w-[32px] min-h-[32px] p-2"
+        @mousedown="event.preventDefault(); handleSendMessage();">
         send
       </button>
+    </div>
   </main>
 </body>
 
