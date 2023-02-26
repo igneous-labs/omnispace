@@ -319,6 +319,7 @@ Game.load = function () {
         Loader.loadImage('town', './img/town.png'),
         Loader.loadImage('overworld', './img/bg.png'),
         Loader.loadImage('floathouse', './img/floathouse.png'),
+        Loader.loadImage('floatisland', './img/floatisland.jpg'),
         Loader.loadImage('char_default', './img/char_default.png'),
         Loader.loadImage('char_fp', './img/char_fp.png'),
         Loader.loadImage('char_pixisu', './img/char_pixisu.png'),
@@ -399,6 +400,18 @@ Game.render = function (tFrame) {
     //     rh,
     // )
 
+    const room = Loader.getImage("floatisland")
+    const rw = room.width * 1;
+    const rh = room.height * 1;
+
+    Game.ctx.drawImage(
+        room, 
+        (1500-rw)/2, 
+        (1500-rh)/2,
+        rw,
+        rh,
+    )
+
     // // overworld is big
     // const overworld = Loader.getImage("overworld")
     // const rw = overworld.width * 2.5
@@ -411,16 +424,16 @@ Game.render = function (tFrame) {
     //     rh,
     // )
 
-    const room = Loader.getImage("town")
-    const rw = room.width * 2.5;
-    const rh = room.height * 2.5;
-    Game.ctx.drawImage(
-        room, 
-        (1500-rw)/2, 
-        (1500-rh)/2,
-        rw,
-        rh,
-    )
+    // const room = Loader.getImage("town")
+    // const rw = room.width * 2.5;
+    // const rh = room.height * 2.5;
+    // Game.ctx.drawImage(
+    //     room, 
+    //     (1500-rw)/2, 
+    //     (1500-rh)/2,
+    //     rw,
+    //     rh,
+    // )
     
 
     for (let playerId in Game.renderState) {
