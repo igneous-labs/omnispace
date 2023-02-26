@@ -405,8 +405,8 @@ Game.render = function (tFrame) {
     // )
 
     const room = Loader.getImage("town")
-    const rw = room.width * 2;
-    const rh = room.height * 2;
+    const rw = room.width * 2.5;
+    const rh = room.height * 2.5;
     Game.ctx.drawImage(
         room, 
         (1500-rw)/2, 
