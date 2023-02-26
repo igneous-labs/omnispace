@@ -150,3 +150,9 @@ h6 {
   margin-left: auto;
   border-radius: var(--rad) var(--rad-sm) var(--rad-sm) var(--rad);
 }
+
+@media (min-width: 600px) {
+  #view {
+    max-height: 25vh;
+  }
+}
