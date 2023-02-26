@@ -12,6 +12,7 @@ var roomList = [];
 var viewingRoom = null;
 var messageHistory = {};
 var client = null;
+var prevVisualViewportHeight = 999999;
 
 // This function bridges the chat client and game client
 function gameCommOnMatrixMsg(matrixEvent) {
@@ -348,4 +349,15 @@ async function logout() {
 }
 
 document.addEventListener('paste', handlePaste);
+window.visualViewport.addEventListener("resize", (event) => {
+    var chat_area = document.getElementById("chat_area");
+    if (window.visualViewport?.height < prevVisualViewportHeight) {
+      const h = document.getElementById("canvas")?.clientHeight;
+      chat_area.style.cssText = `grid-area: 1/1;background-color: rgba(255, 255, 255, 0.7);align-self:end;`;
+    } else {
+      chat_area.style.cssText = "";
+    }
+  
+    prevVisualViewportHeight = window.visualViewport?.height;
+  });
 start();
