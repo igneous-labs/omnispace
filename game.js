@@ -392,28 +392,28 @@ Game.render = function (tFrame) {
     //     rh,
     // )
 
-    // overworld is big
-    const overworld = Loader.getImage("overworld")
-    const rw = overworld.width * 2.5
-    const rh = overworld.height * 2.5
-    Game.ctx.drawImage(
-        overworld, 
-        (1500-rw)/2, 
-        (1500-rh)/2, 
-        rw,
-        rh,
-    )
-
-    // const room = Loader.getImage("town")
-    // const rw = room.width * 2;
-    // const rh = room.height * 2;
+    // // overworld is big
+    // const overworld = Loader.getImage("overworld")
+    // const rw = overworld.width * 2.5
+    // const rh = overworld.height * 2.5
     // Game.ctx.drawImage(
-    //     room, 
+    //     overworld, 
     //     (1500-rw)/2, 
-    //     (1500-rh)/2,
+    //     (1500-rh)/2, 
     //     rw,
     //     rh,
     // )
+
+    const room = Loader.getImage("town")
+    const rw = room.width * 2;
+    const rh = room.height * 2;
+    Game.ctx.drawImage(
+        room, 
+        (1500-rw)/2, 
+        (1500-rh)/2,
+        rw,
+        rh,
+    )
     
 
     for (let playerId in Game.renderState) {
