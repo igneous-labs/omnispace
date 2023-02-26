@@ -108,3 +108,34 @@ h6 {
   display: flex;
   background: white;
 }
+
+/* https://stackoverflow.com/questions/71154905/css-for-chat-room-speech-bubble-position */
+  
+#chat_log {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  --rad: 0px;
+  --rad-sm: 0px;
+}
+
+.message_bubble {
+  width: fit-content;
+  max-width: 80%;
+  margin: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
+  border-radius: var(--rad-sm) var(--rad) var(--rad) var(--rad-sm);
+}
+
+.other_message {
+  background-color: rgb(235, 235, 235);
+  margin-right: auto;  
+}
+
+.self_message {
+  background: linear-gradient(30deg, #bec2ee, #a3f8ed );
+  margin-left: auto; 
+  border-radius: var(--rad) var(--rad-sm) var(--rad-sm) var(--rad);
+}
+

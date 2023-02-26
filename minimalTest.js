@@ -224,11 +224,12 @@ function render() {
             const senderName = members.filter((member) => member.userId === senderId)[0].rawDisplayName
           
             return acc + `
-                <div :class="{'select-none': isMobile}" data-message-event-id="${message.event.event_id}">
-                    <strong>${senderName}: </strong>
+                <div :class="{'select-none': isMobile}" data-message-event-id="${message.event.event_id}" 
+                    class="message_bubble ${senderId === MATRIX_USER_ID ? "self_message" : "other_message"}"
+                >
+                    ${senderId === MATRIX_USER_ID ? "" : `<strong>${senderName}: </strong>`}
                     <span x-on:touchstart="messageTouchStart(event);" x-on:touchend="messageTouchEnd(event);" x-on:contextmenu="handleRightClick(event)">
-                        ${message.event.content.body}
-                      ${message.event.content.msgtype === "m.image" ? `<img src=${client.mxcUrlToHttp(message.event.content.url)} />` : ''}
+                      ${message.event.content.msgtype === "m.image" ? `<img src=${client.mxcUrlToHttp(message.event.content.url)} />` : message.event.content.body}
                     </span>
                 </span>
                 </div>
@@ -236,7 +237,7 @@ function render() {
         }, '')
 
       
-        view.innerHTML = messageHistoryHTML
+        view.innerHTML = `<div id='chat_log'> ${messageHistoryHTML} </div>`
 
         view.classList.remove('overflow-y-scroll')
 
