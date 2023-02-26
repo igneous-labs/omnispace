@@ -21,7 +21,6 @@
         width: 100%;
         padding-top: 50px;
         padding-bottom: 50px;
-        max-height: 100%;
     }
     #chat_log {
         display: flex;
@@ -112,4 +111,33 @@
         <input type="text" id ="messagebox">
         <button>Send</button>
     </div>
+
+    <script>
+        let pendingUpdate = false;
+    
+        function viewportHandler(event) {
+        if (pendingUpdate) return;
+        pendingUpdate = true;
+    
+        requestAnimationFrame(() => {
+            pendingUpdate = false;
+            const layoutViewport = document.getElementById('layoutViewport');
+    
+            // Since the bar is position: fixed we need to offset it by the
+            // visual viewport's offset from the layout viewport origin.
+            const viewport = event.target;
+            const offsetLeft = viewport.offsetLeft;
+            const offsetTop = viewport.height
+                        - layoutViewport.getBoundingClientRect().height
+                        + viewport.offsetTop;
+    
+            // You could also do this by setting style.left and style.top if you
+            // use width: 100% instead.
+            document.gettElementById("footer").style.transform = `translate(${offsetLeft}px, ${offsetTop}px) scale(${1 / viewport.scale})`;
+        });
+        }
+    
+        window.visualViewport.addEventListener('scroll', viewportHandler);
+        window.visualViewport.addEventListener('resize', viewportHandler);
+    </script>    
 </body>
