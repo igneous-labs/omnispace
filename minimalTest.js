@@ -134,15 +134,19 @@ const messageData = {
   },
   handleReply() {
     const view = document.getElementById("view");
-    // 70px for reply box above the message input
-    view.style.height = `${view.clientHeight - 70}px`;
+    if (!this.replyingToMessage) {
+      // 70px for reply box above the message input
+      view.style.height = `${view.clientHeight - 70}px`;
+    }
     this.replyingToMessage = this.selectedMessage;
     this.handleCloseMenu();
   },
   handleUnselectReply() {
     const view = document.getElementById("view");
-    // 70px for reply box above the message input
-    view.style.height = `${view.clientHeight + 70}px`;
+    if (this.replyingToMessage) {
+      // 70px for reply box above the message input
+      view.style.height = `${view.clientHeight + 70}px`;
+    }
     this.replyingToMessage = null;
   },
   handleSendMessage(e) {
