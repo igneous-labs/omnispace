@@ -40,7 +40,8 @@
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
     <link href="/dist/output.css" rel="stylesheet" />
   </head>
-  <body class="overflow-y-hidden">
+  <!-- overflow-y-hidden doesnt work with safari -->
+  <body class="overflow-hidden">
     <nav class="flex flex-wrap justify-between items-center px-4 py-2 gap-2">
       <button
         onClick="setActiveRoom(null); render();"
@@ -3451,7 +3452,7 @@
       <!-- End game -->
 
       <!-- container for both chat text and message box -->
-      <div class="flex flex-col landscape:h-[70%] grow">
+      <div class="flex flex-col landscape:h-[70%] lanscape:grow">
         <!-- Start chat/rooms list -->
         <!-- flex-col-reverse makes div scroll to bottom by default -->
         <div

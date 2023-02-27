@@ -14,8 +14,7 @@ function onVirtualKeyboard(isUp) {
     const navHeight = document.querySelector("nav").offsetHeight;
     const footerHeight = document.querySelector("footer").offsetHeight;
     const vpH = window.visualViewport.height;
-    // hax: add 20px to buffer margins, etc
-    view.style.height = `${vpH - navHeight - footerHeight - 20}px`;
+    view.style.height = `${vpH - navHeight - footerHeight}px`;
 }
 
 function onVirtualKeyboardUp() {
