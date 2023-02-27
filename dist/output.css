@@ -3410,12 +3410,20 @@ select {
 }
 
 @media (orientation: portrait) {
+  .portrait\:fixed {
+    position: fixed;
+  }
+
+  .portrait\:left-0 {
+    left: 0px;
+  }
+
   .portrait\:mb-4 {
     margin-bottom: 1rem;
   }
 
-  .portrait\:w-full {
-    width: 100%;
+  .portrait\:w-screen {
+    width: 100vw;
   }
 
   .portrait\:flex-col {
