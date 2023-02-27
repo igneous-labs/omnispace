@@ -35,8 +35,20 @@
     <link href="/dist/output.css" rel="stylesheet" />
   </head>
   <body>
-    <nav class="flex justify-between items-center px-4 py-2">
-      <h1 id="title" class="text-xl font-bold">Omnispace</h1>
+    <nav class="flex flex-wrap justify-between items-center px-4 py-2 gap-2">
+      <button
+        onClick="setActiveRoom(null); render();"
+        class="rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+      >
+        Back
+      </button>
+      <h1 id="title" class="text-xl font-bold mx-auto">Omnispace</h1>
+      <button
+        onClick="logout()"
+        class="rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+      >
+        Logout
+      </button>
 
       <!-- Start customize character sidebar -->
       <div
@@ -62,7 +74,7 @@
       >
         <button
           @click="characterMenuOpen = true"
-          class="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          class="rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
           Customize character
         </button>
@@ -3433,22 +3445,6 @@
         <canvas id = "canvas" width="400" height="400"></canvas>
       </div>
       <!-- End game -->
-
-      <!-- Start matrix -->
-      <div class="py-2 flex justify-between">
-        <button
-          onClick="setActiveRoom(null); render();"
-          class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
-        >
-          Back
-        </button>
-        <button
-          onClick="logout()"
-          class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
-        >
-          Logout
-        </button>
-      </div>
 
       <!-- Start chat/rooms list -->
       <div
