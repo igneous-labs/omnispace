@@ -67,8 +67,15 @@
         padding: 5px;
     }
 
+    #layoutViewport {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        visibility: hidden;
+    }
+
 </style>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1 maximum-scale=1" />
 <body>
     <div id="header">Header</div>
     <div id="chat_area">
@@ -112,29 +119,30 @@
         <button>Send</button>
     </div>
 
+    <div id="layoutViewport"></div>
     <script>
         let pendingUpdate = false;
     
         function viewportHandler(event) {
-        if (pendingUpdate) return;
-        pendingUpdate = true;
-    
-        requestAnimationFrame(() => {
-            pendingUpdate = false;
-            const layoutViewport = document.getElementById('layoutViewport');
-    
-            // Since the bar is position: fixed we need to offset it by the
-            // visual viewport's offset from the layout viewport origin.
-            const viewport = event.target;
-            const offsetLeft = viewport.offsetLeft;
-            const offsetTop = viewport.height
-                        - layoutViewport.getBoundingClientRect().height
-                        + viewport.offsetTop;
-    
-            // You could also do this by setting style.left and style.top if you
-            // use width: 100% instead.
-            document.gettElementById("footer").style.transform = `translate(${offsetLeft}px, ${offsetTop}px) scale(${1 / viewport.scale})`;
-        });
+            if (pendingUpdate) return;
+            pendingUpdate = true;
+        
+            requestAnimationFrame(() => {
+                pendingUpdate = false;
+                const layoutViewport = document.getElementById('layoutViewport');
+        
+                // Since the bar is position: fixed we need to offset it by the
+                // visual viewport's offset from the layout viewport origin.
+                const viewport = event.target;
+                const offsetLeft = viewport.offsetLeft;
+                const offsetTop = viewport.height
+                            - layoutViewport.getBoundingClientRect().height
+                            + viewport.offsetTop;
+        
+                // You could also do this by setting style.left and style.top if you
+                // use width: 100% instead.
+                document.getElementById("footer").style.transform = `translate(${offsetLeft}px, ${offsetTop}px) scale(${1 / viewport.scale})`;
+            });
         }
     
         window.visualViewport.addEventListener('scroll', viewportHandler);
