@@ -47,7 +47,12 @@
     <link href="/dist/output.css" rel="stylesheet" />
   </head>
   <!-- overflow-y-hidden doesnt work with safari -->
-  <body class="overflow-hidden">
+  <body
+    class="overflow-hidden"
+    x-data="{
+      characterMenuOpen: false,
+    }"
+  >
     <nav
       class="flex flex-wrap justify-between items-center px-4 py-2 gap-2 sticky top-0"
     >
@@ -57,7 +62,9 @@
       >
         Back
       </button>
-      <h1 id="title" class="text-xl font-bold mx-auto">Omnispace</h1>
+      <h1 id="title" class="text-xl font-bold mx-auto truncate max-w-[190px]">
+        Omnispace
+      </h1>
       <button
         onClick="logout()"
         class="rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
@@ -68,7 +75,6 @@
       <!-- Start customize character sidebar -->
       <div
         x-data="{
-          characterMenuOpen: false,
           isSaving: false,
           async saveCharacter(selectors) {
             if (this.isSaving) return;
@@ -3453,6 +3459,7 @@
     <main
       class="h-full flex justify-between portrait:flex-col landscape:flex-row gap-4 px-4 py-2"
       x-data="{ ...messageData }"
+      :class="{ invisible: characterMenuOpen }"
     >
       <!-- Start game -->
       <canvas
