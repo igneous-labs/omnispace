@@ -114,6 +114,7 @@ h6 {
 
 #chat_area {
   grid-area: 2/1;
+  background: rgba(255, 255, 255, 0.7);
 }
 
 #chat_input_wrapper {
