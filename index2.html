@@ -5,12 +5,11 @@
         margin: 0;
     }
     body {
+        overflow: hidden;
         background-color: white;
     }
     #header {
-        position: fixed;
-        min-height: 50px;
-        max-height: 50px;
+        height: 50px;
         background-color: maroon;
         width: 100%;
     }
@@ -18,9 +17,8 @@
         overflow: scroll;
         overflow-x: hidden;
         background-color: teal;
+        height: calc(100svh - 100px);
         width: 100%;
-        padding-top: 50px;
-        padding-bottom: 50px;
     }
     #chat_log {
         display: flex;
@@ -51,33 +49,17 @@
     }
 
     #footer {
-        position: fixed;
-        left: 0px;
-        right: 0px;
-        bottom: 0px;
-        min-height: 50px;
-        max-height: 50px;
+        height: 50px;
         background-color: yellow;
         width: 100%;
         display: flex;
-        transform-origin: left bottom;
-        transform: translate(0px, 0px) scale(1);
     }
     
     #messagebox {
         width: 100%;
-        width: 100%;
         border: 1px solid black;
         padding: 5px;
     }
-
-    #layoutViewport {
-        position: fixed;
-        width: 100%;
-        height: 100%;
-        visibility: hidden;
-    }
-
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1 maximum-scale=1" />
 <body>
@@ -122,29 +104,16 @@
         <input type="text" id ="messagebox">
         <button>Send</button>
     </div>
-
-    <div id="layoutViewport"></div>
-    <script>    
-    /*
+    <script>
         function viewportHandler(event) {
-            const layoutViewport = document.getElementById('layoutViewport');
-
-            // Since the bar is position: fixed we need to offset it by the
-            // visual viewport's offset from the layout viewport origin.
-            const viewport = event.target;
-            const offsetLeft = viewport.offsetLeft;
-            const offsetTop = viewport.height
-                        - layoutViewport.getBoundingClientRect().height
-                        + viewport.offsetTop;
-
-            // You could also do this by setting style.left and style.top if you
-            // use width: 100% instead.
-            // document.getElementById("footer").style.left = `${offsetLeft}px`;
-            // document.getElementById("footer").style.top = `${offsetTop}px`;
-            document.getElementById("footer").style.transform = `translate(${offsetLeft}px, ${offsetTop}px) scale(${1 / viewport.scale})`;
+            /** @type {VisualViewport} */
+            const vp = event.target;
+            document.getElementById("chat_area").style.height = `calc(${vp.height}px - 100px)`;
+            document.getElementById("header").innerHTML = vp.height;
+            document.body.scrollTop = 0; // For Safari
+            document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
         }
-    */
-        //window.visualViewport.addEventListener('scroll', viewportHandler);
-        //window.visualViewport.addEventListener('resize', viewportHandler);
+        window.visualViewport.addEventListener('scroll', viewportHandler);
+        window.visualViewport.addEventListener('resize', viewportHandler);
     </script>    
 </body>
