@@ -103,17 +103,17 @@ h6 {
 }
 
 #game {
-  grid-area: 1/1;
+  /* grid-area: 1/1; */
 }
 
 #view {
   overflow: auto;
   /* do math here */
-  max-height: calc(100vh - 48px - 100vw - 100px);
+  max-height: calc(100vh - 48px - 100vw - 80px);
 }
 
 #chat_area {
-  grid-area: 2/1;
+  /* grid-area: 2/1; */
   background: rgba(255, 255, 255, 0.7);
 }
 

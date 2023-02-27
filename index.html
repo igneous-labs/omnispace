@@ -26,7 +26,7 @@
 
 <body>
   <main class="max-h-full flex flex-col px-4 py-10" x-data="{ ...messageData }">
-    <div id="header" class="flex justify-between items-center">
+    <div id="header" class="flex justify-between items-center" style="position: sticky; top: 0; z-index: 9; background: #ffffff;">
       <button onClick="setActiveRoom(null); render();"
         class="inline-flex justify-center rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
         Back
@@ -40,13 +40,13 @@
 
     <div id="app">
       <!-- Start game -->
-      <div id="game" class="mt-4" style="position: sticky; top: 0;">
+      <div id="game" class="mt-4" style="position: absolute; top: 0px;">
         <canvas id="canvas" width="400" height="400"></canvas>
       </div>
       <!-- End game -->
 
       <!-- Start matrix -->
-      <div id="chat_area" style="z-index: 9">
+      <div id="chat_area" style="z-index: 9; margin-top: 400px;">
         <!-- Start chat/rooms list -->
         <div id="rooms_messages_list" class="flex flex-col-reverse grow"
           :class="{ 'overflow-auto': !messageMenuOpen, 'overflow-hidden': messageMenuOpen }">
