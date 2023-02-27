@@ -14,10 +14,17 @@ function onVirtualKeyboard(isUp) {
     isUp ? 0 : Math.round(canvas.offsetHeight)
   }px solid transparent`;
 
+  setViewHeight();
+}
+
+function setViewHeight() {
   const navHeight = document.querySelector("nav").offsetHeight;
   const footerHeight = document.querySelector("footer").offsetHeight;
   const vpH = window.visualViewport.height;
-  view.style.height = `${Math.round(vpH - navHeight - footerHeight - 15)}px`;
+  // leave 15px for bottom margin between textrow and bottom of screen
+  document.getElementById("view").style.height = `${Math.round(
+    vpH - navHeight - footerHeight - 15,
+  )}px`;
 }
 
 function onVirtualKeyboardUp() {
@@ -51,3 +58,7 @@ window.visualViewport.addEventListener("resize", viewportHandler);
 if (window.innerHeight > window.innerWidth) {
   onVirtualKeyboardDown();
 }
+
+const navFooterResizeObs = new ResizeObserver(setViewHeight);
+navFooterResizeObs.observe(document.querySelector("nav"));
+navFooterResizeObs.observe(document.querySelector("footer"));
