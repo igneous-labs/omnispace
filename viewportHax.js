@@ -9,12 +9,15 @@ function onVirtualKeyboard(isUp) {
   canvas.style.zIndex = isUp ? -1 : 1;
   const view = document.getElementById("view");
   view.style.backgroundColor = isUp ? "rgba(0, 0, 0, 0.5)" : "transparent";
-  view.style.paddingTop = `${isUp ? 0 : canvas.offsetHeight}px`;
+  // NB: padding, margin doesnt work
+  view.style.borderTop = `${
+    isUp ? 0 : Math.round(canvas.offsetHeight)
+  }px solid`;
 
   const navHeight = document.querySelector("nav").offsetHeight;
   const footerHeight = document.querySelector("footer").offsetHeight;
   const vpH = window.visualViewport.height;
-  view.style.height = `${vpH - navHeight - footerHeight - 15}px`;
+  view.style.height = `${Math.round(vpH - navHeight - footerHeight - 15)}px`;
 }
 
 function onVirtualKeyboardUp() {
