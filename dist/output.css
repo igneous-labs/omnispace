@@ -3448,6 +3448,10 @@ select {
     height: 70%;
   }
 
+  .landscape\:grow {
+    flex-grow: 1;
+  }
+
   .landscape\:flex-row {
     flex-direction: row;
   }
