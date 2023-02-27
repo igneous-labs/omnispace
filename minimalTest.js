@@ -228,7 +228,7 @@ function render() {
                     class="message_bubble ${senderId === MATRIX_USER_ID ? "self_message" : "other_message"}"
                 >
                     ${senderId === MATRIX_USER_ID ? "" : `<strong>${senderName}: </strong>`}
-                    <span x-on:touchstart="messageTouchStart(event);" x-on:touchend="messageTouchEnd(event);" x-on:contextmenu="handleRightClick(event)">
+                    <span class="message" x-on:touchstart="messageTouchStart(event);" x-on:touchend="messageTouchEnd(event);" x-on:contextmenu="handleRightClick(event)">
                       ${message.event.content.msgtype === "m.image" ? `<img src=${client.mxcUrlToHttp(message.event.content.url)} />` : message.event.content.body}
                     </span>
                 </span>
@@ -369,8 +369,11 @@ window.visualViewport.addEventListener("resize", (event) => {
 });
 
 document.body.addEventListener("touchmove", (event) => {
-  if (isMobile && window.screen.height - MIN_KEYBOARD_HEIGHT > window.visualViewport.height && !canScroll) {
-      event.preventDefault();
+    if (isMobile && window.screen.height - MIN_KEYBOARD_HEIGHT > window.visualViewport.height && !canScroll) {
+      const shouldDisableScroll = !event.target.closest('#rooms_messages_list')
+      if (shouldDisableScroll) {
+        event.preventDefault();
+      }
     }
 }, { passive: false });
   
