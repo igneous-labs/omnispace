@@ -1,35 +1,39 @@
-<!-- Login: 
+<!-- Login:
     - on login, save { userId, accessToken } to localStorage
       under MATRIX_LOGIN_LOCAL_STORAGE_KEY
     - NB: synapse access tokens supposedly last forever right now,
-      TODO: handle refresh and invalidation 
+      TODO: handle refresh and invalidation
 -->
 
 <!DOCTYPE html>
 <html lang="en">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <head>
-        <script defer src="lib/matrix.js"></script>
-        <script defer src="consts.js"></script>
-        <script defer src="login.js"></script>
-        
-        <Title>Login</Title>
-        <meta charset="utf-8" />
-        <link rel="icon" href="data:," />
-        <link href="styles/style.css" rel="stylesheet" />
-        <body>
-            <div id="wrapper">
-                <h1 id="title"> Login </h1>
-                <form id="login-form" onsubmit="onLoginSubmit(event)">
-                    <label for="username">Username:</label>
-                    <input autocomplete="username" type="text" name="username" /><br>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <head>
+    <script defer src="lib/matrix.js"></script>
+    <script defer src="consts.js"></script>
+    <script defer src="login.js"></script>
 
-                    <label for="password">Password:</label>
-                    <input autocomplete="current-password" type="password" name="password" /><br>
-                    
-                    <input type="submit" value="login" />
-                </form>
-            </div>
-        </body>
-    </head>
+    <title>Login</title>
+    <meta charset="utf-8" />
+    <link rel="icon" href="data:," />
+    <link href="styles/style.css" rel="stylesheet" />
+    <body>
+      <div id="wrapper">
+        <h1 id="title">Login</h1>
+        <form id="login-form" onsubmit="onLoginSubmit(event)">
+          <label for="username">Username:</label>
+          <input autocomplete="username" type="text" name="username" /><br />
+
+          <label for="password">Password:</label>
+          <input
+            autocomplete="current-password"
+            type="password"
+            name="password"
+          /><br />
+
+          <input type="submit" value="login" />
+        </form>
+      </div>
+    </body>
+  </head>
 </html>

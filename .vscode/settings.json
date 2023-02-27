@@ -7,10 +7,19 @@
   "javascript.suggest.completeJSDocs": true,
   // Preferred path ending with extension (good for ESM & cjs).
   "javascript.preferences.importModuleSpecifierEnding": "js",
-  
+
   // Other suggestions useful stuff:
   // Complete functions with their parameter signature.
   "javascript.suggest.completeFunctionCalls": true,
   // Enable auto import suggestions.
-  "javascript.suggest.autoImports": true
+  "javascript.suggest.autoImports": true,
+  // Prettier
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file"
 }

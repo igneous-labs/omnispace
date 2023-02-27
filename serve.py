@@ -15,4 +15,4 @@ class HTTPRequestHandler(server.SimpleHTTPRequestHandler):
 if __name__ == "__main__":
     addr = ("", 8003)
     httpd = server.HTTPServer(addr, HTTPRequestHandler)
-    httpd.serve_forever() 
+    httpd.serve_forever()

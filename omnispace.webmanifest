@@ -1,16 +1,16 @@
 {
-    "name": "Omnispace",
-    "short_name": "Omnispace",
-    "description": "Omnispace -- customise your avatar, chat with anyone in a cute virtual space",
-    "icons": [
-      {
-        "src": "img/bla.png",
-        "sizes": "512x512",
-        "type": "image/png"
-      }
-    ],
-    "start_url": "index.html",
-    "display": "fullscreen",
-    "theme_color": "FFFFFF",
-    "background_color": "#FFFFFF"
-  }
+  "name": "Omnispace",
+  "short_name": "Omnispace",
+  "description": "Omnispace -- customise your avatar, chat with anyone in a cute virtual space",
+  "icons": [
+    {
+      "src": "img/bla.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "index.html",
+  "display": "fullscreen",
+  "theme_color": "FFFFFF",
+  "background_color": "#FFFFFF"
+}

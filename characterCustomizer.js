@@ -30,26 +30,26 @@ const poses = {
   thrustingTwoHanded: 3,
   walkingOneHanded: 4,
   walkingTwoHanded: 4,
-}
+};
 
 function readBlob(b) {
   return new Promise(function (resolve, reject) {
-    const reader = new FileReader()
+    const reader = new FileReader();
 
     reader.onloadend = function () {
-      resolve(reader.result)
-    }
+      resolve(reader.result);
+    };
 
-    reader.readAsDataURL(b)
-  })
+    reader.readAsDataURL(b);
+  });
 }
 
 async function characterPreviewFetcher(selectors, zip, pose, poseFrame) {
-  const res = await fetch('https://api.maplestory.net/character/render', {
-    method: 'POST',
+  const res = await fetch("https://api.maplestory.net/character/render", {
+    method: "POST",
     headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      "Accept": "application/json",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       skin: selectors.skin,
@@ -74,218 +74,218 @@ async function characterPreviewFetcher(selectors, zip, pose, poseFrame) {
       pose,
       poseFrame,
     }),
-  })
+  });
 
-  const blob = await res.blob()
+  const blob = await res.blob();
 
   // Don't do anything if the image is broken (due to an invalid pose)
   if (blob === undefined) {
-    return
+    return;
   }
 
   // If zip is specified - save img there
   if (zip) {
-    zip.file(`${pose}-${poseFrame}.png`, blob)
+    zip.file(`${pose}-${poseFrame}.png`, blob);
   } else {
     // Otherwise just return the blob
-    return blob
+    return blob;
   }
 }
 
 const generateSpritesheet = async (zip, selectors) => {
-  const spritesheetFolder = zip.folder('spritesheet')
-  const posesToFetch = []
+  const spritesheetFolder = zip.folder("spritesheet");
+  const posesToFetch = [];
 
   for (const [pose, numOfFrames] of Object.entries(poses)) {
     Array.from({ length: numOfFrames }, (_, i) => {
       posesToFetch.push(
         characterPreviewFetcher(selectors, spritesheetFolder, pose, i),
-      )
-    })
+      );
+    });
   }
 
-  return Promise.all(posesToFetch)
-}
+  return Promise.all(posesToFetch);
+};
 
 const saveZip = async (zip) => {
-  const blob = await zip.generateAsync({ type: 'blob' })
-  saveAs(blob, 'spritesheet.zip')
-}
+  const blob = await zip.generateAsync({ type: "blob" });
+  saveAs(blob, "spritesheet.zip");
+};
 
 async function characterSaver(selectors) {
-  const zip = new JSZip()
-  await generateSpritesheet(zip, selectors)
-  saveZip(zip)
+  const zip = new JSZip();
+  await generateSpritesheet(zip, selectors);
+  saveZip(zip);
 }
 
 const characterOptions = {
   skins: [
     {
-      value: 'light',
-      label: 'Light',
+      value: "light",
+      label: "Light",
     },
     {
-      value: 'tanned',
-      label: 'Tanned',
+      value: "tanned",
+      label: "Tanned",
     },
     {
-      value: 'dark',
-      label: 'Dark',
+      value: "dark",
+      label: "Dark",
     },
     {
-      value: 'pale',
-      label: 'Pale',
+      value: "pale",
+      label: "Pale",
     },
     {
-      value: 'ashen',
-      label: 'Ashen',
+      value: "ashen",
+      label: "Ashen",
     },
     {
-      value: 'white',
-      label: 'White',
+      value: "white",
+      label: "White",
     },
     {
-      value: 'palePink',
-      label: 'Pale Pink',
+      value: "palePink",
+      label: "Pale Pink",
     },
     {
-      value: 'clay',
-      label: 'Clay',
+      value: "clay",
+      label: "Clay",
     },
     {
-      value: 'mercedes',
-      label: 'Mercedes',
+      value: "mercedes",
+      label: "Mercedes",
     },
     {
-      value: 'ghostly',
-      label: 'Ghostly',
+      value: "ghostly",
+      label: "Ghostly",
     },
     {
-      value: 'softPetal',
-      label: 'Soft Petal',
+      value: "softPetal",
+      label: "Soft Petal",
     },
     {
-      value: 'blushingPetal',
-      label: 'Blushing Petal',
+      value: "blushingPetal",
+      label: "Blushing Petal",
     },
   ],
   expressions: [
     {
-      value: 'default',
-      label: 'Default',
+      value: "default",
+      label: "Default",
     },
     {
-      value: 'hit',
-      label: 'Hit',
+      value: "hit",
+      label: "Hit",
     },
     {
-      value: 'smile',
-      label: 'Smile',
+      value: "smile",
+      label: "Smile",
     },
     {
-      value: 'troubled',
-      label: 'Troubled',
+      value: "troubled",
+      label: "Troubled",
     },
     {
-      value: 'cry',
-      label: 'Cry',
+      value: "cry",
+      label: "Cry",
     },
     {
-      value: 'angry',
-      label: 'Angry',
+      value: "angry",
+      label: "Angry",
     },
     {
-      value: 'bewildered',
-      label: 'Bewildered',
+      value: "bewildered",
+      label: "Bewildered",
     },
     {
-      value: 'stunned',
-      label: 'Stunned',
+      value: "stunned",
+      label: "Stunned",
     },
     {
-      value: 'blaze',
-      label: 'Blaze',
+      value: "blaze",
+      label: "Blaze",
     },
     {
-      value: 'bowing',
-      label: 'Bowing',
+      value: "bowing",
+      label: "Bowing",
     },
     {
-      value: 'cheers',
-      label: 'Cheers',
+      value: "cheers",
+      label: "Cheers",
     },
     {
-      value: 'chu',
-      label: 'Chu',
+      value: "chu",
+      label: "Chu",
     },
     {
-      value: 'dam',
-      label: 'Dam',
+      value: "dam",
+      label: "Dam",
     },
     {
-      value: 'despair',
-      label: 'Despair',
+      value: "despair",
+      label: "Despair",
     },
     {
-      value: 'glitter',
-      label: 'Glitter',
+      value: "glitter",
+      label: "Glitter",
     },
     {
-      value: 'hot',
-      label: 'Hot',
+      value: "hot",
+      label: "Hot",
     },
     {
-      value: 'hum',
-      label: 'Hum',
+      value: "hum",
+      label: "Hum",
     },
     {
-      value: 'love',
-      label: 'Love',
+      value: "love",
+      label: "Love",
     },
     {
-      value: 'oops',
-      label: 'Oops',
+      value: "oops",
+      label: "Oops",
     },
     {
-      value: 'pain',
-      label: 'Pain',
+      value: "pain",
+      label: "Pain",
     },
     {
-      value: 'qBlue',
-      label: 'QBlue',
+      value: "qBlue",
+      label: "QBlue",
     },
     {
-      value: 'shine',
-      label: 'Shine',
+      value: "shine",
+      label: "Shine",
     },
     {
-      value: 'vomit',
-      label: 'Vomit',
+      value: "vomit",
+      label: "Vomit",
     },
     {
-      value: 'wink',
-      label: 'Wink',
+      value: "wink",
+      label: "Wink",
     },
   ],
   ears: [
     {
-      value: 'humanEars',
-      label: 'Human',
+      value: "humanEars",
+      label: "Human",
     },
     {
-      value: 'elvenEars',
-      label: 'Elven',
+      value: "elvenEars",
+      label: "Elven",
     },
     {
-      value: 'lefEars',
-      label: 'Lef',
+      value: "lefEars",
+      label: "Lef",
     },
     {
-      value: 'highLefEars',
-      label: 'High Lef',
+      value: "highLefEars",
+      label: "High Lef",
     },
   ],
-}
+};
 
 const defaultSelectors = {
   skin: characterOptions.skins[0].value,
@@ -293,13 +293,13 @@ const defaultSelectors = {
   ears: characterOptions.ears[0].value,
   hair: {
     hairId: 30000,
-    name: 'Toben Hair',
-    requiredStats: { gender: 'any' },
+    name: "Toben Hair",
+    requiredStats: { gender: "any" },
   },
   face: {
     faceId: 20000,
-    name: 'Motivated Look (Black)',
-    requiredStats: { gender: 'any' },
+    name: "Motivated Look (Black)",
+    requiredStats: { gender: "any" },
   },
   faceAccessory: undefined,
   eyeAccessory: undefined,
@@ -313,22 +313,22 @@ const defaultSelectors = {
   shield: undefined,
   cape: undefined,
   shoes: undefined,
-}
+};
 
 const menuData = {
   selectors: { ...defaultSelectors },
   characterPreview: null,
   async fetchCharacterPreview() {
-    const blob = await characterPreviewFetcher(this.selectors)
+    const blob = await characterPreviewFetcher(this.selectors);
 
-    const characterPreviewURI = await readBlob(blob)
+    const characterPreviewURI = await readBlob(blob);
 
-    this.characterPreview = characterPreviewURI
+    this.characterPreview = characterPreviewURI;
   },
   handleRemoveItem(itemName) {
     if (this.selectors[itemName] !== defaultSelectors[itemName]) {
-      this.selectors[itemName] = defaultSelectors[itemName]
-      this.fetchCharacterPreview()
+      this.selectors[itemName] = defaultSelectors[itemName];
+      this.fetchCharacterPreview();
     }
   },
-}
+};
