@@ -1181,10 +1181,6 @@ select {
   max-height: 2.5rem;
 }
 
-.max-h-full {
-  max-height: 100%;
-}
-
 .min-h-0 {
   min-height: 0px;
 }
@@ -2489,11 +2485,6 @@ select {
 .py-1 {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
-}
-
-.py-10 {
-  padding-top: 2.5rem;
-  padding-bottom: 2.5rem;
 }
 
 .py-12 {

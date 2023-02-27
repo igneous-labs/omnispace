@@ -36,7 +36,7 @@
   </head>
   <body>
     <main
-      class="max-h-full flex flex-col px-4 py-10"
+      class="h-full flex flex-col px-4 py-2"
       x-data="{ ...messageData }"
     >
       <div class="flex justify-between items-center">
@@ -3520,7 +3520,7 @@
         </div>
       </div>
 
-      <div class="justify-self-end mt-4 flex items-end gap-x-2">
+      <div class="w-full justify-self-end flex items-end gap-x-2">
         <div class="w-full">
           <template x-if="replyingToMessage">
             <div
@@ -3614,7 +3614,7 @@
             role="textbox"
             contenteditable
             data-placeholder="Message"
-            class="block resize-none min-h-[32px] px-2.5 py-0.5 border overflow-hidden outline-none"
+            class="block resize-none min-h-[32px] px-2.5 py-0.5 border overflow-hidden outline-none w-full"
             :class="{ 'border rounded-md': !replyingToMessage, 'border-x border-b rounded-br-md rounded-bl-md': replyingToMessage }"
             tabindex="0"
             x-on:keydown="handleSendMessage(event);"
