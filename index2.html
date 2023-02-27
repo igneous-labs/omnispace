@@ -123,12 +123,12 @@
             document.body.scrollTop = 0; // For Safari
             document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
             // keyboard was pulled up
-            if (prevVVheight > vp.height && document.activeElement.id === "messagebox") {
+            if (prevVVheight > vp.height) {
                 document.getElementById("game").style.zIndex = -1;
-                document.getElementById("chat_area").style.opacity = "50%";
+                document.getElementById("chat_area").style.backgroundColor = "rgba(0, 0, 0, 0.5)";
             } else {
                 document.getElementById("game").style.zIndex = 1;
-                document.getElementById("chat_area").style.opacity = "100%";
+                document.getElementById("chat_area").style.backgroundColor = undefined;
             }
             prevVVheight = vp.height;
         }
