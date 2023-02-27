@@ -52,12 +52,16 @@
 
     #footer {
         position: fixed;
-        bottom: 0;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
         min-height: 50px;
         max-height: 50px;
         background-color: yellow;
         width: 100%;
         display: flex;
+        transform-origin: left bottom;
+        transform: translate(0px, 0px) scale(1);
     }
     
     #messagebox {
@@ -120,32 +124,27 @@
     </div>
 
     <div id="layoutViewport"></div>
-    <script>
-        let pendingUpdate = false;
-    
+    <script>    
+    /*
         function viewportHandler(event) {
-            if (pendingUpdate) return;
-            pendingUpdate = true;
-        
-            requestAnimationFrame(() => {
-                pendingUpdate = false;
-                const layoutViewport = document.getElementById('layoutViewport');
-        
-                // Since the bar is position: fixed we need to offset it by the
-                // visual viewport's offset from the layout viewport origin.
-                const viewport = event.target;
-                const offsetLeft = viewport.offsetLeft;
-                const offsetTop = viewport.height
-                            - layoutViewport.getBoundingClientRect().height
-                            + viewport.offsetTop;
-        
-                // You could also do this by setting style.left and style.top if you
-                // use width: 100% instead.
-                document.getElementById("footer").style.transform = `translate(${offsetLeft}px, ${offsetTop}px) scale(${1 / viewport.scale})`;
-            });
+            const layoutViewport = document.getElementById('layoutViewport');
+
+            // Since the bar is position: fixed we need to offset it by the
+            // visual viewport's offset from the layout viewport origin.
+            const viewport = event.target;
+            const offsetLeft = viewport.offsetLeft;
+            const offsetTop = viewport.height
+                        - layoutViewport.getBoundingClientRect().height
+                        + viewport.offsetTop;
+
+            // You could also do this by setting style.left and style.top if you
+            // use width: 100% instead.
+            // document.getElementById("footer").style.left = `${offsetLeft}px`;
+            // document.getElementById("footer").style.top = `${offsetTop}px`;
+            document.getElementById("footer").style.transform = `translate(${offsetLeft}px, ${offsetTop}px) scale(${1 / viewport.scale})`;
         }
-    
-        window.visualViewport.addEventListener('scroll', viewportHandler);
-        window.visualViewport.addEventListener('resize', viewportHandler);
+    */
+        //window.visualViewport.addEventListener('scroll', viewportHandler);
+        //window.visualViewport.addEventListener('resize', viewportHandler);
     </script>    
 </body>
