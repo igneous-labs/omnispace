@@ -3453,12 +3453,12 @@
       <!-- container for both chat text and message box -->
       <div class="flex flex-col landscape:h-[70%] grow">
         <!-- Start chat/rooms list -->
+        <!-- flex-col-reverse makes div scroll to bottom by default -->
         <div
-          id="view-container"
           class="flex flex-col-reverse box-border"
           :class="{ 'overflow-auto': !messageMenuOpen, 'overflow-hidden': messageMenuOpen }"
+          id="view"
         >
-          <div id="view"></div>
         </div>
         <!-- End chat/rooms list -->
 

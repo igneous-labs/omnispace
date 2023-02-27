@@ -31,13 +31,11 @@ function onVirtualKeyboardDown() {
  * @param {*} event 
  */
 function viewportHandler(event) {
+    const vp = event.target;
     // only run if in portrait mode (on mobile)
     if (window.innerHeight <= window.innerWidth) {
         return;
     }
-    const vp = event.target;
-    // hax: add buffer of 100 to deal with random
-    // swipes up and down on ios triggering resize
     if (prevVVheight > vp.height) {
         onVirtualKeyboardUp();
     } else {
@@ -47,4 +45,7 @@ function viewportHandler(event) {
 }
 
 window.visualViewport.addEventListener('resize', viewportHandler);
-onVirtualKeyboardDown();
+// only run initial set if in portrait mode (on mobile)
+if (window.innerHeight > window.innerWidth) {
+    onVirtualKeyboardDown();
+}

@@ -209,13 +209,14 @@ function render() {
         document.getElementById("title").textContent = "Omnispaces"
         printRoomList();
 
-      view.classList.add('overflow-y-scroll')
-
       view.scrollTop = 0
     }
     else {
-        document.getElementById("title").textContent = roomList.get(viewingRoom).name
-        var messageHistoryHTML = messageHistory[viewingRoom].reduce((acc, message) => {
+        document.getElementById("title").textContent = roomList.get(viewingRoom).name;
+
+        // because view is col-reverse while messageHistory is in chronological order,
+        // we need to add latest first so that it renders at the bottom 
+        var messageHistoryHTML = messageHistory[viewingRoom].map(x => x).reverse().reduce((acc, message) => {
             // Find the room where 
             const roomId = message['event']['room_id']
             const senderId = message['event']['sender']
@@ -232,12 +233,10 @@ function render() {
                 </span>
                 </div>
             `
-        }, '')
+        }, '');
 
       
         view.innerHTML = messageHistoryHTML
-
-        view.classList.remove('overflow-y-scroll')
 
         // Autoscroll to new message, when scrollbar is at the bottom of chatbox
         const isScrolledToBottom = view.scrollHeight - view.clientHeight <= view.scrollTop + 1
