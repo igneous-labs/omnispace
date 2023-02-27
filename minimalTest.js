@@ -351,31 +351,49 @@ async function logout() {
 
 document.addEventListener('paste', handlePaste);
 
-const MIN_KEYBOARD_HEIGHT = 300;
-let canScroll = true;
-window.visualViewport.addEventListener("resize", (event) => {
-    if (!isMobile) return;
-    var chat_area = document.getElementById("chat_area");
-    var header = document.getElementById("header");
-    if (window.screen.height - MIN_KEYBOARD_HEIGHT > window.visualViewport.height) {
-      chat_area.classList.add('keyboard_open');
-      window.scrollTo(0, header?.clientHeight + 26)
-      canScroll = false;
-    } else {
-      chat_area.classList.remove('keyboard_open');
-      window.scrollTo(0, document.body.scrollHeight)
-      canScroll = true;
+let pendingUpdate = false;
+const viewportHandler = (event) => {
+    if (pendingUpdate) {
+        return;
     }
-});
+    pendingUpdate = true;
 
-document.body.addEventListener("touchmove", (event) => {
-    if (isMobile && window.screen.height - MIN_KEYBOARD_HEIGHT > window.visualViewport.height && !canScroll) {
-      const shouldDisableScroll = !event.target.closest('#rooms_messages_list')
-      if (shouldDisableScroll) {
-        event.preventDefault();
-      }
-    }
-}, { passive: false });
-  
+    requestAnimationFrame(() => {
+        pendingUpdate = false;
+        const layoutViewport = document.getElementById('game');
+        layoutViewport.style.transform = "none";
+        if (layoutViewport.getBoundingClientRect().top < 0) {
+            layoutViewport.style.transform = `translate(0, ${-layoutViewport.getBoundingClientRect().top}px)`;
+        }
+    });
+};
+window.visualViewport.addEventListener("scroll", viewportHandler);
+window.visualViewport.addEventListener("resize", viewportHandler);
+
+// const MIN_KEYBOARD_HEIGHT = 300;
+// let canScroll = true;
+// window.visualViewport.addEventListener("resize", (event) => {
+//     if (!isMobile) return;
+//     var chat_area = document.getElementById("chat_area");
+//     var header = document.getElementById("header");
+//     if (window.screen.height - MIN_KEYBOARD_HEIGHT > window.visualViewport.height) {
+//       chat_area.classList.add('keyboard_open');
+//       window.scrollTo(0, header?.clientHeight + 26)
+//       canScroll = false;
+//     } else {
+//       chat_area.classList.remove('keyboard_open');
+//       window.scrollTo(0, document.body.scrollHeight)
+//       canScroll = true;
+//     }
+// });
+
+// document.body.addEventListener("touchmove", (event) => {
+//     if (isMobile && window.screen.height - MIN_KEYBOARD_HEIGHT > window.visualViewport.height && !canScroll) {
+//       const shouldDisableScroll = !event.target.closest('#rooms_messages_list')
+//       if (shouldDisableScroll) {
+//         event.preventDefault();
+//       }
+//     }
+// }, { passive: false });
 
 start();
