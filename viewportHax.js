@@ -12,7 +12,7 @@ function onVirtualKeyboard(isUp) {
   // NB: padding, margin doesnt work
   view.style.borderTop = `${
     isUp ? 0 : Math.round(canvas.offsetHeight)
-  }px solid`;
+  }px solid transparent`;
 
   const navHeight = document.querySelector("nav").offsetHeight;
   const footerHeight = document.querySelector("footer").offsetHeight;
