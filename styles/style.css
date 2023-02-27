@@ -110,6 +110,7 @@ h6 {
   overflow: auto;
   /* do math here */
   max-height: calc(100vh - 48px - 100vw - 80px);
+  height: 100%;
 }
 
 #chat_area {
