@@ -1258,8 +1258,8 @@ select {
   max-width: 56rem;
 }
 
-.max-w-\[190px\] {
-  max-width: 190px;
+.max-w-\[150px\] {
+  max-width: 150px;
 }
 
 .max-w-full {
