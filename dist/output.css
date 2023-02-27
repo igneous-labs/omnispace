@@ -1137,6 +1137,10 @@ select {
   display: none;
 }
 
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
 .h-24 {
   height: 6rem;
 }
@@ -3402,5 +3406,29 @@ select {
     .dark\:lg\:hover\:\[paint-order\:markers\]:hover {
       paint-order: markers;
     }
+  }
+}
+
+@media (orientation: portrait) {
+  .portrait\:mb-4 {
+    margin-bottom: 1rem;
+  }
+
+  .portrait\:w-full {
+    width: 100%;
+  }
+
+  .portrait\:flex-col {
+    flex-direction: column;
+  }
+}
+
+@media (orientation: landscape) {
+  .landscape\:h-\[70\%\] {
+    height: 70%;
+  }
+
+  .landscape\:flex-row {
+    flex-direction: row;
   }
 }
