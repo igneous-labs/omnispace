@@ -11,14 +11,20 @@
       referrerpolicy="no-referrer"
     ></script>
     <!-- <script defer src="gameComm.js"></script> -->
-    <script type="module" src="https://unpkg.com/canvas-txt@3.0.0/build/index.js"></script>
+    <script
+      type="module"
+      src="https://unpkg.com/canvas-txt@3.0.0/build/index.js"
+    ></script>
     <script defer src="game.js"></script>
 
     <title>Test</title>
     <meta charset="utf-8" />
     <link rel="icon" href="data:," />
     <link href="styles/style.css" rel="stylesheet" />
-    <meta name="viewport" content="width=device-width, initial-scale=1 maximum-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1 maximum-scale=1"
+    />
     <link rel="manifest" href="omnispace.webmanifest" />
     <script src="/characterCustomizer.js"></script>
     <script
@@ -41,7 +47,9 @@
     <link href="/dist/output.css" rel="stylesheet" />
   </head>
   <body class="overflow-y-hidden">
-    <nav class="flex flex-wrap justify-between items-center px-4 py-2 gap-2">
+    <nav
+      class="flex flex-wrap justify-between items-center px-4 py-2 gap-2 sticky top-0"
+    >
       <button
         onClick="setActiveRoom(null); render();"
         class="rounded-md border border-transparent bg-slate-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
@@ -3445,9 +3453,13 @@
       class="h-full flex justify-between portrait:flex-col landscape:flex-row gap-4 px-4 py-2"
       x-data="{ ...messageData }"
     >
-
       <!-- Start game -->
-      <canvas class="block aspect-square portrait:fixed portrait:w-screen portrait:left-0 landscape:h-[70%]" id="canvas" width="400" height="400"></canvas>
+      <canvas
+        class="block aspect-square portrait:fixed portrait:w-screen portrait:left-0 landscape:h-[70%]"
+        id="canvas"
+        width="400"
+        height="400"
+      ></canvas>
       <!-- End game -->
 
       <!-- container for both chat text and message box -->
@@ -3458,8 +3470,7 @@
           class="flex flex-col-reverse box-border"
           :class="{ 'overflow-auto': !messageMenuOpen, 'overflow-hidden': messageMenuOpen }"
           id="view"
-        >
-        </div>
+        ></div>
         <!-- End chat/rooms list -->
 
         <!-- Start message input row -->
@@ -3575,7 +3586,10 @@
 
                       <div class="flex flex-col min-w-0">
                         <p x-text="senderName" class="font-bold"></p>
-                        <p x-text="messageContent" class="truncate max-w-full"></p>
+                        <p
+                          x-text="messageContent"
+                          class="truncate max-w-full"
+                        ></p>
                       </div>
                     </div>
 
@@ -3647,12 +3661,18 @@
             <img id="uploadPreview" />
           </div>
           <div>
-            <button value="cancel" type="button" onclick="document.getElementById('uploadImageDialog').close()">Cancel</button>
+            <button
+              value="cancel"
+              type="button"
+              onclick="document.getElementById('uploadImageDialog').close()"
+            >
+              Cancel
+            </button>
             <button id="confirmBtn" type="submit">Send</button>
           </div>
         </form>
       </dialog>
-      
+
       <!-- End matrix -->
     </main>
   </body>
