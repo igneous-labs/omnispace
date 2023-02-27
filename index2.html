@@ -16,8 +16,6 @@
     #chat_area {
         overflow: scroll;
         overflow-x: hidden;
-        background-color: teal;
-        height: calc(100svh - 100px);
         width: 100%;
     }
     #chat_log {
@@ -60,9 +58,18 @@
         border: 1px solid black;
         padding: 5px;
     }
+
+    #game {
+        background-color: black;
+        width: 400px;
+        height: 400px;
+        position: fixed;
+        top: 60px;
+    }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1 maximum-scale=1" />
 <body>
+    <div id="game"></div>
     <div id="header">Header</div>
     <div id="chat_area">
         <div id="chat_log">
@@ -105,15 +112,26 @@
         <button>Send</button>
     </div>
     <script>
+        let prevVVheight = window.visualViewport.height;
+
         function viewportHandler(event) {
             /** @type {VisualViewport} */
             const vp = event.target;
-            document.getElementById("chat_area").style.height = `calc(${vp.height}px - 100px)`;
+            document.getElementById("chat_area").style.height = `${vp.height - 100}px`;
             document.getElementById("header").innerHTML = vp.height;
             document.body.scrollTop = 0; // For Safari
             document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+            // keyboard was pulled up
+            if (prevVVheight > vp.height) {
+                document.getElementById("game").style.zIndex = -1;
+                document.getElementById("chat_area").style.opacity = "50%";
+            } else {
+                document.getElementById("game").style.zIndex = 1;
+                document.getElementById("chat_area").style.opacity = "100%";
+            }
+            prevVVheight = vp.height;
         }
-        window.visualViewport.addEventListener('scroll', viewportHandler);
         window.visualViewport.addEventListener('resize', viewportHandler);
+        document.getElementById("chat_area").style.height = `${window.visualViewport.height - 100}px`;
     </script>    
 </body>
