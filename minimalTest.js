@@ -136,7 +136,7 @@ const messageData = {
     const view = document.getElementById("view");
     if (!this.replyingToMessage) {
       // 70px for reply box above the message input
-      view.style.height = `${view.clientHeight - 70}px`;
+      view.style.height = `${view.offsetHeight - 70}px`;
     }
     this.replyingToMessage = this.selectedMessage;
     this.handleCloseMenu();
@@ -145,7 +145,7 @@ const messageData = {
     const view = document.getElementById("view");
     if (this.replyingToMessage) {
       // 70px for reply box above the message input
-      view.style.height = `${view.clientHeight + 70}px`;
+      view.style.height = `${view.offsetHeight + 70}px`;
     }
     this.replyingToMessage = null;
   },
