@@ -133,17 +133,21 @@ const messageData = {
     }
   },
   handleReply() {
+    const view = document.getElementById("view");
+    view.style.height = `${view.clientHeight - 70}px`;
     this.replyingToMessage = this.selectedMessage;
     this.handleCloseMenu();
   },
   handleUnselectReply() {
+    const view = document.getElementById("view");
+    view.style.height = `${view.clientHeight + 70}px`;
     this.replyingToMessage = null;
   },
   handleSendMessage(e) {
     // Button click
     if (!e) {
       sendMessage(this.replyingToMessage?.event.event_id);
-      this.replyingToMessage = null;
+      this.handleUnselectReply();
     } else if (e.keyCode === 13) {
       // Shift + enter pressed
       if (e.shiftKey) {
@@ -155,7 +159,7 @@ const messageData = {
       if (!isMobile) {
         e.preventDefault();
         sendMessage(this.replyingToMessage?.event.event_id);
-        this.replyingToMessage = null;
+        this.handleUnselectReply();
       }
     }
   },
