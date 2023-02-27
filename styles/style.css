@@ -99,6 +99,7 @@ h6 {
 
 #app {
   display: grid;
+  position: relative;
 }
 
 #game {
@@ -155,4 +156,14 @@ h6 {
   #view {
     max-height: 25vh;
   }
+}
+
+.keyboard_open {
+  grid-area: 1/1 !important;
+  background: rgba(255, 255, 255, 0.7);
+  align-self: end;
+  z-index: 9;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }

@@ -350,15 +350,29 @@ async function logout() {
 }
 
 document.addEventListener('paste', handlePaste);
+
+const MIN_KEYBOARD_HEIGHT = 300;
+let canScroll = true;
 window.visualViewport.addEventListener("resize", (event) => {
+    if (!isMobile) return;
     var chat_area = document.getElementById("chat_area");
-    if (window.visualViewport?.height < prevVisualViewportHeight) {
-      const h = document.getElementById("canvas")?.clientHeight;
-      chat_area.style.cssText = `grid-area: 1/1;background-color: rgba(255, 255, 255, 0.7);align-self:end;`;
+    var header = document.getElementById("header");
+    if (window.screen.height - MIN_KEYBOARD_HEIGHT > window.visualViewport.height) {
+      chat_area.classList.add('keyboard_open');
+      window.scrollTo(0, header?.clientHeight + 26)
+      canScroll = false;
     } else {
-      chat_area.style.cssText = "";
+      chat_area.classList.remove('keyboard_open');
+      window.scrollTo(0, document.body.scrollHeight)
+      canScroll = true;
     }
+});
+
+document.body.addEventListener("touchmove", (event) => {
+  if (isMobile && window.screen.height - MIN_KEYBOARD_HEIGHT > window.visualViewport.height && !canScroll) {
+      event.preventDefault();
+    }
+}, { passive: false });
   
-    prevVisualViewportHeight = window.visualViewport?.height;
-  });
+
 start();
