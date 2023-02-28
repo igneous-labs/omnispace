@@ -1254,12 +1254,12 @@ select {
   min-width: 32px;
 }
 
-.max-w-4xl {
-  max-width: 56rem;
+.min-w-\[38px\] {
+  min-width: 38px;
 }
 
-.max-w-\[145px\] {
-  max-width: 145px;
+.max-w-4xl {
+  max-width: 56rem;
 }
 
 .max-w-full {
