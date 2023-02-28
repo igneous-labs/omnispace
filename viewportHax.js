@@ -4,10 +4,8 @@ function setViewHeight() {
   const footerHeight = document.querySelector("footer").offsetHeight;
   const vpH = window.visualViewport.height;
   // leave 15px for bottom margin between textrow and bottom of screen
-  console.log(vpH);
-  console.log(vpH, navHeight, footerHeight);
   document.getElementById("main").style.height = `${Math.round(
-    vpH - navHeight - footerHeight - 15,
+    vpH - navHeight - 15,
   )}px`;
 }
 
