@@ -248,7 +248,6 @@ function render() {
     document.getElementById("back")?.classList.add("invisible");
     document.getElementById("message_box")?.classList.remove("flex");
     document.getElementById("message_box")?.classList.add("hidden");
-    document.getElementById("open_chat")?.classList.add("hidden");
     printRoomList();
 
     view.scrollTop = 0;
