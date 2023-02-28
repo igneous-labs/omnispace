@@ -405,9 +405,4 @@ async function logout() {
 }
 
 document.addEventListener("paste", handlePaste);
-document.getElementById("chat_input").addEventListener("blur", (e) => {
-  console.log("Chat input lost focus")
-  document.getElementById("canvas").zIndex = 1;
-  document.getElementById("view").style.backgroundColor = "transparent"
-});
 start();

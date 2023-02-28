@@ -1,33 +1,5 @@
 // Make sure script is ran in defer so that window is defined
 
-function onVirtualViewportChange() {
-  // const isOskUp = window.visualViewport.height < 0.75 * window.innerHeight;
-
-  const canvas = document.getElementById("canvas");
-  // canvas.style.zIndex = isOskUp ? -1 : 1;
-  const view = document.getElementById("view");
-  // view.style.backgroundColor = isOskUp ? "rgba(0, 0, 0, 0.5)" : "transparent";
-  // // NB: padding, margin doesnt work
-  // view.style.borderTop = `${
-  //   isOskUp ? 0 : Math.round(canvas.offsetHeight)
-  // }px solid transparent`;
-
-  if (document.getElementById("chat_input") === document.activeElement) {
-    canvas.style.zIndex = -1
-    view.style.backgroundColor = "rgba(220, 220, 220, 0.7)"
-  }
-  else {
-    canvas.style.zIndex = 1
-    view.style.backgroundColor = "transparent"
-  }
-
-  setViewHeight();
-
-  // scroll to top only at the end
-  document.body.scrollTop = 0; // For Safari
-  document.documentElement.scrollTop = 0; // For Chrome, Firefox
-}
-
 function setViewHeight() {
   const navHeight = document.querySelector("nav").offsetHeight;
   const footerHeight = document.querySelector("footer").offsetHeight;
@@ -38,25 +10,40 @@ function setViewHeight() {
   )}px`;
 }
 
-/**
- *
- * @param {*} event
- */
-function viewportHandler(event) {
-  const vp = event.target;
+function viewportHandler() {
   // only run if in portrait mode (on mobile)
   if (window.innerHeight <= window.innerWidth) {
     return;
   }
-  onVirtualViewportChange();
+  setViewHeight();
 }
 
 window.visualViewport.addEventListener("resize", viewportHandler);
-// only run initial set if in portrait mode (on mobile)
-if (window.innerHeight > window.innerWidth) {
-  onVirtualViewportChange();
-}
+// run initial set
+viewportHandler();
 
 const navFooterResizeObs = new ResizeObserver(setViewHeight);
 navFooterResizeObs.observe(document.querySelector("nav"));
 navFooterResizeObs.observe(document.querySelector("footer"));
+
+const chatInput = document.getElementById("chat_input");
+chatInput.addEventListener("blur", (e) => {
+  // only run if in portrait mode (on mobile)
+  if (window.innerHeight <= window.innerWidth) {
+    return;
+  }
+  console.log("Chat input lost focus");
+  document.getElementById("canvas").zIndex = 1;
+  document.getElementById("view").style.backgroundColor = "transparent";
+});
+
+chatInput.addEventListener("focus", (e) => {
+  // only run if in portrait mode (on mobile)
+  if (window.innerHeight <= window.innerWidth) {
+    return;
+  }
+  console.log("Chat input on focus");
+  document.getElementById("canvas").style.zIndex = -1;
+  document.getElementById("view").style.backgroundColor =
+    "rgba(220, 220, 220, 0.7)";
+});
