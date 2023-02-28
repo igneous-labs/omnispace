@@ -23,3 +23,8 @@ window.addEventListener("scroll", (e) => {
     document.body.scrollTop = 0;
   }
 });
+
+// haxx0r for Safari
+document.getElementById("chat_input")?.addEventListener("focus", (e) => {
+  setTimeout(() => window.scrollTo(0, 0), 100);
+});
