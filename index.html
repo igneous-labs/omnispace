@@ -48,13 +48,12 @@
   </head>
   <!-- overflow-y-hidden doesnt work with safari -->
   <body
-    class="overflow-hidden"
     x-data="{
       characterMenuOpen: false,
     }"
   >
     <nav
-      class="flex items-center px-4 py-2 gap-2 sticky top-0"
+      class="flex items-center px-4 py-2 gap-2"
       :class="{ 'z-10': characterMenuOpen }"
     >
       <div class="flex-1">
@@ -3535,12 +3534,12 @@
     </nav>
 
     <main
-      class="h-full flex justify-between portrait:flex-col landscape:flex-row gap-4 px-4 py-2"
+      class="h-[calc(100%-54px)] flex flex-col gap-4 px-4 py-2"
       x-data="{ ...messageData }"
     >
       <!-- Start game -->
       <canvas
-        class="block aspect-square portrait:fixed portrait:w-screen portrait:left-0 landscape:h-[70%]"
+        class="block h-[400px]"
         id="canvas"
         width="400"
         height="400"
@@ -3548,18 +3547,18 @@
       <!-- End game -->
 
       <!-- container for both chat text and message box -->
-      <div class="flex flex-col landscape:h-[70%] landscape:grow">
+      <div class="flex flex-col flex-grow">
         <!-- Start chat/rooms list -->
         <!-- flex-col-reverse makes div scroll to bottom by default -->
         <div
-          class="flex flex-col-reverse box-border"
+          class="flex flex-col-reverse box-border h-full"
           :class="{ 'overflow-auto': !messageMenuOpen, 'overflow-hidden': messageMenuOpen }"
           id="view"
         ></div>
         <!-- End chat/rooms list -->
 
         <!-- Start message input row -->
-        <footer id="message_form" class="flex items-end gap-x-2 portrait:mb-4">
+        <footer id="message_form" class="items-end gap-x-2 hidden flex-grow">
           <div
             id="message_menu"
             @keydown.escape.stop="handleCloseMenu();"
@@ -3612,7 +3611,7 @@
 
           <div
             id="message_box"
-            class="w-full justify-self-end items-end gap-x-2 hidden"
+            class="flex w-full justify-self-end items-end gap-x-2"
           >
             <div class="w-full min-w-0">
               <template x-if="replyingToMessage">

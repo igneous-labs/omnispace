@@ -136,7 +136,7 @@ const messageData = {
     const view = document.getElementById("view");
     if (!this.replyingToMessage) {
       // 70px for reply box above the message input
-      view.style.height = `${view.offsetHeight - 70}px`;
+      // view.style.height = `${view.offsetHeight - 70}px`;
     }
     this.replyingToMessage = this.selectedMessage;
     this.handleCloseMenu();
@@ -145,7 +145,7 @@ const messageData = {
     const view = document.getElementById("view");
     if (this.replyingToMessage) {
       // 70px for reply box above the message input
-      view.style.height = `${view.offsetHeight + 70}px`;
+      // view.style.height = `${view.offsetHeight + 70}px`;
     }
     this.replyingToMessage = null;
   },
@@ -246,8 +246,8 @@ function render() {
   if (viewingRoom === null) {
     document.getElementById("title").textContent = "All Chats";
     document.getElementById("back")?.classList.add("invisible");
-    document.getElementById("message_box")?.classList.remove("flex");
-    document.getElementById("message_box")?.classList.add("hidden");
+    document.getElementById("message_form")?.classList.remove("flex");
+    document.getElementById("message_form")?.classList.add("hidden");
     printRoomList();
 
     view.scrollTop = 0;
@@ -255,8 +255,8 @@ function render() {
     document.getElementById("title").textContent =
       roomList.get(viewingRoom).name;
     document.getElementById("back")?.classList.remove("invisible");
-    document.getElementById("message_box")?.classList.remove("hidden");
-    document.getElementById("message_box")?.classList.add("flex");
+    document.getElementById("message_form")?.classList.remove("hidden");
+    document.getElementById("message_form")?.classList.add("flex");
     document.getElementById("open_chat")?.classList.remove("hidden");
 
     // because view is col-reverse while messageHistory is in chronological order,
