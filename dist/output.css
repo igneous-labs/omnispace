@@ -589,7 +589,6 @@ select {
   width: -moz-fit-content;
   width: fit-content;
   max-width: 80%;
-  max-height: 80%;
   overflow-wrap: break-word;
   margin: 0.25rem;
   padding-left: 0.25rem;
