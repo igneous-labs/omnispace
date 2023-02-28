@@ -317,6 +317,12 @@ function render() {
   if (appMode === "game") {
     // Always show canvas in game mode
     document.getElementById("canvas").style.display = "block";
+    document.getElementById("toggle_chat")?.classList.add("bg-slate-600");
+    document.getElementById("toggle_chat")?.classList.add("hover:bg-slate-700");
+    document.getElementById("toggle_chat")?.classList.remove("bg-green-400");
+    document
+      .getElementById("toggle_chat")
+      ?.classList.remove("hover:bg-green-500");
     if (viewingRoom !== null) {
       // While in game mode, we show rooms list but not specific chats
       document.getElementById("view").style.display = "none";
@@ -324,6 +330,12 @@ function render() {
       document.getElementById("view").style.display = "flex";
     }
   } else {
+    document.getElementById("toggle_chat")?.classList.remove("bg-slate-600");
+    document
+      .getElementById("toggle_chat")
+      ?.classList.remove("hover:bg-slate-700");
+    document.getElementById("toggle_chat")?.classList.add("bg-green-400");
+    document.getElementById("toggle_chat")?.classList.add("hover:bg-green-500");
     document.getElementById("canvas").style.display = "none";
     document.getElementById("view").style.display = "flex";
   }
