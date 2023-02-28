@@ -1,15 +1,15 @@
 // Make sure script is ran in defer so that window is defined
 
-let prevVVheight = window.visualViewport.height;
+function onVirtualViewportChange() {
+  const isOskUp = window.visualViewport.height < 0.75 * window.innerHeight;
 
-function onVirtualKeyboard(isUp) {
   const canvas = document.getElementById("canvas");
-  canvas.style.zIndex = isUp ? -1 : 1;
+  canvas.style.zIndex = isOskUp ? -1 : 1;
   const view = document.getElementById("view");
-  view.style.backgroundColor = isUp ? "rgba(0, 0, 0, 0.5)" : "transparent";
+  view.style.backgroundColor = isOskUp ? "rgba(0, 0, 0, 0.5)" : "transparent";
   // NB: padding, margin doesnt work
   view.style.borderTop = `${
-    isUp ? 0 : Math.round(canvas.offsetHeight)
+    isOskUp ? 0 : Math.round(canvas.offsetHeight)
   }px solid transparent`;
 
   setViewHeight();
@@ -29,14 +29,6 @@ function setViewHeight() {
   )}px`;
 }
 
-function onVirtualKeyboardUp() {
-  onVirtualKeyboard(true);
-}
-
-function onVirtualKeyboardDown() {
-  onVirtualKeyboard(false);
-}
-
 /**
  *
  * @param {*} event
@@ -47,18 +39,13 @@ function viewportHandler(event) {
   if (window.innerHeight <= window.innerWidth) {
     return;
   }
-  if (prevVVheight > vp.height) {
-    onVirtualKeyboardUp();
-  } else {
-    onVirtualKeyboardDown();
-  }
-  prevVVheight = vp.height;
+  onVirtualViewportChange();
 }
 
 window.visualViewport.addEventListener("resize", viewportHandler);
 // only run initial set if in portrait mode (on mobile)
 if (window.innerHeight > window.innerWidth) {
-  onVirtualKeyboardDown();
+  onVirtualViewportChange();
 }
 
 const navFooterResizeObs = new ResizeObserver(setViewHeight);
