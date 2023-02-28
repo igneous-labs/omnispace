@@ -1166,10 +1166,6 @@ select {
   display: none;
 }
 
-.aspect-square {
-  aspect-ratio: 1 / 1;
-}
-
 .h-24 {
   height: 6rem;
 }
@@ -3453,14 +3449,6 @@ select {
 }
 
 @media (orientation: portrait) {
-  .portrait\:left-0 {
-    left: 0px;
-  }
-
-  .portrait\:w-screen {
-    width: 100vw;
-  }
-
   .portrait\:flex-col {
     flex-direction: column;
   }
