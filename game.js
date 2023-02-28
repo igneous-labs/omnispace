@@ -1065,9 +1065,9 @@ class NetworkHandler {
 }
 
 function resizeCanvas() {
-  canvas.height = canvas.clientHeight;
-  canvas.width = canvas.clientWidth;
-  camera.updateViewport();
+  //   canvas.height = canvas.clientHeight;
+  //   canvas.width = canvas.clientWidth;
+  //   camera.updateViewport();
 }
 
 //
