@@ -1064,6 +1064,12 @@ class NetworkHandler {
   }
 }
 
+function resizeCanvas() {
+  canvas.height = canvas.clientHeight;
+  canvas.width = canvas.clientWidth;
+  camera.updateViewport();
+}
+
 //
 // Let's start the game!
 //
@@ -1075,6 +1081,9 @@ canvas.addEventListener("click", handleTouchOrClick);
 window.onload = function () {
   Game.ctx = canvas.getContext("2d");
   camera = new Camera(Game.ctx, { distance: 400 });
+  resizeCanvas();
   CanvasTxt = window.canvasTxt.default;
   Game.run();
 };
+
+window.addEventListener("resize", resizeCanvas);
