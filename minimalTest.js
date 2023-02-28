@@ -270,8 +270,14 @@ function render() {
           `
                 <div :class="{'select-none': isMobile}" data-message-event-id="${
                   message.event.event_id
-                }">
-                    <strong>${senderName}: </strong>
+                }" class="message_bubble ${
+            senderId === MATRIX_USER_ID ? "self_message" : "other_message"
+          }">
+                    ${
+                      senderId === MATRIX_USER_ID
+                        ? ""
+                        : `<strong>${senderName}: </strong>`
+                    }
                     <span x-on:touchstart="messageTouchStart(event);" x-on:touchend="messageTouchEnd(event);" x-on:contextmenu="handleRightClick(event)">
                         ${message.event.content.body}
                       ${

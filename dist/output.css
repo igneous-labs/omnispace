@@ -585,9 +585,29 @@ select {
   outline: 1px auto -webkit-focus-ring-color;
 }
 
-.nigger {
-  font-size: 2.25rem;
-  line-height: 2.5rem;
+.message_bubble {
+  width: -moz-fit-content;
+  width: fit-content;
+  max-width: 80%;
+  overflow-wrap: break-word;
+  margin: 0.25rem;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  border-radius: 0.125rem;
+  /*border-radius: var(--rad-sm) var(--rad) var(--rad) var(--rad-sm);*/
+}
+
+.other_message {
+  --tw-bg-opacity: 1;
+  background-color: rgb(235 235 235 / var(--tw-bg-opacity));
+  margin-right: auto;
+}
+
+.self_message {
+  background: linear-gradient(30deg, #bec2ee, #a3f8ed);
+  margin-left: auto;
+  border-radius: 0.125rem;
+  /* border-radius: var(--rad) var(--rad-sm) var(--rad-sm) var(--rad); */
 }
 
 *, ::before, ::after {
