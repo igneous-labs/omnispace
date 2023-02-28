@@ -323,7 +323,11 @@ function render() {
     }
   } else {
     document.getElementById("view").style.display = "flex";
-    document.getElementById("canvas").style.display = "none";
+    if (!!viewingRoom) {
+      document.getElementById("canvas").style.display = "none";
+    } else {
+      document.getElementById("canvas").style.display = "block";
+    }
   }
 }
 
