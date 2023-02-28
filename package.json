@@ -4,6 +4,7 @@
     "tailwindcss": "^3.2.6"
   },
   "scripts": {
-    "tailwind-build": "pnpx tailwindcss build -i ./styles.css -o ./dist/output.css"
+    "tailwind-build": "pnpx tailwindcss build -i ./styles.css -o ./dist/output.css",
+    "tailwind-watch": "pnpx tailwindcss -i ./styles.css -o ./dist/output.css --watch"
   }
 }
