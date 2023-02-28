@@ -325,7 +325,7 @@ function render() {
       ?.classList.remove("hover:bg-green-500");
     if (viewingRoom !== null) {
       // While in game mode, we show rooms list but not specific chats
-      document.getElementById("view").style.display = "none";
+      document.getElementById("view").style.visibility = "hidden";
     } else {
       document.getElementById("view").style.display = "flex";
     }
