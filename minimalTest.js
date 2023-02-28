@@ -242,14 +242,21 @@ function printRoomList() {
 function render() {
   const view = document.getElementById("view");
   view.innerHTML = "";
+  console.log({ viewingRoom });
   if (viewingRoom === null) {
-    document.getElementById("title").textContent = "Omnispaces";
+    document.getElementById("title").textContent = "All Chats";
+    document.getElementById("back")?.classList.add("invisible");
+    document.getElementById("message_box")?.classList.remove("flex");
+    document.getElementById("message_box")?.classList.add("hidden");
     printRoomList();
 
     view.scrollTop = 0;
   } else {
     document.getElementById("title").textContent =
       roomList.get(viewingRoom).name;
+    document.getElementById("back")?.classList.remove("invisible");
+    document.getElementById("message_box")?.classList.remove("hidden");
+    document.getElementById("message_box")?.classList.add("flex");
 
     // because view is col-reverse while messageHistory is in chronological order,
     // we need to add latest first so that it renders at the bottom
