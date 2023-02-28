@@ -12,6 +12,7 @@
   .message_bubble {
     @apply w-fit;
     @apply max-w-[80%];
+    @apply max-h-[80%];
     @apply break-words;
     @apply m-1;
     @apply px-1;
