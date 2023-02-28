@@ -1202,10 +1202,6 @@ select {
   height: 300px;
 }
 
-.h-\[400px\] {
-  height: 400px;
-}
-
 .h-\[calc\(100\%-54px\)\] {
   height: calc(100% - 54px);
 }
