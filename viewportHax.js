@@ -2,7 +2,7 @@
 
 // let prevVVheight = window.visualViewport.height;
 
-function onVirtualKeyboard(isUp) {
+function onVirtualKeyboard() {
   // document.body.scrollTop = 0; // For Safari
   // document.documentElement.scrollTop = 0; // For Chrome, Firefox
   // const canvas = document.getElementById("canvas");
@@ -40,11 +40,12 @@ function onVirtualKeyboardDown() {
  * @param {*} event
  */
 function viewportHandler(event) {
-  // const vp = event.target;
-  // // only run if in portrait mode (on mobile)
-  // if (window.innerHeight <= window.innerWidth) {
-  //   return;
-  // }
+  const vp = event.target;
+  // only run if in portrait mode (on mobile)
+  if (window.innerHeight <= window.innerWidth) {
+    return;
+  }
+  onVirtualKeyboard();
   // if (prevVVheight > vp.height) {
   //   onVirtualKeyboardUp();
   // } else {
@@ -56,7 +57,7 @@ function viewportHandler(event) {
 window.visualViewport.addEventListener("resize", viewportHandler);
 // only run initial set if in portrait mode (on mobile)
 if (window.innerHeight > window.innerWidth) {
-  onVirtualKeyboardDown();
+  onVirtualKeyboard();
 }
 
 const navFooterResizeObs = new ResizeObserver(setViewHeight);
