@@ -3,8 +3,6 @@
 let prevVVheight = window.visualViewport.height;
 
 function onVirtualKeyboard(isUp) {
-  document.body.scrollTop = 0; // For Safari
-  document.documentElement.scrollTop = 0; // For Chrome, Firefox
   const canvas = document.getElementById("canvas");
   canvas.style.zIndex = isUp ? -1 : 1;
   const view = document.getElementById("view");
@@ -15,6 +13,10 @@ function onVirtualKeyboard(isUp) {
   }px solid transparent`;
 
   setViewHeight();
+
+  // scroll to top only at the end
+  document.body.scrollTop = 0; // For Safari
+  document.documentElement.scrollTop = 0; // For Chrome, Firefox
 }
 
 function setViewHeight() {
