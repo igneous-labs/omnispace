@@ -249,8 +249,6 @@ function render() {
     document.getElementById("message_form")?.classList.remove("flex");
     document.getElementById("message_form")?.classList.add("hidden");
     printRoomList();
-
-    view.scrollTop = 0;
   } else {
     document.getElementById("title").textContent =
       roomList.get(viewingRoom).name;
