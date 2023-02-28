@@ -314,21 +314,29 @@ function render() {
     }
   }
 
+  console.log(appMode);
   if (appMode === "game") {
+    // Always show canvas in game mode
     document.getElementById("canvas").style.display = "block";
-    if (!!viewingRoom) {
+    if (viewingRoom !== null) {
+      // While in game mode, we show rooms list but not specific chats
       document.getElementById("view").style.display = "none";
     } else {
       document.getElementById("view").style.display = "flex";
     }
   } else {
+    document.getElementById("canvas").style.display = "none";
     document.getElementById("view").style.display = "flex";
-    if (!!viewingRoom) {
-      document.getElementById("canvas").style.display = "none";
-    } else {
-      document.getElementById("canvas").style.display = "block";
-    }
   }
+
+  // } else {
+  //   document.getElementById("view").style.display = "flex";
+  //   // if (viewingRoom !== null) {
+  //   //   document.getElementById("canvas").style.display = "none";
+  //   // } else {
+  //   //   document.getElementById("canvas").style.display = "block";
+  //   // }
+  // }
 }
 
 function handlePaste(evt) {
