@@ -311,6 +311,15 @@ function render() {
       view.scrollTop = view.scrollHeight - view.clientHeight;
     }
   }
+
+  if (appMode === "game") {
+    document.getElementById("canvas").style.display = "block";
+    document.getElementById("view").style.display = "none";
+  }
+  else {
+    document.getElementById("view").style.display = "block";
+    document.getElementById("canvas").style.display = "none";
+  }
 }
 
 function handlePaste(evt) {
@@ -409,6 +418,12 @@ async function logout() {
   client.stopClient();
   await client.clearStores();
   window.location.replace("login.html");
+}
+
+let appMode = "game";
+
+function toggleAppMode() {
+  appMode = appMode === "game" ? "chat" : "game";
 }
 
 document.addEventListener("paste", handlePaste);
