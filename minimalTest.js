@@ -303,14 +303,6 @@ function render() {
       }, "");
 
     view.innerHTML = messageHistoryHTML;
-
-    // Autoscroll to new message, when scrollbar is at the bottom of chatbox
-    const isScrolledToBottom =
-      view.scrollHeight - view.clientHeight <= view.scrollTop + 1;
-
-    if (isScrolledToBottom) {
-      view.scrollTop = view.scrollHeight - view.clientHeight;
-    }
   }
 
   console.log(appMode);
