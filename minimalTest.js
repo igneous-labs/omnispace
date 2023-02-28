@@ -456,3 +456,22 @@ function toggleAppMode() {
 
 document.addEventListener("paste", handlePaste);
 start();
+
+let pendingUpdate = false;
+const viewportHandler = (event) => {
+    if (pendingUpdate) {
+        return;
+    }
+    pendingUpdate = true;
+
+    requestAnimationFrame(() => {
+        pendingUpdate = false;
+        const layoutViewport = document.querySelector('nav');
+        layoutViewport.style.transform = "none";
+        if (layoutViewport.getBoundingClientRect().top < 0) {
+            layoutViewport.style.transform = `translate(0, ${-layoutViewport.getBoundingClientRect().top}px)`;
+        }
+    });
+};
+window.visualViewport.addEventListener("scroll", viewportHandler);
+window.visualViewport.addEventListener("resize", viewportHandler);

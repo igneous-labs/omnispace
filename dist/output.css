@@ -1166,6 +1166,10 @@ select {
   display: none;
 }
 
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
 .h-24 {
   height: 6rem;
 }
@@ -1200,10 +1204,6 @@ select {
 
 .h-\[300px\] {
   height: 300px;
-}
-
-.h-\[400px\] {
-  height: 400px;
 }
 
 .h-\[calc\(100\%-54px\)\] {
@@ -3449,5 +3449,33 @@ select {
     .dark\:lg\:hover\:\[paint-order\:markers\]:hover {
       paint-order: markers;
     }
+  }
+}
+
+@media (orientation: portrait) {
+  .portrait\:left-0 {
+    left: 0px;
+  }
+
+  .portrait\:w-screen {
+    width: 100vw;
+  }
+
+  .portrait\:flex-col {
+    flex-direction: column;
+  }
+}
+
+@media (orientation: landscape) {
+  .landscape\:h-\[70\%\] {
+    height: 70%;
+  }
+
+  .landscape\:grow {
+    flex-grow: 1;
+  }
+
+  .landscape\:flex-row {
+    flex-direction: row;
   }
 }
