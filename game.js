@@ -1081,9 +1081,9 @@ canvas.addEventListener("click", handleTouchOrClick);
 window.onload = function () {
   Game.ctx = canvas.getContext("2d");
   camera = new Camera(Game.ctx, { distance: 400 });
-  resizeCanvas();
+  // resizeCanvas();
   CanvasTxt = window.canvasTxt.default;
   Game.run();
 };
 
-window.addEventListener("resize", resizeCanvas);
+// window.addEventListener("resize", resizeCanvas);
