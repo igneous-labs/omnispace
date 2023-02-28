@@ -7,3 +7,28 @@
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
 }
+
+@layer base {
+  .message_bubble {
+    @apply w-fit;
+    @apply max-w-[80%];
+    @apply max-h-[80%];
+    @apply break-words;
+    @apply m-1;
+    @apply px-1;
+    @apply rounded-sm;
+    /*border-radius: var(--rad-sm) var(--rad) var(--rad) var(--rad-sm);*/
+  }
+  
+  .other_message {
+    @apply bg-[#ebebeb];
+    @apply mr-auto;
+  }
+  
+  .self_message {
+    background: linear-gradient(30deg, #bec2ee, #a3f8ed);
+    @apply ml-auto;
+    @apply rounded-sm;
+    /* border-radius: var(--rad) var(--rad-sm) var(--rad-sm) var(--rad); */
+  }
+}
