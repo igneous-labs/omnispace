@@ -1097,8 +1097,3 @@ window.onload = function () {
 };
 
 window.addEventListener("resize", resizeCanvas);
-window.addEventListener("scroll", (e) => {
-  if (document.body.scrollTop > 0) {
-    document.body.scrollTop = 0;
-  }
-});

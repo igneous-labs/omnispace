@@ -18,3 +18,8 @@ navFooterResizeObs.observe(document.querySelector("nav"));
 navFooterResizeObs.observe(document.querySelector("footer"));
 window.visualViewport.addEventListener("resize", setViewHeight);
 window.visualViewport.addEventListener("scroll", setViewHeight);
+window.addEventListener("scroll", (e) => {
+  if (document.body.scrollTop > 0) {
+    document.body.scrollTop = 0;
+  }
+});
