@@ -585,6 +585,11 @@ select {
   outline: 1px auto -webkit-focus-ring-color;
 }
 
+.nigger {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+
 *, ::before, ::after {
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
