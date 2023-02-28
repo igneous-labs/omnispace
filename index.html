@@ -3559,7 +3559,10 @@
         <!-- End chat/rooms list -->
 
         <!-- Start message input row -->
-        <footer id="message_form" class="items-end gap-x-2 hidden w-full">
+        <footer
+          id="message_form"
+          class="items-end gap-x-2 hidden w-full relative z-10 bg-white"
+        >
           <div
             id="message_menu"
             @keydown.escape.stop="handleCloseMenu();"
