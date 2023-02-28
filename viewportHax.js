@@ -10,6 +10,22 @@ function setViewHeight() {
   )}px`;
 }
 
+/**
+ *
+ * @param {boolean} isOskUp
+ */
+function setViewAppearance(isOskUp) {
+  const view = document.getElementById("view");
+  view.style.backgroundColor = isOskUp
+    ? "rgba(220, 220, 220, 0.7)"
+    : "transparent";
+  view.style.borderTop = isOskUp
+    ? "0px solid transparent"
+    : `${Math.round(
+        document.getElementById("canvas").offsetHeight,
+      )}px solid transparent`;
+}
+
 function viewportHandler() {
   // only run if in portrait mode (on mobile)
   if (window.innerHeight <= window.innerWidth) {
@@ -21,6 +37,7 @@ function viewportHandler() {
 window.visualViewport.addEventListener("resize", viewportHandler);
 // run initial set
 viewportHandler();
+setViewAppearance(false);
 
 const navFooterResizeObs = new ResizeObserver(setViewHeight);
 navFooterResizeObs.observe(document.querySelector("nav"));
@@ -33,13 +50,8 @@ chatInput.addEventListener("blur", (e) => {
     return;
   }
   console.log("Chat input lost focus");
-  const canvas = document.getElementById("canvas");
-  canvas.style.zIndex = 1;
-  const view = document.getElementById("view");
-  view.style.backgroundColor = "transparent";
-  view.style.borderTop = `${Math.round(
-    canvas.offsetHeight,
-  )}px solid transparent`;
+  document.getElementById("canvas").style.zIndex = 1;
+  setViewAppearance(false);
 });
 
 chatInput.addEventListener("focus", (e) => {
@@ -48,9 +60,6 @@ chatInput.addEventListener("focus", (e) => {
     return;
   }
   console.log("Chat input on focus");
-  const canvas = document.getElementById("canvas");
-  canvas.style.zIndex = -1;
-  const view = document.getElementById("view");
-  view.style.backgroundColor = "rgba(220, 220, 220, 0.7)";
-  view.style.borderTop = `0px solid transparent`;
+  document.getElementById("canvas").style.zIndex = -1;
+  setViewAppearance(true);
 });
