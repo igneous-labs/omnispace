@@ -33,8 +33,13 @@ chatInput.addEventListener("blur", (e) => {
     return;
   }
   console.log("Chat input lost focus");
-  document.getElementById("canvas").zIndex = 1;
-  document.getElementById("view").style.backgroundColor = "transparent";
+  const canvas = document.getElementById("canvas");
+  canvas.style.zIndex = 1;
+  const view = document.getElementById("view");
+  view.style.backgroundColor = "transparent";
+  view.style.borderTop = `${Math.round(
+    canvas.offsetHeight,
+  )}px solid transparent`;
 });
 
 chatInput.addEventListener("focus", (e) => {
@@ -43,7 +48,9 @@ chatInput.addEventListener("focus", (e) => {
     return;
   }
   console.log("Chat input on focus");
-  document.getElementById("canvas").style.zIndex = -1;
-  document.getElementById("view").style.backgroundColor =
-    "rgba(220, 220, 220, 0.7)";
+  const canvas = document.getElementById("canvas");
+  canvas.style.zIndex = -1;
+  const view = document.getElementById("view");
+  view.style.backgroundColor = "rgba(220, 220, 220, 0.7)";
+  view.style.borderTop = `0px solid transparent`;
 });
