@@ -248,6 +248,7 @@ function render() {
     document.getElementById("back")?.classList.add("invisible");
     document.getElementById("message_box")?.classList.remove("flex");
     document.getElementById("message_box")?.classList.add("hidden");
+    document.getElementById("open_chat")?.classList.add("hidden");
     printRoomList();
 
     view.scrollTop = 0;
@@ -257,6 +258,7 @@ function render() {
     document.getElementById("back")?.classList.remove("invisible");
     document.getElementById("message_box")?.classList.remove("hidden");
     document.getElementById("message_box")?.classList.add("flex");
+    document.getElementById("open_chat")?.classList.remove("hidden");
 
     // because view is col-reverse while messageHistory is in chronological order,
     // we need to add latest first so that it renders at the bottom
@@ -314,10 +316,13 @@ function render() {
 
   if (appMode === "game") {
     document.getElementById("canvas").style.display = "block";
-    document.getElementById("view").style.display = "none";
-  }
-  else {
-    document.getElementById("view").style.display = "block";
+    if (!!viewingRoom) {
+      document.getElementById("view").style.display = "none";
+    } else {
+      document.getElementById("view").style.display = "flex";
+    }
+  } else {
+    document.getElementById("view").style.display = "flex";
     document.getElementById("canvas").style.display = "none";
   }
 }
