@@ -76,4 +76,5 @@ document.getElementById("chat_input").addEventListener("focus", (_) => {
 
 document.getElementById("chat_input").addEventListener("blur", (_) => {
   document.getElementById("canvas").style.zIndex = 1;
+  document.getElementById("chat_input").style.background = "transparent";
 });
