@@ -459,19 +459,21 @@ start();
 
 let pendingUpdate = false;
 const viewportHandler = (event) => {
-    if (pendingUpdate) {
-        return;
-    }
-    pendingUpdate = true;
+  if (pendingUpdate) {
+    return;
+  }
+  pendingUpdate = true;
 
-    requestAnimationFrame(() => {
-        pendingUpdate = false;
-        const layoutViewport = document.querySelector('nav');
-        layoutViewport.style.transform = "none";
-        if (layoutViewport.getBoundingClientRect().top < 0) {
-            layoutViewport.style.transform = `translate(0, ${-layoutViewport.getBoundingClientRect().top}px)`;
-        }
-    });
+  requestAnimationFrame(() => {
+    pendingUpdate = false;
+    const nav = document.getElementById("nav");
+    nav.style.transform = "none";
+    if (nav.getBoundingClientRect().top < 0) {
+      nav.style.transform = `translate(0, ${-nav.getBoundingClientRect()
+        .top}px)`;
+    }
+  });
 };
+
 window.visualViewport.addEventListener("scroll", viewportHandler);
 window.visualViewport.addEventListener("resize", viewportHandler);
