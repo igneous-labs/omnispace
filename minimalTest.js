@@ -466,11 +466,18 @@ const viewportHandler = (event) => {
 
   requestAnimationFrame(() => {
     pendingUpdate = false;
+    const canvas = document.querySelector("canvas");
     const nav = document.getElementById("nav");
     nav.style.transform = "none";
     if (nav.getBoundingClientRect().top < 0) {
       nav.style.transform = `translate(0, ${-nav.getBoundingClientRect()
         .top}px)`;
+    }
+    canvas.style.transform = "none";
+    if (canvas.getBoundingClientRect().top < 0) {
+      canvas.style.transform = `translate(0, ${
+        -canvas.getBoundingClientRect().top - 75
+      }px)`;
     }
   });
 };
