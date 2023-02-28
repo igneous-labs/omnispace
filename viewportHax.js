@@ -1,16 +1,25 @@
 // Make sure script is ran in defer so that window is defined
 
 function onVirtualViewportChange() {
-  const isOskUp = window.visualViewport.height < 0.75 * window.innerHeight;
+  // const isOskUp = window.visualViewport.height < 0.75 * window.innerHeight;
 
   const canvas = document.getElementById("canvas");
-  canvas.style.zIndex = isOskUp ? -1 : 1;
+  // canvas.style.zIndex = isOskUp ? -1 : 1;
   const view = document.getElementById("view");
-  view.style.backgroundColor = isOskUp ? "rgba(0, 0, 0, 0.5)" : "transparent";
-  // NB: padding, margin doesnt work
-  view.style.borderTop = `${
-    isOskUp ? 0 : Math.round(canvas.offsetHeight)
-  }px solid transparent`;
+  // view.style.backgroundColor = isOskUp ? "rgba(0, 0, 0, 0.5)" : "transparent";
+  // // NB: padding, margin doesnt work
+  // view.style.borderTop = `${
+  //   isOskUp ? 0 : Math.round(canvas.offsetHeight)
+  // }px solid transparent`;
+
+  if (document.getElementById("chat_input") === document.activeElement) {
+    canvas.style.zIndex = -1
+    view.style.backgroundColor = "rgba(220, 220, 220, 0.7)"
+  }
+  else {
+    canvas.style.zIndex = 1
+    view.style.backgroundColor = "transparent"
+  }
 
   setViewHeight();
 
