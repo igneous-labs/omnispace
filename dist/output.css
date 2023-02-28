@@ -1025,6 +1025,11 @@ select {
   clear: none;
 }
 
+.mx-4 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
@@ -3451,12 +3456,12 @@ select {
 }
 
 @media (orientation: portrait) {
-  .portrait\:fixed {
-    position: fixed;
+  .portrait\:absolute {
+    position: absolute;
   }
 
-  .portrait\:left-0 {
-    left: 0px;
+  .portrait\:relative {
+    position: relative;
   }
 
   .portrait\:mb-4 {
@@ -3475,10 +3480,6 @@ select {
 @media (orientation: landscape) {
   .landscape\:h-\[70\%\] {
     height: 70%;
-  }
-
-  .landscape\:grow {
-    flex-grow: 1;
   }
 
   .landscape\:flex-row {
