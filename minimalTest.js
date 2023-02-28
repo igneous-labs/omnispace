@@ -241,7 +241,6 @@ function printRoomList() {
 
 function render() {
   const view = document.getElementById("view");
-  view.innerHTML = "";
   console.log({ viewingRoom });
   if (viewingRoom === null) {
     document.getElementById("title").textContent = "All Chats";
@@ -300,7 +299,15 @@ function render() {
         );
       }, "");
 
+    const prevScrollTop = view.scrollTop;
+    const isAtBottom = view.scrollTop === 0;
     view.innerHTML = messageHistoryHTML;
+
+    if (isAtBottom) {
+      view.scrollTop = 0;
+    } else {
+      view.scrollTop = prevScrollTop;
+    }
   }
 
   console.log(appMode);
