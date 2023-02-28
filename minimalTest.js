@@ -325,9 +325,9 @@ function render() {
       ?.classList.remove("hover:bg-green-500");
     if (viewingRoom !== null) {
       // While in game mode, we show rooms list but not specific chats
-      document.getElementById("view").style.visibility = "hidden";
+      // document.getElementById("view").style.visibility = "hidden";
     } else {
-      document.getElementById("view").style.visibility = "visible";
+      // document.getElementById("view").style.visibility = "visible";
       // document.getElementById("view").style.display = "flex";
     }
   } else {
@@ -339,7 +339,7 @@ function render() {
     document.getElementById("toggle_chat")?.classList.add("hover:bg-green-500");
     document.getElementById("canvas").style.display = "none";
     // document.getElementById("view").style.display = "flex";
-    document.getElementById("view").style.visibility = "visible";
+    // document.getElementById("view").style.visibility = "visible";
   }
 
   // } else {
