@@ -22,7 +22,7 @@ function setViewHeight() {
   const footerHeight = document.querySelector("footer").offsetHeight;
   const vpH = window.visualViewport.height;
   // leave 15px for bottom margin between textrow and bottom of screen
-  document.getElementById("view").style.height = `${Math.round(
+  document.getElementById("main").style.height = `${Math.round(
     vpH - navHeight - footerHeight - 15,
   )}px`;
 }

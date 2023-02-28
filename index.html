@@ -3535,8 +3535,9 @@
     </nav>
 
     <main
-      class="h-[calc(100%-54px)] flex flex-col gap-4 px-4 py-2 justify-between portrait:flex-col landscape:flex-row"
+      class="flex flex-col gap-4 px-4 py-2 justify-between portrait:flex-col landscape:flex-row"
       x-data="{ ...messageData }"
+      id="main"
     >
       <!-- Start game -->
       <canvas id="canvas" class="block fixed" width="400" height="400"></canvas>
