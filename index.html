@@ -3539,7 +3539,12 @@
       id="main"
     >
       <!-- Start game -->
-      <canvas id="canvas" class="block fixed" width="400" height="400"></canvas>
+      <canvas
+        id="canvas"
+        class="block fixed left-0"
+        width="400"
+        height="400"
+      ></canvas>
       <!-- End game -->
 
       <!-- container for both chat text and message box -->
@@ -3554,10 +3559,7 @@
         <!-- End chat/rooms list -->
 
         <!-- Start message input row -->
-        <footer
-          id="message_form"
-          class="items-end gap-x-2 hidden flex-grow w-full"
-        >
+        <footer id="message_form" class="items-end gap-x-2 hidden w-full">
           <div
             id="message_menu"
             @keydown.escape.stop="handleCloseMenu();"

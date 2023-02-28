@@ -457,30 +457,30 @@ function toggleAppMode() {
 document.addEventListener("paste", handlePaste);
 start();
 
-let pendingUpdate = false;
-const viewportHandler = (event) => {
-  if (pendingUpdate) {
-    return;
-  }
-  pendingUpdate = true;
+// let pendingUpdate = false;
+// const viewportHandler = (event) => {
+//   if (pendingUpdate) {
+//     return;
+//   }
+//   pendingUpdate = true;
 
-  requestAnimationFrame(() => {
-    pendingUpdate = false;
-    const canvas = document.querySelector("canvas");
-    const nav = document.getElementById("nav");
-    nav.style.transform = "none";
-    if (nav.getBoundingClientRect().top < 0) {
-      nav.style.transform = `translate(0, ${-nav.getBoundingClientRect()
-        .top}px)`;
-    }
-    canvas.style.transform = "none";
-    if (canvas.getBoundingClientRect().top < 0) {
-      canvas.style.transform = `translate(0, ${
-        -canvas.getBoundingClientRect().top - 75
-      }px)`;
-    }
-  });
-};
+//   requestAnimationFrame(() => {
+//     pendingUpdate = false;
+//     const canvas = document.querySelector("canvas");
+//     const nav = document.getElementById("nav");
+//     nav.style.transform = "none";
+//     if (nav.getBoundingClientRect().top < 0) {
+//       nav.style.transform = `translate(0, ${-nav.getBoundingClientRect()
+//         .top}px)`;
+//     }
+//     canvas.style.transform = "none";
+//     if (canvas.getBoundingClientRect().top < 0) {
+//       canvas.style.transform = `translate(0, ${
+//         -canvas.getBoundingClientRect().top - 75
+//       }px)`;
+//     }
+//   });
+// };
 
-window.visualViewport.addEventListener("scroll", viewportHandler);
-window.visualViewport.addEventListener("resize", viewportHandler);
+// window.visualViewport.addEventListener("scroll", viewportHandler);
+// window.visualViewport.addEventListener("resize", viewportHandler);
