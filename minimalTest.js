@@ -338,8 +338,8 @@ function render() {
     document.getElementById("toggle_chat")?.classList.add("bg-green-400");
     document.getElementById("toggle_chat")?.classList.add("hover:bg-green-500");
     document.getElementById("canvas").style.display = "none";
-    document.getElementById("view").style.display = "flex";
-    // document.getElementById("view").style.visibility = "visible";
+    // document.getElementById("view").style.display = "flex";
+    document.getElementById("view").style.visibility = "visible";
   }
 
   // } else {
