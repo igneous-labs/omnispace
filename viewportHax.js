@@ -67,3 +67,13 @@ navFooterResizeObs.observe(document.querySelector("nav"));
 navFooterResizeObs.observe(document.querySelector("footer"));
 window.visualViewport.addEventListener("resize", setViewHeight);
 window.visualViewport.addEventListener("scroll", setViewHeight);
+
+document.getElementById("chat_input").addEventListener("focus", (_) => {
+  document.getElementById("canvas").style.zIndex = -1;
+  document.getElementById("chat_input").style.background =
+    "rgba(255, 255, 255, 1)";
+});
+
+document.getElementById("chat_input").addEventListener("blur", (_) => {
+  document.getElementById("canvas").style.zIndex = 1;
+});
