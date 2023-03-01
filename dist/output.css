@@ -611,7 +611,7 @@ select {
 }
 
 /**
-   * apply this to ONE child of a flex-col container 
+   * apply this to ONE AND ONLY ONE child of a flex-col container 
    * to make it grow and shrink to fill up the remainder
    * vertical space of the contianer 
    */

@@ -254,7 +254,6 @@ function render() {
     document.getElementById("back").classList.remove("invisible");
     document.getElementById("message_form").classList.remove("hidden");
     document.getElementById("message_form").classList.add("flex");
-    document.getElementById("open_chat").classList.remove("hidden");
 
     // because view is col-reverse while messageHistory is in chronological order,
     // we need to add latest first so that it renders at the bottom
