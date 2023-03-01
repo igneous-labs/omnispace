@@ -136,7 +136,7 @@ const messageData = {
     const view = document.getElementById("view");
     if (!this.replyingToMessage) {
       // 70px for reply box above the message input
-      view.style.height = `${view.offsetHeight - 70}px`;
+      // view.style.height = `${view.offsetHeight - 70}px`;
     }
     this.replyingToMessage = this.selectedMessage;
     this.handleCloseMenu();
@@ -145,7 +145,7 @@ const messageData = {
     const view = document.getElementById("view");
     if (this.replyingToMessage) {
       // 70px for reply box above the message input
-      view.style.height = `${view.offsetHeight + 70}px`;
+      // view.style.height = `${view.offsetHeight + 70}px`;
     }
     this.replyingToMessage = null;
   },
@@ -241,15 +241,19 @@ function printRoomList() {
 
 function render() {
   const view = document.getElementById("view");
-  view.innerHTML = "";
+  console.log({ viewingRoom });
   if (viewingRoom === null) {
-    document.getElementById("title").textContent = "Omnispaces";
+    document.getElementById("title").textContent = "All Chats";
+    document.getElementById("back").classList.add("invisible");
+    document.getElementById("message_form").classList.remove("flex");
+    document.getElementById("message_form").classList.add("hidden");
     printRoomList();
-
-    view.scrollTop = 0;
   } else {
     document.getElementById("title").textContent =
       roomList.get(viewingRoom).name;
+    document.getElementById("back").classList.remove("invisible");
+    document.getElementById("message_form").classList.remove("hidden");
+    document.getElementById("message_form").classList.add("flex");
 
     // because view is col-reverse while messageHistory is in chronological order,
     // we need to add latest first so that it renders at the bottom
@@ -270,8 +274,14 @@ function render() {
           `
                 <div :class="{'select-none': isMobile}" data-message-event-id="${
                   message.event.event_id
-                }">
-                    <strong>${senderName}: </strong>
+                }" class="message_bubble ${
+            senderId === MATRIX_USER_ID ? "self_message" : "other_message"
+          }">
+                    ${
+                      senderId === MATRIX_USER_ID
+                        ? ""
+                        : `<strong>${senderName}: </strong>`
+                    }
                     <span x-on:touchstart="messageTouchStart(event);" x-on:touchend="messageTouchEnd(event);" x-on:contextmenu="handleRightClick(event)">
                         ${message.event.content.body}
                       ${
@@ -288,15 +298,35 @@ function render() {
         );
       }, "");
 
+    const prevScrollTop = view.scrollTop;
+    const isAtBottom = view.scrollTop === 0;
     view.innerHTML = messageHistoryHTML;
 
-    // Autoscroll to new message, when scrollbar is at the bottom of chatbox
-    const isScrolledToBottom =
-      view.scrollHeight - view.clientHeight <= view.scrollTop + 1;
-
-    if (isScrolledToBottom) {
-      view.scrollTop = view.scrollHeight - view.clientHeight;
+    if (isAtBottom) {
+      view.scrollTop = 0;
+    } else {
+      view.scrollTop = prevScrollTop;
     }
+  }
+
+  console.log(appMode);
+  if (appMode === "game") {
+    // Always show canvas in game mode
+    document.getElementById("canvas").style.display = "block";
+    document.getElementById("toggle_chat").classList.add("bg-slate-600");
+    document.getElementById("toggle_chat").classList.add("hover:bg-slate-700");
+    document.getElementById("toggle_chat").classList.remove("bg-green-400");
+    document
+      .getElementById("toggle_chat")
+      .classList.remove("hover:bg-green-500");
+  } else {
+    document.getElementById("canvas").style.display = "none";
+    document.getElementById("toggle_chat").classList.remove("bg-slate-600");
+    document
+      .getElementById("toggle_chat")
+      .classList.remove("hover:bg-slate-700");
+    document.getElementById("toggle_chat").classList.add("bg-green-400");
+    document.getElementById("toggle_chat").classList.add("hover:bg-green-500");
   }
 }
 
@@ -396,6 +426,12 @@ async function logout() {
   client.stopClient();
   await client.clearStores();
   window.location.replace("login.html");
+}
+
+let appMode = "game";
+
+function toggleAppMode() {
+  appMode = appMode === "game" ? "chat" : "game";
 }
 
 document.addEventListener("paste", handlePaste);

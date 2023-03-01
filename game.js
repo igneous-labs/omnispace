@@ -1065,8 +1065,18 @@ class NetworkHandler {
 }
 
 function resizeCanvas() {
-  canvas.height = canvas.clientHeight;
-  canvas.width = canvas.clientWidth;
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const vpH = window.visualViewport.height;
+  const vpW = window.visualViewport.width;
+
+  if (isMobile && window.innerHeight > window.innerWidth) {
+    canvas.height = Math.max(Math.min(vpH, vpW), window.innerWidth);
+    canvas.width = Math.max(Math.min(vpH, vpW), window.innerWidth);
+  } else {
+    canvas.height = Math.min(vpH, vpW);
+    canvas.width = Math.min(vpH, vpW);
+  }
+
   camera.updateViewport();
 }
 

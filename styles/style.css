@@ -51,11 +51,6 @@
     isolation: isolate;
   }
 
-#game_frame {
-    height: 50vh;
-    width: 100%;
-}
-
 #chat_input {
     width: 100%;
 }

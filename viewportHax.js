@@ -1,64 +1,38 @@
-// Make sure script is ran in defer so that window is defined
-
-let prevVVheight = window.visualViewport.height;
-
-function onVirtualKeyboard(isUp) {
-  document.body.scrollTop = 0; // For Safari
-  document.documentElement.scrollTop = 0; // For Chrome, Firefox
-  const canvas = document.getElementById("canvas");
-  canvas.style.zIndex = isUp ? -1 : 1;
-  const view = document.getElementById("view");
-  view.style.backgroundColor = isUp ? "rgba(0, 0, 0, 0.5)" : "transparent";
-  // NB: padding, margin doesnt work
-  view.style.borderTop = `${
-    isUp ? 0 : Math.round(canvas.offsetHeight)
-  }px solid transparent`;
-
-  setViewHeight();
-}
-
-function setViewHeight() {
+function setMainHeight() {
+  // console.log("called");
   const navHeight = document.querySelector("nav").offsetHeight;
-  const footerHeight = document.querySelector("footer").offsetHeight;
   const vpH = window.visualViewport.height;
   // leave 15px for bottom margin between textrow and bottom of screen
-  document.getElementById("view").style.height = `${Math.round(
-    vpH - navHeight - footerHeight - 15,
+  document.getElementById("main").style.height = `${Math.round(
+    vpH - navHeight - 15,
   )}px`;
 }
 
-function onVirtualKeyboardUp() {
-  onVirtualKeyboard(true);
-}
-
-function onVirtualKeyboardDown() {
-  onVirtualKeyboard(false);
-}
-
-/**
- *
- * @param {*} event
- */
-function viewportHandler(event) {
-  const vp = event.target;
-  // only run if in portrait mode (on mobile)
-  if (window.innerHeight <= window.innerWidth) {
-    return;
-  }
-  if (prevVVheight > vp.height) {
-    onVirtualKeyboardUp();
-  } else {
-    onVirtualKeyboardDown();
-  }
-  prevVVheight = vp.height;
-}
-
-window.visualViewport.addEventListener("resize", viewportHandler);
-// only run initial set if in portrait mode (on mobile)
 if (window.innerHeight > window.innerWidth) {
-  onVirtualKeyboardDown();
+  setMainHeight();
 }
 
-const navFooterResizeObs = new ResizeObserver(setViewHeight);
+const navFooterResizeObs = new ResizeObserver(setMainHeight);
 navFooterResizeObs.observe(document.querySelector("nav"));
 navFooterResizeObs.observe(document.querySelector("footer"));
+window.visualViewport.addEventListener("resize", setMainHeight);
+window.visualViewport.addEventListener("scroll", setMainHeight);
+window.addEventListener("scroll", (e) => {
+  if (document.body.scrollTop > 0) {
+    document.body.scrollTop = 0;
+  }
+});
+
+/**
+ * haxx0r for Safari:
+ * safari scrolls to the focused element
+ *  - after focus event listener fires
+ *  - before new layout changes
+ *  - without triggering scroll event
+ * This causes it to scroll to the chat_input's old position far below the canvas.
+ * Here we scroll to window top after a delay (instead of in the focus event listener)
+ * to give the layout time to change.
+ */
+document.getElementById("chat_input").addEventListener("focus", (e) => {
+  setTimeout(() => window.scrollTo(0, 0), 100);
+});
