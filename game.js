@@ -243,6 +243,10 @@ let PlayerSpriteSheetMap = {
   "@sf:melchior.info": "char_sf",
 };
 
+let entitySpriteSheetMap = {
+  coin: "coin",
+};
+
 /*
  * SpriteSheetFrameMap
  * Splits up a spritesheet into its individual frames
@@ -369,6 +373,15 @@ let SpriteSheetFrameMap = {
       [346, 413],
     ],
   },
+  coin: {
+    default: [
+      [0, 15],
+      [16, 31],
+      [32, 47],
+      [48, 63],
+      [64, 79],
+    ],
+  },
 };
 
 /*
@@ -389,6 +402,11 @@ let Game = {
   ACTIVE_PLAYER: null,
   PLAYER_SPEED: 0.1,
   PLAYER_TARGET_DEST: null,
+
+  // FEATURE: coins
+  renderEntityState: null,
+  coinPosition: null,
+  playerCoins: 0,
 
   load: () => {},
   setInitialState: () => {},
@@ -417,6 +435,9 @@ Game.load = function () {
     Loader.loadImage("char_lieu", "./img/char_lieu.png"),
     Loader.loadImage("char_rczjian", "./img/char_rczjian.png"),
     Loader.loadImage("char_sf", "./img/char_sf.png"),
+
+    // Load coin animation
+    Loader.loadImage("coin", "./img/coin.png"),
   ];
 };
 
@@ -427,6 +448,16 @@ Game.setInitialState = function () {
   };
 
   Game.renderState = {};
+  Game.renderEntityState = {};
+
+  // TEMP: Spawn a coin
+  Game.coinPosition = [650, 650];
+
+  Game.renderEntityState["coin"] = {
+    entityType: "coin",
+    currentAnimationFrame: 0,
+    lastAnimationChangeTime: Game.lastRender,
+  };
 };
 
 Game.run = function () {
@@ -463,7 +494,8 @@ Game.render = function (tFrame) {
 
   camera.moveTo(
     Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position[0],
-    Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position[1],
+    // FIXME 50 is a magic number because I am offsetting the player display
+    Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position[1] - 50,
   );
   camera.begin();
 
@@ -574,8 +606,8 @@ Game.render = function (tFrame) {
           sy,
           sWidth,
           sHeight,
-          0,
-          0,
+          0 + sWidth / 2,
+          0 - sHeight,
           sWidth,
           sHeight,
         );
@@ -587,12 +619,14 @@ Game.render = function (tFrame) {
           sy,
           sWidth,
           sHeight,
-          x,
-          y,
+          x - sWidth / 2,
+          y - sHeight,
           sWidth,
           sHeight,
         );
       }
+
+      Game.ctx.fillRect(x, y, 1, 10);
     }
   }
 
@@ -633,8 +667,8 @@ Game.render = function (tFrame) {
         const sHeight = char.height; // height of the spritesheet
         const boxHt = 20;
         const boxWh = 80;
-        const offsetX = x + sWidth / 2 - boxWh / 2;
-        const offsetY = y + sHeight;
+        const offsetX = x - boxWh / 2;
+        const offsetY = y;
         Game.ctx.font = "16px sans-serif";
         Game.ctx.fillStyle = `rgba(220, 220, 220, 0.7)`;
         Game.ctx.fillRect(offsetX, offsetY, boxWh, boxHt);
@@ -661,24 +695,92 @@ Game.render = function (tFrame) {
       if (player && player.messageToDisplay !== null) {
         // Render messages only for five seconds (FIXME: pull this out into a constant somewhere)
         if (tFrame - player.messageToDisplay[1] < 5000) {
+          let spriteSheetName = "char_default";
+          let matrixUserId = Game.worldState.client_chat_user_ids[playerId];
+
+          if (matrixUserId in PlayerSpriteSheetMap) {
+            spriteSheetName =
+              PlayerSpriteSheetMap[
+                Game.worldState.client_chat_user_ids[playerId]
+              ]; // this gives e.g. "char_default"
+          }
+          const playerSpriteSheet = SpriteSheetFrameMap[spriteSheetName]; // this gives {walking: [[]], standing: [[]]}
           const boxHt = 150;
+          const boxWh = 80;
           const padding = 5;
+          let playerCurrentStatus =
+            Game.worldState.world_state_data[playerId].status;
+          const sx =
+            playerSpriteSheet[playerCurrentStatus][
+              player.currentAnimationFrame
+            ][0]; // start x-coord of the slice of the spritesheet to draw
+          const sWidth =
+            playerSpriteSheet[playerCurrentStatus][
+              player.currentAnimationFrame
+            ][1] - sx; // width of the slice of the spritesheet to draw
+          const char = Loader.getImage(spriteSheetName); // which spritesheet to use
+          const sHeight = char.height; // height of the spritesheet
+          const offsetX = x - boxWh / 2;
+          const offsetY = y - boxHt - padding - sHeight;
           Game.ctx.font = "16px sans-serif";
           Game.ctx.fillStyle = `rgba(220, 220, 220, 0.7)`;
-          Game.ctx.fillRect(x, y - boxHt - padding, 100, boxHt);
+          Game.ctx.fillRect(offsetX, offsetY, boxWh, boxHt);
           Game.ctx.strokeStyle = `rgba(200, 200, 200, 1.0)`;
-          Game.ctx.strokeRect(x, y - boxHt - padding, 100, boxHt);
+          Game.ctx.strokeRect(offsetX, offsetY, boxWh, boxHt);
           Game.ctx.fillStyle = "black";
           CanvasTxt.drawText(
             Game.ctx,
             truncate(player.messageToDisplay[0], 100),
-            x,
-            y - boxHt - padding,
-            100,
+            offsetX,
+            offsetY,
+            boxWh,
             boxHt,
           );
         }
       }
+    }
+  }
+
+  // Render coins
+  for (let entityId in Game.renderEntityState) {
+    const entity = Game.renderEntityState[entityId];
+    if (
+      entity.hasOwnProperty("entityType") &&
+      entity.entityType === "coin" &&
+      "coin" in entitySpriteSheetMap
+    ) {
+      if (tFrame - entity.lastAnimationChangeTime > 150) {
+        entity.currentAnimationFrame =
+          (entity.currentAnimationFrame + 1) %
+          SpriteSheetFrameMap[entity.entityType]["default"].length;
+        entity.lastAnimationChangeTime = tFrame;
+      }
+
+      const sx =
+        SpriteSheetFrameMap[entity.entityType]["default"][
+          entity.currentAnimationFrame
+        ][0]; // start x-coord of the slice of the spritesheet to draw
+      const sy = 0;
+      const sWidth =
+        SpriteSheetFrameMap[entity.entityType]["default"][
+          entity.currentAnimationFrame
+        ][1] - sx;
+      const coinImg = Loader.getImage("coin");
+      const sHeight = coinImg.height; // height of the spritesheet
+      const [x, y] = [...Game.coinPosition];
+      Game.ctx.drawImage(
+        coinImg,
+        sx,
+        sy,
+        sWidth,
+        sHeight,
+        x,
+        y,
+        sWidth,
+        sHeight,
+      );
+    } else {
+      continue;
     }
   }
 
@@ -773,8 +875,20 @@ Game.update = function (tFrame) {
 
   Game.networkHandler.sendPlayerState(playerData);
 
+  // Coin! check if coin is close enough to the player, if yes, take it
+  if (
+    Game.coinPosition !== null &&
+    distanceBetween(playerData.position, Game.coinPosition) < 10
+  ) {
+    Game.coinPosition = null;
+    delete Game.renderEntityState.coin;
+    Game.playerCoins += 1;
+  }
+
+  //
+
   function distanceBetween(a, b) {
-    if (!a || !b) return 0;
+    if (!a || !b) return -1;
     return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
   }
 };
