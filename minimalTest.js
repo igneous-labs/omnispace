@@ -86,7 +86,6 @@ const messageData = {
     const clickedTop = isMobile
       ? e.targetTouches[0].clientY - 20
       : e.clientY - 30;
-    console.log(e);
     const clickedLeft = isMobile ? e.targetTouches[0].clientX : e.clientX + 30;
     const messageMenuEl = document.getElementById("message_menu");
     messageMenuEl.style.top = `${
