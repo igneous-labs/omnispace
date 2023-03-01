@@ -28,3 +28,14 @@ window.addEventListener("scroll", (e) => {
 document.getElementById("chat_input")?.addEventListener("focus", (e) => {
   setTimeout(() => window.scrollTo(0, 0), 100);
 });
+
+document.addEventListener(
+  "touchmove",
+  function (e) {
+    const isChatView = e.target.closest("#view");
+    if (!isChatView) {
+      e.preventDefault();
+    }
+  },
+  { passive: false },
+);

@@ -311,23 +311,23 @@ function render() {
   }
 
   console.log(appMode);
+  const canvas = document.getElementById("canvas");
+  const toggleChat = document.getElementById("toggle_chat");
   if (appMode === "game") {
     // Always show canvas in game mode
-    document.getElementById("canvas").style.display = "block";
-    document.getElementById("toggle_chat")?.classList.add("bg-slate-600");
-    document.getElementById("toggle_chat")?.classList.add("hover:bg-slate-700");
-    document.getElementById("toggle_chat")?.classList.remove("bg-green-400");
-    document
-      .getElementById("toggle_chat")
-      ?.classList.remove("hover:bg-green-500");
+    canvas.style.display = "block";
+    toggleChat.classList.add("bg-slate-600");
+    toggleChat.classList.add("hover:bg-slate-700");
+    toggleChat.classList.remove("bg-green-400");
+    toggleChat.classList.remove("hover:bg-green-500");
+    // view.style.paddingTop = `${canvas.height + 10}px`;
   } else {
-    document.getElementById("canvas").style.display = "none";
-    document.getElementById("toggle_chat")?.classList.remove("bg-slate-600");
-    document
-      .getElementById("toggle_chat")
-      ?.classList.remove("hover:bg-slate-700");
-    document.getElementById("toggle_chat")?.classList.add("bg-green-400");
-    document.getElementById("toggle_chat")?.classList.add("hover:bg-green-500");
+    canvas.style.display = "none";
+    toggleChat.classList.remove("bg-slate-600");
+    toggleChat.classList.remove("hover:bg-slate-700");
+    toggleChat.classList.add("bg-green-400");
+    toggleChat.classList.add("hover:bg-green-500");
+    // view.style.paddingTop = undefined;
   }
 }
 
