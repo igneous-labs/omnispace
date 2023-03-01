@@ -24,7 +24,16 @@ window.addEventListener("scroll", (e) => {
   }
 });
 
-// haxx0r for Safari
-document.getElementById("chat_input")?.addEventListener("focus", (e) => {
+/**
+ * haxx0r for Safari:
+ * safari scrolls to the focused element
+ *  - after focus event listener fires
+ *  - before new layout changes
+ *  - without triggering scroll event
+ * This causes it to scroll to the chat_input's old position far below the canvas.
+ * Here we scroll to window top after a delay (instead of in the focus event listener)
+ * to give the layout time to change.
+ */
+document.getElementById("chat_input").addEventListener("focus", (e) => {
   setTimeout(() => window.scrollTo(0, 0), 100);
 });
