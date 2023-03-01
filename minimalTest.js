@@ -244,17 +244,17 @@ function render() {
   console.log({ viewingRoom });
   if (viewingRoom === null) {
     document.getElementById("title").textContent = "All Chats";
-    document.getElementById("back")?.classList.add("invisible");
-    document.getElementById("message_form")?.classList.remove("flex");
-    document.getElementById("message_form")?.classList.add("hidden");
+    document.getElementById("back").classList.add("invisible");
+    document.getElementById("message_form").classList.remove("flex");
+    document.getElementById("message_form").classList.add("hidden");
     printRoomList();
   } else {
     document.getElementById("title").textContent =
       roomList.get(viewingRoom).name;
-    document.getElementById("back")?.classList.remove("invisible");
-    document.getElementById("message_form")?.classList.remove("hidden");
-    document.getElementById("message_form")?.classList.add("flex");
-    document.getElementById("open_chat")?.classList.remove("hidden");
+    document.getElementById("back").classList.remove("invisible");
+    document.getElementById("message_form").classList.remove("hidden");
+    document.getElementById("message_form").classList.add("flex");
+    document.getElementById("open_chat").classList.remove("hidden");
 
     // because view is col-reverse while messageHistory is in chronological order,
     // we need to add latest first so that it renders at the bottom
