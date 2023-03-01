@@ -1096,4 +1096,4 @@ window.onload = function () {
   Game.run();
 };
 
-new ResizeObserver(resizeCanvas).observe(canvas);
+window.addEventListener("resize", resizeCanvas);
