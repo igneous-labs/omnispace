@@ -133,20 +133,10 @@ const messageData = {
     }
   },
   handleReply() {
-    const view = document.getElementById("view");
-    if (!this.replyingToMessage) {
-      // 70px for reply box above the message input
-      // view.style.height = `${view.offsetHeight - 70}px`;
-    }
     this.replyingToMessage = this.selectedMessage;
     this.handleCloseMenu();
   },
   handleUnselectReply() {
-    const view = document.getElementById("view");
-    if (this.replyingToMessage) {
-      // 70px for reply box above the message input
-      // view.style.height = `${view.offsetHeight + 70}px`;
-    }
     this.replyingToMessage = null;
   },
   handleSendMessage(e) {
@@ -168,6 +158,11 @@ const messageData = {
         this.handleUnselectReply();
       }
     }
+  },
+  handleCopy() {
+    const text = this.selectedMessage.event.content.body;
+    navigator.clipboard.writeText(text);
+    this.handleCloseMenu();
   },
 };
 
