@@ -161,7 +161,7 @@ const messageData = {
   },
   handleCopy() {
     const text = this.selectedMessage.event.content.body;
-    navigator.clipboard.writeText(text);
+    ClipboardJS.copy(text);
     this.handleCloseMenu();
   },
 };
