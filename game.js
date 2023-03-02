@@ -778,8 +778,6 @@ Game.render = function (tFrame) {
         sWidth,
         sHeight,
       );
-    } else {
-      continue;
     }
   }
 
