@@ -36,3 +36,18 @@ window.addEventListener("scroll", (e) => {
 document.getElementById("chat_input").addEventListener("focus", (e) => {
   setTimeout(() => window.scrollTo(0, 0), 100);
 });
+
+// This is used to disable scrolling on mobile everywhere except for inside of the #view element when the chat input is focused
+if (isMobile) {
+  document.addEventListener(
+    "touchmove",
+    function (e) {
+      if (document.activeElement.id !== "chat_input") return;
+      const isChatView = e.target.closest("#view");
+      if (!isChatView) {
+        e.preventDefault();
+      }
+    },
+    { passive: false },
+  );
+}
