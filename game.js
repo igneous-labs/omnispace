@@ -231,7 +231,7 @@ function parseSpritesheetJson(j) {
 
 let PlayerSpriteSheetMap = {
   "default": "char_default",
-  "@fp:melchior.info": "char_fp",
+  "@fp:melchior.info": "char_fp2",
   "@pixisu:melchior.info": "char_pixisu",
   "@chinkeeyong:melchior.info": "char_chinkeeyong",
   "@Boven:melchior.info": "char_boven",
@@ -382,6 +382,18 @@ let SpriteSheetFrameMap = {
       [562, 671],
     ],
   },
+  char_fp2: {
+    standing: [
+      [1, 65],
+      [67, 132],
+    ],
+    walking: [
+      [134, 208],
+      [210, 285],
+      [287, 372],
+      [374, 460],
+    ],
+  },
 };
 
 /*
@@ -431,6 +443,7 @@ Game.load = function () {
     Loader.loadImage("char_rczjian", "./img/char_rczjian.png"),
     Loader.loadImage("char_sf", "./img/char_sf.png"),
     Loader.loadImage("char_seulgi", "./img/char_seulgi.png"),
+    Loader.loadImage("char_fp2", "./img/char_fp2.png"),
   ];
 };
 
