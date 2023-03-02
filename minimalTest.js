@@ -312,7 +312,7 @@ function render() {
   console.log(appMode);
   if (appMode === "game") {
     // Always show canvas in game mode
-    document.getElementById("canvas").style.display = "block";
+    document.getElementById("canvas").classList.remove("invisible");
     document.getElementById("toggle_chat").classList.add("bg-slate-600");
     document.getElementById("toggle_chat").classList.add("hover:bg-slate-700");
     document.getElementById("toggle_chat").classList.remove("bg-green-400");
@@ -320,7 +320,7 @@ function render() {
       .getElementById("toggle_chat")
       .classList.remove("hover:bg-green-500");
   } else {
-    document.getElementById("canvas").style.display = "none";
+    document.getElementById("canvas").classList.add("invisible");
     document.getElementById("toggle_chat").classList.remove("bg-slate-600");
     document
       .getElementById("toggle_chat")
