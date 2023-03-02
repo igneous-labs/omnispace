@@ -1072,6 +1072,8 @@ function resizeCanvas() {
     const dim = Math.max(Math.min(vpH, vpW), window.innerWidth);
     canvas.height = dim;
     canvas.width = dim;
+    canvas.style.height = dim;
+    canvas.style.width = dim;
   } else {
     const dim = Math.min(
       Math.min(vpH, vpW),
@@ -1080,6 +1082,8 @@ function resizeCanvas() {
     );
     canvas.height = dim;
     canvas.width = dim;
+    canvas.style.height = dim;
+    canvas.style.width = dim;
   }
 
   camera.updateViewport();

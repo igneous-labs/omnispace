@@ -3490,4 +3490,8 @@ select {
   .landscape\:flex-row {
     flex-direction: row;
   }
+
+  .landscape\:items-center {
+    align-items: center;
+  }
 }
