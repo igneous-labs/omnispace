@@ -424,6 +424,7 @@ Game.load = function () {
     Loader.loadImage("char_lieu", "./img/char_lieu.png"),
     Loader.loadImage("char_rczjian", "./img/char_rczjian.png"),
     Loader.loadImage("char_sf", "./img/char_sf.png"),
+    Loader.loadImage("char_seulgi", "./img/char_seulgi.png"),
   ];
 };
 
