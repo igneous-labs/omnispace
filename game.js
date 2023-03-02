@@ -742,10 +742,9 @@ Game.render = function (tFrame) {
   }
 
   // Render coins
-  for (let entityId in Game.renderEntityState) {
+  for (const entityId of Object.keys(Game.renderEntityState)) {
     const entity = Game.renderEntityState[entityId];
     if (
-      entity.hasOwnProperty("entityType") &&
       entity.entityType === "coin" &&
       "coin" in entitySpriteSheetMap
     ) {
