@@ -1031,9 +1031,19 @@ select {
   clear: none;
 }
 
+.mx-4 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
+}
+
+.my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .-mt-px {
@@ -2475,6 +2485,10 @@ select {
      object-fit: scale-down;
 }
 
+.p-0 {
+  padding: 0px;
+}
+
 .p-2 {
   padding: 0.5rem;
 }
@@ -3457,6 +3471,10 @@ select {
 @media (orientation: portrait) {
   .portrait\:fixed {
     position: fixed;
+  }
+
+  .portrait\:left-0 {
+    left: 0px;
   }
 
   .portrait\:flex-col {

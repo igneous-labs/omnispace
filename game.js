@@ -1065,16 +1065,21 @@ class NetworkHandler {
 }
 
 function resizeCanvas() {
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   const vpH = window.visualViewport.height;
   const vpW = window.visualViewport.width;
 
-  if (isMobile && window.innerHeight > window.innerWidth) {
-    canvas.height = Math.max(Math.min(vpH, vpW), window.innerWidth);
-    canvas.width = Math.max(Math.min(vpH, vpW), window.innerWidth);
+  if (window.innerHeight > window.innerWidth) {
+    const dim = Math.max(Math.min(vpH, vpW), window.innerWidth);
+    canvas.height = dim;
+    canvas.width = dim;
   } else {
-    canvas.height = Math.min(vpH, vpW);
-    canvas.width = Math.min(vpH, vpW);
+    const dim = Math.min(
+      Math.min(vpH, vpW),
+      // bec flex children cant exceed parent dims
+      document.getElementById("main").clientHeight,
+    );
+    canvas.height = dim;
+    canvas.width = dim;
   }
 
   camera.updateViewport();
