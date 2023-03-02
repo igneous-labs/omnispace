@@ -241,6 +241,7 @@ let PlayerSpriteSheetMap = {
   "@lieu:melchior.info": "char_lieu",
   "@rczjian:melchior.info": "char_rczjian",
   "@sf:melchior.info": "char_sf",
+  "@seulgi:melchior.info": "char_seulgi",
 };
 
 /*
@@ -369,6 +370,12 @@ let SpriteSheetFrameMap = {
       [346, 413],
     ],
   },
+  char_seulgi: {
+    {
+      standing: [ [ 1, 110 ], [ 112, 221 ] ],
+      walking: [ [ 223, 335 ], [ 337, 446 ], [ 448, 560 ], [ 562, 671 ] ]
+    }
+  }
 };
 
 /*
