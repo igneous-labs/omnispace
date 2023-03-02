@@ -3469,23 +3469,31 @@
                         <!-- End character customizer content -->
                       </div>
 
-                      <div class="flex flex-shrink-0 justify-end px-4 py-4">
+                      <div class="flex flex-shrink-0 justify-between px-4 py-4">
                         <button
-                          type="button"
-                          class="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                          @click="closeCharacterMenu()"
-                          :disabled="isSaving"
+                          onClick="logout()"
+                          class="rounded-md border border-transparent py-2 px-2 text-sm font-medium text-white shadow-sm bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 min-w-[38px]"
                         >
-                          Cancel
+                          Logout
                         </button>
-                        <button
-                          type="submit"
-                          class="ml-4 inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                          @click="saveCharacter(selectors)"
-                          :disabled="isSaving"
-                        >
-                          Save
-                        </button>
+                        <div class="flex justify-end">
+                          <button
+                            type="button"
+                            class="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                            @click="closeCharacterMenu()"
+                            :disabled="isSaving"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            class="ml-4 inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                            @click="saveCharacter(selectors)"
+                            :disabled="isSaving"
+                          >
+                            Save
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -3495,27 +3503,6 @@
           </div>
         </div>
         <!-- End customize character sidebar -->
-
-        <button
-          onClick="logout()"
-          class="rounded-md border border-transparent bg-slate-600 py-2 px-2 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 min-w-[38px]"
-        >
-          <svg
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-            class="h-5 w-5"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
-            ></path>
-          </svg>
-        </button>
 
         <button
           id="toggle_chat"
