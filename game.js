@@ -242,6 +242,7 @@ let PlayerSpriteSheetMap = {
   "@rczjian:melchior.info": "char_rczjian",
   "@sf:melchior.info": "char_sf",
   "@seulgi:melchior.info": "char_seulgi",
+  "@ellinx:melchior.info": "char_ellinx",
 };
 
 /*
@@ -394,6 +395,18 @@ let SpriteSheetFrameMap = {
       [374, 460],
     ],
   },
+  char_ellinx: {
+    standing: [
+      [1, 49],
+      [51, 99],
+    ],
+    walking: [
+      [101, 149],
+      [151, 199],
+      [201, 249],
+      [251, 299],
+    ],
+  },
 };
 
 /*
@@ -444,6 +457,7 @@ Game.load = function () {
     Loader.loadImage("char_sf", "./img/char_sf.png"),
     Loader.loadImage("char_seulgi", "./img/char_seulgi.png"),
     Loader.loadImage("char_fp2", "./img/char_fp2.png"),
+    Loader.loadImage("char_ellinx", "./img/char_ellinx.png"),
   ];
 };
 
