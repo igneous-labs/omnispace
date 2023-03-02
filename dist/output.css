@@ -1031,9 +1031,19 @@ select {
   clear: none;
 }
 
+.mx-4 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
+}
+
+.my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .-mt-px {
@@ -2475,6 +2485,10 @@ select {
      object-fit: scale-down;
 }
 
+.p-0 {
+  padding: 0px;
+}
+
 .p-2 {
   padding: 0.5rem;
 }
@@ -3372,6 +3386,11 @@ select {
   --tw-ring-color: rgb(199 210 254 / var(--tw-ring-opacity));
 }
 
+.focus\:ring-red-500:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(239 68 68 / var(--tw-ring-opacity));
+}
+
 .focus\:ring-slate-500:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(100 116 139 / var(--tw-ring-opacity));
@@ -3459,6 +3478,10 @@ select {
     position: fixed;
   }
 
+  .portrait\:left-0 {
+    left: 0px;
+  }
+
   .portrait\:flex-col {
     flex-direction: column;
   }
@@ -3471,5 +3494,9 @@ select {
 
   .landscape\:flex-row {
     flex-direction: row;
+  }
+
+  .landscape\:items-center {
+    align-items: center;
   }
 }

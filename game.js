@@ -231,7 +231,7 @@ function parseSpritesheetJson(j) {
 
 let PlayerSpriteSheetMap = {
   "default": "char_default",
-  "@fp:melchior.info": "char_fp",
+  "@fp:melchior.info": "char_fp2",
   "@pixisu:melchior.info": "char_pixisu",
   "@chinkeeyong:melchior.info": "char_chinkeeyong",
   "@Boven:melchior.info": "char_boven",
@@ -241,6 +241,8 @@ let PlayerSpriteSheetMap = {
   "@lieu:melchior.info": "char_lieu",
   "@rczjian:melchior.info": "char_rczjian",
   "@sf:melchior.info": "char_sf",
+  "@seulgi:melchior.info": "char_seulgi",
+  "@ellinx:melchior.info": "char_ellinx",
 };
 
 let entitySpriteSheetMap = {
@@ -380,6 +382,42 @@ let SpriteSheetFrameMap = {
       [32, 47],
       [48, 63],
       [64, 79],
+      ]
+  },
+  char_seulgi: {
+    standing: [
+      [1, 110],
+      [112, 221],
+    ],
+    walking: [
+      [223, 335],
+      [337, 446],
+      [448, 560],
+      [562, 671],
+    ],
+  },
+  char_fp2: {
+    standing: [
+      [1, 65],
+      [67, 132],
+    ],
+    walking: [
+      [134, 208],
+      [210, 285],
+      [287, 372],
+      [374, 460],
+    ],
+  },
+  char_ellinx: {
+    standing: [
+      [1, 49],
+      [51, 99],
+    ],
+    walking: [
+      [101, 149],
+      [151, 199],
+      [201, 249],
+      [251, 299],
     ],
   },
 };
@@ -435,6 +473,9 @@ Game.load = function () {
     Loader.loadImage("char_lieu", "./img/char_lieu.png"),
     Loader.loadImage("char_rczjian", "./img/char_rczjian.png"),
     Loader.loadImage("char_sf", "./img/char_sf.png"),
+    Loader.loadImage("char_seulgi", "./img/char_seulgi.png"),
+    Loader.loadImage("char_fp2", "./img/char_fp2.png"),
+    Loader.loadImage("char_ellinx", "./img/char_ellinx.png"),
 
     // Load coin animation
     Loader.loadImage("coin", "./img/coin.png"),
@@ -1176,16 +1217,25 @@ class NetworkHandler {
 }
 
 function resizeCanvas() {
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   const vpH = window.visualViewport.height;
   const vpW = window.visualViewport.width;
 
-  if (isMobile && window.innerHeight > window.innerWidth) {
-    canvas.height = Math.max(Math.min(vpH, vpW), window.innerWidth);
-    canvas.width = Math.max(Math.min(vpH, vpW), window.innerWidth);
+  if (window.innerHeight > window.innerWidth) {
+    const dim = Math.max(Math.min(vpH, vpW), window.innerWidth);
+    canvas.height = dim;
+    canvas.width = dim;
+    canvas.style.height = dim;
+    canvas.style.width = dim;
   } else {
-    canvas.height = Math.min(vpH, vpW);
-    canvas.width = Math.min(vpH, vpW);
+    const dim = Math.min(
+      Math.min(vpH, vpW),
+      // bec flex children cant exceed parent dims
+      document.getElementById("main").clientHeight,
+    );
+    canvas.height = dim;
+    canvas.width = dim;
+    canvas.style.height = dim;
+    canvas.style.width = dim;
   }
 
   camera.updateViewport();
