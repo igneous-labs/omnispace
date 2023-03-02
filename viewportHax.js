@@ -1,7 +1,6 @@
-function setViewHeight() {
-  console.log("called");
+function setMainHeight() {
+  // console.log("called");
   const navHeight = document.querySelector("nav").offsetHeight;
-  const footerHeight = document.querySelector("footer").offsetHeight;
   const vpH = window.visualViewport.height;
   // leave 15px for bottom margin between textrow and bottom of screen
   document.getElementById("main").style.height = `${Math.round(
@@ -10,22 +9,31 @@ function setViewHeight() {
 }
 
 if (window.innerHeight > window.innerWidth) {
-  setViewHeight();
+  setMainHeight();
 }
 
-const navFooterResizeObs = new ResizeObserver(setViewHeight);
+const navFooterResizeObs = new ResizeObserver(setMainHeight);
 navFooterResizeObs.observe(document.querySelector("nav"));
 navFooterResizeObs.observe(document.querySelector("footer"));
-window.visualViewport.addEventListener("resize", setViewHeight);
-window.visualViewport.addEventListener("scroll", setViewHeight);
+window.visualViewport.addEventListener("resize", setMainHeight);
+window.visualViewport.addEventListener("scroll", setMainHeight);
 window.addEventListener("scroll", (e) => {
   if (document.body.scrollTop > 0) {
     document.body.scrollTop = 0;
   }
 });
 
-// haxx0r for Safari
-document.getElementById("chat_input")?.addEventListener("focus", (e) => {
+/**
+ * haxx0r for Safari:
+ * safari scrolls to the focused element
+ *  - after focus event listener fires
+ *  - before new layout changes
+ *  - without triggering scroll event
+ * This causes it to scroll to the chat_input's old position far below the canvas.
+ * Here we scroll to window top after a delay (instead of in the focus event listener)
+ * to give the layout time to change.
+ */
+document.getElementById("chat_input").addEventListener("focus", (e) => {
   setTimeout(() => window.scrollTo(0, 0), 100);
 });
 

@@ -610,6 +610,20 @@ select {
   /* border-radius: var(--rad) var(--rad-sm) var(--rad-sm) var(--rad); */
 }
 
+/**
+   * apply this to ONE AND ONLY ONE child of a flex-col container 
+   * to make it grow and shrink to fill up the remainder
+   * vertical space of the contianer 
+   */
+
+.flex-fill-v {
+  /** if omitted, will overflow container if content height is big.
+     * See: https://stackoverflow.com/questions/36247140/why-dont-flex-items-shrink-past-content-size 
+     */
+  min-height: 0px;
+  flex: 1 1 0%;
+}
+
 *, ::before, ::after {
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
@@ -977,10 +991,6 @@ select {
   right: 0px;
 }
 
-.top-0 {
-  top: 0px;
-}
-
 .isolate {
   isolation: isolate;
 }
@@ -1200,10 +1210,6 @@ select {
 
 .h-\[300px\] {
   height: 300px;
-}
-
-.h-\[calc\(100\%-54px\)\] {
-  height: calc(100% - 54px);
 }
 
 .h-full {
@@ -3449,16 +3455,16 @@ select {
 }
 
 @media (orientation: portrait) {
+  .portrait\:fixed {
+    position: fixed;
+  }
+
   .portrait\:flex-col {
     flex-direction: column;
   }
 }
 
 @media (orientation: landscape) {
-  .landscape\:h-\[70\%\] {
-    height: 70%;
-  }
-
   .landscape\:grow {
     flex-grow: 1;
   }
