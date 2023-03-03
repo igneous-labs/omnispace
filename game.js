@@ -506,7 +506,16 @@ Game.setInitialState = function () {
     lastAnimationChangeTime: Game.lastRender,
   };
 
-  Game.entities.push(new PressurePlate({ position: [600, 600] }));
+  Game.entities.push(
+    new PressurePlate({ position: [600, 600] }),
+    new Sign({
+      position: [160, 520],
+      height: 100,
+      width: 380,
+      direction: "front",
+      messages: { 0: "hello world" },
+    }),
+  );
 };
 
 Game.run = function () {
