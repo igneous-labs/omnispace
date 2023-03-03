@@ -382,7 +382,7 @@ let SpriteSheetFrameMap = {
       [32, 47],
       [48, 63],
       [64, 79],
-      ]
+    ],
   },
   char_seulgi: {
     standing: [
@@ -446,6 +446,8 @@ let Game = {
   coinPosition: null,
   playerCoins: 0,
 
+  entities: [],
+
   load: () => {},
   setInitialState: () => {},
   run: () => {},
@@ -480,6 +482,9 @@ Game.load = function () {
 
     // Load coin animation
     Loader.loadImage("coin", "./img/coin.png"),
+
+    // Toys: pressurePlate
+    Loader.loadImage("tile", "./img/tile.png"),
   ];
 };
 
@@ -500,6 +505,8 @@ Game.setInitialState = function () {
     currentAnimationFrame: 0,
     lastAnimationChangeTime: Game.lastRender,
   };
+
+  Game.entities.push(new PressurePlate({ position: [600, 600] }));
 };
 
 Game.run = function () {
@@ -591,6 +598,11 @@ Game.render = function (tFrame) {
   //     rw,
   //     rh,
   // )
+
+  // Render entities
+  for (const entity of Game.entities) {
+    entity.render();
+  }
 
   for (let playerId in Game.renderState) {
     // Render the player, then any chat bubbles
@@ -792,10 +804,7 @@ Game.render = function (tFrame) {
   // Render coins
   for (const entityId of Object.keys(Game.renderEntityState)) {
     const entity = Game.renderEntityState[entityId];
-    if (
-      entity.entityType === "coin" &&
-      "coin" in entitySpriteSheetMap
-    ) {
+    if (entity.entityType === "coin" && "coin" in entitySpriteSheetMap) {
       if (tFrame - entity.lastAnimationChangeTime > 150) {
         entity.currentAnimationFrame =
           (entity.currentAnimationFrame + 1) %
@@ -930,7 +939,10 @@ Game.update = function (tFrame) {
     Game.playerCoins += 1;
   }
 
-  //
+  // Entities
+  for (const entity of Game.entities) {
+    entity.update();
+  }
 
   function distanceBetween(a, b) {
     if (!a || !b) return -1;
