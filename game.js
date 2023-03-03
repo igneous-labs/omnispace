@@ -548,7 +548,7 @@ Game.render = function (tFrame) {
   );
   camera.begin();
 
-  Game.ctx.fillStyle = "rgb(27, 155, 152)";
+  Game.ctx.fillStyle = "rgb(102, 204, 255)";
   Game.ctx.fillRect(0, 0, 1500, 1500);
 
   // const room = Loader.getImage("floathouse")
