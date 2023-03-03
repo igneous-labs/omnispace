@@ -1,5 +1,6 @@
 /**
- * A six-faced die
+ * A six-faced die.
+ * Make sure to <script> before game.js so that game.js can use this for setup
  */
 
 /**
@@ -7,11 +8,22 @@
  */
 
 class Die {
-  static constructor() {
+  static spriteFile = "die";
+
+  // spritesheet is arranged horizontally,
+  // with up-facing ranging from 1 on the left to 6 on the right
+  static spriteHeightPx = 64;
+  static spriteSectionWidthPx = 64;
+
+  constructor(settings) {
     /**
      * @type {DieChoice}
      */
     this.choice = 1;
+    /**
+     * @type {[number, number]}
+     */
+    this.position = settings.position;
   }
 
   update() {
@@ -20,6 +32,18 @@ class Die {
   }
 
   render() {
-    // TODO: render this.choice face up
+    // @ts-ignore
+    Game.ctx.drawImage(
+      // @ts-ignore
+      Loader.getImage(Die.spriteFile),
+      (this.choice - 1) * Die.spriteSectionWidthPx, // sx
+      0, // sy
+      Die.spriteSectionWidthPx, // swidth
+      Die.spriteHeightPx, // sheight
+      this.position[0], // dx
+      this.position[1], // dy
+      Die.spriteSectionWidthPx, // dwidth
+      Die.spriteHeightPx, // dheight
+    );
   }
 }
