@@ -11,10 +11,14 @@ class Die {
   static spriteFile = "die";
 
   // spritesheet is arranged horizontally,
-  // with up-facing ranging from 1 on the left to 6 on the right
+  // with up-face ranging from 1 on the left to 6 on the right
   static spriteHeightPx = 64;
   static spriteSectionWidthPx = 64;
 
+  /**
+   *
+   * @param {{ position: [number, number] }} settings
+   */
   constructor(settings) {
     /**
      * @type {DieChoice}
@@ -32,6 +36,8 @@ class Die {
   }
 
   render() {
+    // TODO: import asset
+    /*
     // @ts-ignore
     Game.ctx.drawImage(
       // @ts-ignore
@@ -45,5 +51,6 @@ class Die {
       Die.spriteSectionWidthPx, // dwidth
       Die.spriteHeightPx, // dheight
     );
+    */
   }
 }

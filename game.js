@@ -422,6 +422,12 @@ let SpriteSheetFrameMap = {
   },
 };
 
+/**
+ * @typedef Entity
+ * @property {() => void} render
+ * @property {() => void} update
+ */
+
 /*
  * Game object
  *
@@ -446,6 +452,10 @@ let Game = {
   coinPosition: null,
   playerCoins: 0,
 
+  // FEATURE: global die singleton
+  globalDie: null,
+
+  /** @type {Array<Entity>} */
   entities: [],
 
   load: () => {},
@@ -506,6 +516,9 @@ Game.setInitialState = function () {
     lastAnimationChangeTime: Game.lastRender,
   };
 
+  Game.globalDie = new Die({ position: [600, 700] });
+
+  Game.entities.push(Game.globalDie);
   Game.entities.push(new PressurePlate({ position: [600, 600] }));
 };
 
