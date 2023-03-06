@@ -12,8 +12,10 @@ class Die {
 
   // spritesheet is arranged horizontally,
   // with up-face ranging from 1 on the left to 6 on the right
-  static spriteHeightPx = 64;
-  static spriteSectionWidthPx = 64;
+  // and 4 directions for each up-face (total 4*6 = 24 sprites)
+  static spriteHeightPx = 639;
+  static spriteSectionWidthPx = 576;
+  static spriteScale = 0.1;
 
   /**
    *
@@ -37,7 +39,6 @@ class Die {
 
   render() {
     // TODO: import asset
-    /*
     // @ts-ignore
     Game.ctx.drawImage(
       // @ts-ignore
@@ -48,9 +49,8 @@ class Die {
       Die.spriteHeightPx, // sheight
       this.position[0], // dx
       this.position[1], // dy
-      Die.spriteSectionWidthPx, // dwidth
-      Die.spriteHeightPx, // dheight
+      Die.spriteSectionWidthPx * Die.spriteScale, // dwidth
+      Die.spriteHeightPx * Die.spriteScale, // dheight
     );
-    */
   }
 }

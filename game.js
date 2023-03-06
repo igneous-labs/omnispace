@@ -495,6 +495,9 @@ Game.load = function () {
 
     // Toys: pressurePlate
     Loader.loadImage("tile", "./img/tile.png"),
+
+    // Toys: die
+    Loader.loadImage("die", "./img/die.png"),
   ];
 };
 
