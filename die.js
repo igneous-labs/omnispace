@@ -16,6 +16,7 @@ class Die {
   static spriteHeightPx = 639;
   static spriteSectionWidthPx = 576;
   static spriteScale = 0.1;
+  static framesPerUpFace = 4;
 
   /**
    *
@@ -43,7 +44,7 @@ class Die {
     Game.ctx.drawImage(
       // @ts-ignore
       Loader.getImage(Die.spriteFile),
-      (this.choice - 1) * Die.spriteSectionWidthPx, // sx
+      (this.choice - 1) * Die.framesPerUpFace * Die.spriteSectionWidthPx, // sx
       0, // sy
       Die.spriteSectionWidthPx, // swidth
       Die.spriteHeightPx, // sheight
