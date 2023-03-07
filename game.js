@@ -520,9 +520,17 @@ Game.setInitialState = function () {
   };
 
   Game.globalDie = new Die({ position: [600, 700] });
-
-  Game.entities.push(Game.globalDie);
-  Game.entities.push(new PressurePlate({ position: [600, 600] }));
+  Game.entities.push(
+    Game.globalDie,
+    new PressurePlate({ position: [600, 600] }),
+    new Sign({
+      position: [160, 520],
+      height: 100,
+      width: 380,
+      direction: "front",
+      messages: { 0: "hello world" },
+    }),
+  );
 };
 
 Game.run = function () {
