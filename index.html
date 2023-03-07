@@ -3531,13 +3531,13 @@
     <!-- height of main is tied to visualviewport, see viewportHax.js -->
     <!-- box-border + 0 padding so that canvas can just clamp to clientHeight in landscape -->
     <main
-      class="flex flex-col gap-4 box-border p-0 mx-4 my-2 justify-between portrait:flex-col landscape:flex-row landscape:items-center"
+      class="flex flex-col gap-4 box-border p-0 my-2 justify-between portrait:flex-col landscape:flex-row landscape:items-center"
       id="main"
     >
       <!-- Start game -->
       <canvas
         id="canvas"
-        class="block portrait:fixed portrait:left-0"
+        class="block portrait:fixed portrait:left-0 landscape:mx-4"
         width="400"
         height="400"
       ></canvas>
@@ -3546,16 +3546,35 @@
       <!-- container for both chat text and message box -->
       <div class="flex flex-col landscape:grow h-full overflow-x-hidden">
         <!-- Start chat/rooms list -->
-        <!-- flex-col-reverse makes div scroll to bottom by default -->
+
         <div
-          class="flex-fill-v flex flex-col-reverse box-border"
-          :class="{ 'overflow-auto': !messageMenuOpen, 'overflow-hidden': messageMenuOpen }"
-          id="view"
-        ></div>
+          id="outer-view"
+          class="flex-fill-v flex flex-col gap-4 h-full portrait:border-t-transparent border-solid portrait:pt-4 overflow-auto"
+        >
+          <div id="room-search" class="mx-4">
+            <input
+              id="room-search-input"
+              class="rounded-md w-full py-1"
+              type="text"
+              placeholder="Search rooms"
+              onkeyup="return handleSearchRooms(event);"
+            />
+          </div>
+
+          <!-- flex-col-reverse makes div scroll to bottom by default -->
+          <div
+            class="flex-fill-v flex flex-col box-border space-y-2 mx-4"
+            id="view"
+            :class="{ 'overflow-hidden': messageMenuOpen }"
+          ></div>
+        </div>
         <!-- End chat/rooms list -->
 
         <!-- Start message input row -->
-        <footer id="message_form" class="gap-x-2 hidden w-full z-10 bg-white">
+        <footer
+          id="message_form"
+          class="gap-x-2 px-4 hidden w-full z-10 bg-white"
+        >
           <div
             id="message_menu"
             @keydown.escape.stop="handleCloseMenu();"

@@ -382,7 +382,7 @@ let SpriteSheetFrameMap = {
       [32, 47],
       [48, 63],
       [64, 79],
-      ]
+    ],
   },
   char_seulgi: {
     standing: [
@@ -785,10 +785,7 @@ Game.render = function (tFrame) {
   // Render coins
   for (const entityId of Object.keys(Game.renderEntityState)) {
     const entity = Game.renderEntityState[entityId];
-    if (
-      entity.entityType === "coin" &&
-      "coin" in entitySpriteSheetMap
-    ) {
+    if (entity.entityType === "coin" && "coin" in entitySpriteSheetMap) {
       if (tFrame - entity.lastAnimationChangeTime > 150) {
         entity.currentAnimationFrame =
           (entity.currentAnimationFrame + 1) %
@@ -1236,6 +1233,14 @@ function resizeCanvas() {
     canvas.width = dim;
     canvas.style.height = dim;
     canvas.style.width = dim;
+  }
+
+  // Add white space above Chat of the size of canvas in Portait orienation
+  const outerView = document.getElementById("outer-view");
+  if (window.innerHeight > window.innerWidth) {
+    outerView.style.borderTopWidth = `${canvas.height}px`;
+  } else if (outerView.style.borderTopWidth) {
+    outerView.style.borderTopWidth = "";
   }
 
   camera.updateViewport();
