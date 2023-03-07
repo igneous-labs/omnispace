@@ -358,6 +358,29 @@ function isRecentEvent(event) {
   return Math.abs(event.localTimestamp - Date.now()) < 60_000;
 }
 
+// trivial folding hash function that takes string and returns integer < U16 MAX
+// intended to be used to convert matrix event_id (base64 string) to a dice roll
+function simpleHash(str) {
+  const U16_MAX = 65536;
+  let res = 0;
+  for (let i = 0; i < str.length; i++) {
+    res += str[i].charCodeAt(0);
+    res %= U16_MAX;
+  }
+  return res;
+}
+
+function handleCmd(event) {
+  const cmd = event.event.content.body.split(" ")[0].substring(1);
+  switch (cmd) {
+    case "roll":
+      // hash the event id (excluding the leading '$' character)
+      const choice = (simpleHash(event.event.event_id.slice(1)) % 6) + 1;
+      Game.globalDie.choice = choice;
+      break;
+  }
+}
+
 function setCallbacksOnPrepared() {
   client.on("Room", () => {
     setRoomList();
@@ -366,6 +389,11 @@ function setCallbacksOnPrepared() {
 
   client.on("Room.timeline", (event, room, toStartOfTimeline) => {
     if (event.getType() === "m.room.message") {
+      const isChatCmd = event.event.content.body.startsWith("!");
+      if (isChatCmd) {
+        handleCmd(event);
+      }
+
       appendMessageEvent(event, room, toStartOfTimeline);
       if (isRecentEvent(event)) {
         gameCommOnMatrixMsg(event);

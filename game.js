@@ -422,6 +422,12 @@ let SpriteSheetFrameMap = {
   },
 };
 
+/**
+ * @typedef Entity
+ * @property {() => void} render
+ * @property {() => void} update
+ */
+
 /*
  * Game object
  *
@@ -446,6 +452,10 @@ let Game = {
   coinPosition: null,
   playerCoins: 0,
 
+  // FEATURE: global die singleton
+  globalDie: null,
+
+  /** @type {Array<Entity>} */
   entities: [],
 
   load: () => {},
@@ -485,6 +495,9 @@ Game.load = function () {
 
     // Toys: pressurePlate
     Loader.loadImage("tile", "./img/tile.png"),
+
+    // Toys: die
+    Loader.loadImage("die", "./img/die.png"),
   ];
 };
 
@@ -506,7 +519,9 @@ Game.setInitialState = function () {
     lastAnimationChangeTime: Game.lastRender,
   };
 
+  Game.globalDie = new Die({ position: [600, 700] });
   Game.entities.push(
+    Game.globalDie,
     new PressurePlate({ position: [600, 600] }),
     new Sign({
       position: [160, 520],
