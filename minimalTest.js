@@ -375,7 +375,9 @@ function handleCmd(event) {
   switch (cmd) {
     case "roll":
       // hash the event id (excluding the leading '$' character)
+      console.log("[handleCmd::roll] event_id: ", event.event.event_id.slice(1));
       const choice = (simpleHash(event.event.event_id.slice(1)) % 6) + 1;
+      console.log("[handleCmd::roll] choice: ", choice);
       Game.globalDie.choice = choice;
       break;
   }
