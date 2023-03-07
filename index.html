@@ -56,6 +56,7 @@
   <body
     x-data="{
       characterMenuOpen: false,
+      ...messageData
     }"
     class="overflow-hidden flex flex-col"
   >
@@ -66,7 +67,7 @@
       <div class="flex-1">
         <button
           id="back"
-          onClick="setActiveRoom(null); render();"
+          @click="setActiveRoom(null); render(); handleUnselectReply();"
           class="rounded-md border border-transparent bg-slate-600 py-2 px-2 text-sm font-medium text-white shadow-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 invisible min-w-[38px]"
         >
           <svg
@@ -87,7 +88,7 @@
         </button>
       </div>
 
-      <div class="min-w-0 flex-1 text-center">
+      <div class="overflow-x-hidden flex-1 text-center">
         <h1 id="title" class="text-xl font-bold mx-auto truncate w-full">
           All Chats
         </h1>
@@ -3531,7 +3532,6 @@
     <!-- box-border + 0 padding so that canvas can just clamp to clientHeight in landscape -->
     <main
       class="flex flex-col gap-4 box-border p-0 mx-4 my-2 justify-between portrait:flex-col landscape:flex-row landscape:items-center"
-      x-data="{ ...messageData }"
       id="main"
     >
       <!-- Start game -->
@@ -3544,7 +3544,7 @@
       <!-- End game -->
 
       <!-- container for both chat text and message box -->
-      <div class="flex flex-col landscape:grow h-full">
+      <div class="flex flex-col landscape:grow h-full overflow-x-hidden">
         <!-- Start chat/rooms list -->
         <!-- flex-col-reverse makes div scroll to bottom by default -->
         <div
@@ -3636,7 +3636,7 @@
             id="message_box"
             class="flex w-full justify-self-end items-end gap-x-2"
           >
-            <div class="w-full min-w-0">
+            <div class="w-full overflow-x-hidden">
               <template x-if="replyingToMessage">
                 <div
                   x-data="{
@@ -3684,24 +3684,19 @@
                   </svg>
 
                   <div
-                    class="flex items-center pl-2 w-[calc(100%-30px)] justify-between"
+                    class="flex items-center pl-2 w-full justify-between max-w-[calc(100%-30px)]"
                   >
-                    <div class="flex items-center min-w-0">
-                      <template x-if="messageImg">
-                        <img
-                          alt=""
-                          :src="messageImg"
-                          class="w-8 h-8 object-cover mr-2"
-                        />
-                      </template>
+                    <template x-if="messageImg">
+                      <img
+                        alt=""
+                        :src="messageImg"
+                        class="w-8 h-8 object-cover mr-2"
+                      />
+                    </template>
 
-                      <div class="flex flex-col min-w-0">
-                        <p x-text="senderName" class="font-bold"></p>
-                        <p
-                          x-text="messageContent"
-                          class="truncate max-w-full"
-                        ></p>
-                      </div>
+                    <div class="flex flex-col overflow-x-hidden">
+                      <p x-text="senderName" class="font-bold"></p>
+                      <p x-text="messageContent" class="truncate"></p>
                     </div>
 
                     <button
