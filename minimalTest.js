@@ -378,6 +378,16 @@ function handleCmd(event) {
       const choice = (simpleHash(event.event.event_id.slice(1)) % 6) + 1;
       Game.globalDie.choice = choice;
       break;
+
+    case "coins":
+      console.log(Game.playerCoins);
+      // Note you can't use the messageToDisplay variable
+      // cos it will be overwritten by coins
+
+      // can't draw directly on the canvas because that gets redrawn every 25ms
+
+      // TODO draw this nicely on canvas
+      break;
   }
 }
 
