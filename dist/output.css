@@ -1266,10 +1266,6 @@ select {
   width: 20rem;
 }
 
-.w-\[calc\(100\%-30px\)\] {
-  width: calc(100% - 30px);
-}
-
 .w-fit {
   width: -moz-fit-content;
   width: fit-content;
@@ -1281,10 +1277,6 @@ select {
 
 .w-screen {
   width: 100vw;
-}
-
-.min-w-0 {
-  min-width: 0px;
 }
 
 .min-w-\[20px\] {
@@ -1301,6 +1293,10 @@ select {
 
 .max-w-4xl {
   max-width: 56rem;
+}
+
+.max-w-\[calc\(100\%-30px\)\] {
+  max-width: calc(100% - 30px);
 }
 
 .max-w-full {
