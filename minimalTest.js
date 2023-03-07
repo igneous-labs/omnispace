@@ -358,6 +358,15 @@ function isRecentEvent(event) {
   return Math.abs(event.localTimestamp - Date.now()) < 60_000;
 }
 
+function handleCmd(event) {
+  const cmd = event.event.content.body.split(" ")[0].substring(1);
+  switch (cmd) {
+    case "roll":
+      Game.globalDie.choice = 6;
+      break;
+  }
+}
+
 function setCallbacksOnPrepared() {
   client.on("Room", () => {
     setRoomList();
@@ -366,6 +375,11 @@ function setCallbacksOnPrepared() {
 
   client.on("Room.timeline", (event, room, toStartOfTimeline) => {
     if (event.getType() === "m.room.message") {
+      const isChatCmd = event.event.content.body.startsWith("!");
+      if (isChatCmd) {
+        handleCmd(event);
+      }
+
       appendMessageEvent(event, room, toStartOfTimeline);
       if (isRecentEvent(event)) {
         gameCommOnMatrixMsg(event);
