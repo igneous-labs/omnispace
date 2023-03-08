@@ -370,15 +370,52 @@ function simpleHash(str) {
   return res;
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+/**
+ * Tracks the event.event.origin_server_ts of the latest processed
+ * !roll to mitigate race conditions
+ */
+var lastRollCmdTs = 0;
+
+/**
+ *
+ * @returns {Promise<void>} that resolves when remote echo complete for the
+ */
+async function pollRemoteEcho(matrixEvent) {
+  while (true) {
+    // before remote echo, event_id is of the format
+    // `~!...@melchior.info...`
+    if (matrixEvent.event.event_id.startsWith("$")) {
+      return;
+    }
+    await sleep(100);
+  }
+}
+
 function handleCmd(event) {
   const cmd = event.event.content.body.split(" ")[0].substring(1);
   switch (cmd) {
     case "roll":
-      // hash the event id (excluding the leading '$' character)
-      console.log("[handleCmd::roll] event_id: ", event.event.event_id.slice(1));
-      const choice = (simpleHash(event.event.event_id.slice(1)) % 6) + 1;
-      console.log("[handleCmd::roll] choice: ", choice);
-      Game.globalDie.choice = choice;
+      // TODO: race condition if another cmd comes in before this is done
+      pollRemoteEcho(event).then(() => {
+        console.log(
+          "[handleCmd::roll] event_id: ",
+          event.event.event_id.slice(1),
+        );
+        const choice = (simpleHash(event.event.event_id.slice(1)) % 6) + 1;
+        console.log("[handleCmd::roll] choice: ", choice);
+        if (event.event.origin_server_ts <= lastRollCmdTs) {
+          console.log("roll expired, discarding");
+          return;
+        }
+        lastRollCmdTs = event.event.origin_server_ts;
+        Game.globalDie.choice = choice;
+      });
       break;
   }
 }
