@@ -401,8 +401,8 @@ function handleCmd(event) {
   const cmd = event.event.content.body.split(" ")[0].substring(1);
   switch (cmd) {
     case "roll":
-      // TODO: race condition if another cmd comes in before this is done
       pollRemoteEcho(event).then(() => {
+        // hash the event id (excluding the leading '$' character)
         console.log(
           "[handleCmd::roll] event_id: ",
           event.event.event_id.slice(1),
