@@ -390,10 +390,11 @@ async function pollRemoteEcho(matrixEvent) {
   while (true) {
     // before remote echo, event_id is of the format
     // `~!...@melchior.info...`
-    if (matrixEvent.event.event_id.startsWith("$")) {
+    if (matrixEvent.getId().startsWith("$")) {
       return;
     }
-    await sleep(100);
+    // give enough time for the full sync with server to happen
+    await sleep(1_000);
   }
 }
 
@@ -403,17 +404,14 @@ function handleCmd(event) {
     case "roll":
       pollRemoteEcho(event).then(() => {
         // hash the event id (excluding the leading '$' character)
-        console.log(
-          "[handleCmd::roll] event_id: ",
-          event.event.event_id.slice(1),
-        );
-        const choice = (simpleHash(event.event.event_id.slice(1)) % 6) + 1;
+        console.log("[handleCmd::roll] event_id: ", event.getId().slice(1));
+        const choice = (simpleHash(event.getId().slice(1)) % 6) + 1;
         console.log("[handleCmd::roll] choice: ", choice);
-        if (event.event.origin_server_ts <= lastRollCmdTs) {
+        if (event.getTs() <= lastRollCmdTs) {
           console.log("roll expired, discarding");
           return;
         }
-        lastRollCmdTs = event.event.origin_server_ts;
+        lastRollCmdTs = event.getTs();
         Game.globalDie.choice = choice;
       });
       break;
@@ -428,6 +426,13 @@ function setCallbacksOnPrepared() {
 
   client.on("Room.timeline", (event, room, toStartOfTimeline) => {
     if (event.getType() === "m.room.message") {
+      setTimeout(() => {
+        console.log("fag");
+        console.log(JSON.parse(JSON.stringify(event)));
+        console.log(JSON.parse(JSON.stringify(event.event)));
+        console.log("shit");
+      }, 100);
+
       const isChatCmd = event.event.content.body.startsWith("!");
       if (isChatCmd) {
         handleCmd(event);
