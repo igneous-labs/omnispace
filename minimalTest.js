@@ -427,7 +427,8 @@ function setCallbacksOnPrepared() {
   client.on("Room.timeline", (event, room, toStartOfTimeline) => {
     if (event.getType() === "m.room.message") {
       const isChatCmd = event.event.content.body.startsWith("!");
-      if (isChatCmd) {
+      // only respond to commands in hello-world-0
+      if (isChatCmd && room.name === "hello-world-0") {
         handleCmd(event);
       }
 
