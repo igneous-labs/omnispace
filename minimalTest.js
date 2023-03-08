@@ -222,16 +222,8 @@ function setActiveRoom(roomId) {
   const view = document.getElementById("view");
   if (roomId) {
     roomSearch.classList.add("hidden");
-    view.classList.add("overflow-auto");
-    view.classList.remove("flex-col");
-    view.classList.add("flex-col-reverse");
-    view.classList.add("space-y-reverse");
   } else {
     roomSearch.classList.remove("hidden");
-    view.classList.remove("overflow-auto");
-    view.classList.remove("flex-col-reverse");
-    view.classList.remove("space-y-reverse");
-    view.classList.add("flex-col");
   }
   viewingRoom = roomId;
 }
@@ -347,7 +339,6 @@ function render() {
 
   const canvas = document.getElementById("canvas");
   const toggleChat = document.getElementById("toggle_chat");
-  const outerView = document.getElementById("outer-view");
   console.log(appMode);
   if (appMode === "game") {
     // Always show canvas in game mode
@@ -356,18 +347,12 @@ function render() {
     toggleChat.classList.add("hover:bg-slate-700");
     toggleChat.classList.remove("bg-green-400");
     toggleChat.classList.remove("hover:bg-green-500");
-    if (window.innerHeight > window.innerWidth) {
-      outerView.style.borderTopWidth = `${canvas.height}px`;
-    }
   } else {
     canvas.style.display = "none";
     toggleChat.classList.remove("bg-slate-600");
     toggleChat.classList.remove("hover:bg-slate-700");
     toggleChat.classList.add("bg-green-400");
     toggleChat.classList.add("hover:bg-green-500");
-    if (outerView.style.borderTopWidth) {
-      outerView.style.borderTopWidth = "";
-    }
   }
 }
 

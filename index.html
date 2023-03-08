@@ -3549,7 +3549,7 @@
 
         <div
           id="outer-view"
-          class="flex-fill-v flex flex-col gap-4 h-full portrait:border-t-transparent border-solid portrait:pt-4 overflow-auto"
+          class="flex-fill-v flex flex-col gap-4 h-full portrait:pt-4 overflow-auto"
         >
           <div id="room-search" class="mx-4">
             <input
@@ -3563,9 +3563,9 @@
 
           <!-- flex-col-reverse makes div scroll to bottom by default -->
           <div
-            class="flex-fill-v flex flex-col box-border space-y-2 mx-4"
+            class="flex-fill-v flex flex-col-reverse box-border space-y-2 space-y-reverse mx-4"
             id="view"
-            :class="{ 'overflow-hidden': messageMenuOpen }"
+            :class="{ 'overflow-hidden': messageMenuOpen, 'overflow-auto': !messageMenuOpen }"
           ></div>
         </div>
         <!-- End chat/rooms list -->

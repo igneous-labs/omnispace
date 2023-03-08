@@ -1235,14 +1235,6 @@ function resizeCanvas() {
     canvas.style.width = dim;
   }
 
-  // Add white space above Chat of the size of canvas in Portait orienation
-  const outerView = document.getElementById("outer-view");
-  if (window.innerHeight > window.innerWidth) {
-    outerView.style.borderTopWidth = `${canvas.height}px`;
-  } else if (outerView.style.borderTopWidth) {
-    outerView.style.borderTopWidth = "";
-  }
-
   camera.updateViewport();
 }
 

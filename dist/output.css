@@ -3513,10 +3513,6 @@ select {
     flex-direction: column;
   }
 
-  .portrait\:border-t-transparent {
-    border-top-color: transparent;
-  }
-
   .portrait\:pt-4 {
     padding-top: 1rem;
   }
