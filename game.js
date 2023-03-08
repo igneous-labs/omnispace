@@ -455,6 +455,9 @@ let Game = {
   // FEATURE: global die singleton
   globalDie: null,
 
+  // FEATURE: global sign singleton
+  globalSign: null,
+
   /** @type {Array<Entity>} */
   entities: [],
 
@@ -520,16 +523,27 @@ Game.setInitialState = function () {
   };
 
   Game.globalDie = new Die({ position: [600, 700] });
+
+  Game.globalSign = new Sign({
+    position: [160, 520],
+    height: 100,
+    width: 380,
+    direction: "front",
+    // col 110 is where sign truncation kicks in
+    messages: {
+      0: "Would you rather give up the Internet or showering for a month?",
+      1: "Would you rather be a genius everyone thinks is an idiot or an idiot everyone thinks is a genius?",
+      2: "Would you rather sell all of your possessions or sell one of your organs?",
+      3: "Would you rather know when you're going to die or how you're going to die?",
+      4: "Would you rather give your parents or your boss access to your browser history?",
+      5: "Would you rather be reincarnated as a fly or just stop existing when you die?",
+    },
+  });
+
   Game.entities.push(
     Game.globalDie,
     new PressurePlate({ position: [600, 600] }),
-    new Sign({
-      position: [160, 520],
-      height: 100,
-      width: 380,
-      direction: "front",
-      messages: { 0: "hello world" },
-    }),
+    Game.globalSign,
   );
 };
 
