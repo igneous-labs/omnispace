@@ -426,13 +426,6 @@ function setCallbacksOnPrepared() {
 
   client.on("Room.timeline", (event, room, toStartOfTimeline) => {
     if (event.getType() === "m.room.message") {
-      setTimeout(() => {
-        console.log("fag");
-        console.log(JSON.parse(JSON.stringify(event)));
-        console.log(JSON.parse(JSON.stringify(event.event)));
-        console.log("shit");
-      }, 100);
-
       const isChatCmd = event.event.content.body.startsWith("!");
       if (isChatCmd) {
         handleCmd(event);
