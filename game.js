@@ -382,7 +382,7 @@ let SpriteSheetFrameMap = {
       [32, 47],
       [48, 63],
       [64, 79],
-      ]
+    ],
   },
   char_seulgi: {
     standing: [
@@ -422,6 +422,12 @@ let SpriteSheetFrameMap = {
   },
 };
 
+/**
+ * @typedef Entity
+ * @property {() => void} render
+ * @property {() => void} update
+ */
+
 /*
  * Game object
  *
@@ -446,6 +452,15 @@ let Game = {
   coinPosition: null,
   playerCoins: 0,
 
+  // FEATURE: global die singleton
+  globalDie: null,
+
+  // FEATURE: global sign singleton
+  globalSign: null,
+
+  /** @type {Array<Entity>} */
+  entities: [],
+
   load: () => {},
   setInitialState: () => {},
   run: () => {},
@@ -463,6 +478,7 @@ Game.load = function () {
     Loader.loadImage("overworld", "./img/bg.png"),
     Loader.loadImage("floathouse", "./img/floathouse.png"),
     Loader.loadImage("floatisland", "./img/floatisland.jpg"),
+    Loader.loadImage("trivia", "./img/trivia.png"),
     Loader.loadImage("char_default", "./img/char_default.png"),
     Loader.loadImage("char_fp", "./img/char_fp.png"),
     Loader.loadImage("char_pixisu", "./img/char_pixisu.png"),
@@ -479,6 +495,12 @@ Game.load = function () {
 
     // Load coin animation
     Loader.loadImage("coin", "./img/coin.png"),
+
+    // Toys: pressurePlate
+    Loader.loadImage("tile", "./img/tile.png"),
+
+    // Toys: die
+    Loader.loadImage("die", "./img/die.png"),
   ];
 };
 
@@ -499,6 +521,29 @@ Game.setInitialState = function () {
     currentAnimationFrame: 0,
     lastAnimationChangeTime: Game.lastRender,
   };
+
+  Game.globalDie = new Die({ position: [600, 700] });
+
+  Game.globalSign = new Sign({
+    position: [160, 420],
+    height: 200,
+    width: 380,
+    direction: "front",
+    messages: {
+      0: "You've lost your face in an accident. The plastic surgeon can either give you a face that looks exactly like Kurt Tay or Steven Lim.	Which new face do you get?",
+      1: "Your health is failing and modern medicine can't save you. The sorcerer offers you a cure. You'll have a perfect health if you copulate with a goat or eat faeces from a Thai restaurant toilet. Which do you pick?",
+      2: "You reach the afterlife and discover that reincarnation is real. You are given the choice to come back as an ugly woman or as the guy who got kicked out of BTS a month before debut. Who do you pick?",
+      3: "You've survived a mountain plane crash and it's time to start eating people. You can choose your mother or your girlfriend. Who do you eat?",
+      4: "If you could self suck, do you spit or swallow?",
+      5: "A billionaire candidate for president promises that he will pay all your taxes as long as you give up the right to masturbate. Do you vote for him?",
+    },
+  });
+
+  Game.entities.push(
+    Game.globalDie,
+    new PressurePlate({ position: [600, 600] }),
+    Game.globalSign,
+  );
 };
 
 Game.run = function () {
@@ -540,7 +585,7 @@ Game.render = function (tFrame) {
   );
   camera.begin();
 
-  Game.ctx.fillStyle = "rgb(27, 155, 152)";
+  Game.ctx.fillStyle = "rgb(102, 204, 255)";
   Game.ctx.fillRect(0, 0, 1500, 1500);
 
   // const room = Loader.getImage("floathouse")
@@ -556,9 +601,15 @@ Game.render = function (tFrame) {
   //     rh,
   // )
 
-  const room = Loader.getImage("floatisland");
-  const rw = room.width * 1;
-  const rh = room.height * 1;
+  //const room = Loader.getImage("floatisland");
+  //const rw = room.width * 1;
+  //const rh = room.height * 1;
+
+  //Game.ctx.drawImage(room, (1500 - rw) / 2, (1500 - rh) / 2, rw, rh);
+
+  const room = Loader.getImage("trivia");
+  const rw = room.width * 1.5;
+  const rh = room.height * 1.5;
 
   Game.ctx.drawImage(room, (1500 - rw) / 2, (1500 - rh) / 2, rw, rh);
 
@@ -584,6 +635,11 @@ Game.render = function (tFrame) {
   //     rw,
   //     rh,
   // )
+
+  // Render entities
+  for (const entity of Game.entities) {
+    entity.render();
+  }
 
   for (let playerId in Game.renderState) {
     // Render the player, then any chat bubbles
@@ -785,10 +841,7 @@ Game.render = function (tFrame) {
   // Render coins
   for (const entityId of Object.keys(Game.renderEntityState)) {
     const entity = Game.renderEntityState[entityId];
-    if (
-      entity.entityType === "coin" &&
-      "coin" in entitySpriteSheetMap
-    ) {
+    if (entity.entityType === "coin" && "coin" in entitySpriteSheetMap) {
       if (tFrame - entity.lastAnimationChangeTime > 150) {
         entity.currentAnimationFrame =
           (entity.currentAnimationFrame + 1) %
@@ -923,7 +976,10 @@ Game.update = function (tFrame) {
     Game.playerCoins += 1;
   }
 
-  //
+  // Entities
+  for (const entity of Game.entities) {
+    entity.update();
+  }
 
   function distanceBetween(a, b) {
     if (!a || !b) return -1;

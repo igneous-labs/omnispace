@@ -358,6 +358,67 @@ function isRecentEvent(event) {
   return Math.abs(event.localTimestamp - Date.now()) < 60_000;
 }
 
+// trivial folding hash function that takes string and returns integer < U16 MAX
+// intended to be used to convert matrix event_id (base64 string) to a dice roll
+function simpleHash(str) {
+  const U16_MAX = 65536;
+  let res = 0;
+  for (let i = 0; i < str.length; i++) {
+    res += str[i].charCodeAt(0);
+    res %= U16_MAX;
+  }
+  return res;
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+/**
+ * Tracks the event.event.origin_server_ts of the latest processed
+ * !roll to mitigate race conditions
+ */
+var lastRollCmdTs = 0;
+
+/**
+ *
+ * @returns {Promise<void>} that resolves when remote echo complete for the
+ */
+async function pollRemoteEcho(matrixEvent) {
+  while (true) {
+    // before remote echo, event_id is of the format
+    // `~!...@melchior.info...`
+    if (matrixEvent.getId().startsWith("$")) {
+      return;
+    }
+    // give enough time for the full sync with server to happen
+    await sleep(1_000);
+  }
+}
+
+function handleCmd(event) {
+  const cmd = event.event.content.body.split(" ")[0].substring(1);
+  switch (cmd) {
+    case "roll":
+      pollRemoteEcho(event).then(() => {
+        // hash the event id (excluding the leading '$' character)
+        console.log("[handleCmd::roll] event_id: ", event.getId().slice(1));
+        const choice = (simpleHash(event.getId().slice(1)) % 6) + 1;
+        console.log("[handleCmd::roll] choice: ", choice);
+        if (event.getTs() <= lastRollCmdTs) {
+          console.log("roll expired, discarding");
+          return;
+        }
+        lastRollCmdTs = event.getTs();
+        Game.globalDie.choice = choice;
+        Game.globalSign.state = choice - 1;
+      });
+      break;
+  }
+}
+
 function setCallbacksOnPrepared() {
   client.on("Room", () => {
     setRoomList();
@@ -366,6 +427,12 @@ function setCallbacksOnPrepared() {
 
   client.on("Room.timeline", (event, room, toStartOfTimeline) => {
     if (event.getType() === "m.room.message") {
+      const isChatCmd = event.event.content.body.startsWith("!");
+      // only respond to commands in hello-world-0
+      if (isChatCmd && room.name === "hello-world-0") {
+        handleCmd(event);
+      }
+
       appendMessageEvent(event, room, toStartOfTimeline);
       if (isRecentEvent(event)) {
         gameCommOnMatrixMsg(event);
