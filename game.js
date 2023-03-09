@@ -535,7 +535,7 @@ Game.setInitialState = function () {
       1: "Your health is failing and modern medicine can't save you. The sorcerer offers you a cure. You'll have a perfect health if you copulate with a goat or eat faeces from a Thai restaurant toilet. Which do you pick?",
       2: "You reach the afterlife and discover that reincarnation is real. You are given the choice to come back as an ugly woman or as the guy who got kicked out of BTS a month before debut. Who do you pick?",
       3: "You've survived a mountain plane crash and it's time to start eating people. You can choose your mother or your girlfriend. Who do you eat?",
-      4: "You're running for political office. Unfortunately, two pieces of blackmail have surfaced. There's a picture of you kicking a baby, and a video of your entire porn browsing video history. You can only stop one of these from being leaked. Which do you pick?",
+      4: "If you could self suck, do you spit or swallow?",
       5: "A billionaire candidate for president promises that he will pay all your taxes as long as you give up the right to masturbate. Do you vote for him?",
     },
   });
