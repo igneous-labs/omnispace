@@ -11,11 +11,7 @@ const MATRIX_LOGIN_STORED = JSON.parse(matrixLoginStoredStr);
 const { accessToken: MATRIX_ACCESS_TOKEN, userId: MATRIX_USER_ID } =
   MATRIX_LOGIN_STORED;
 
-const test = {
-  a: "a",
-};
-
-var roomList = [];
+var roomList = new Map();
 var viewingRoom = null;
 var messageHistory = {};
 var client = null;
@@ -222,21 +218,58 @@ function setRoomList() {
 }
 
 function setActiveRoom(roomId) {
+  const roomSearch = document.getElementById("room-search");
+  const view = document.getElementById("view");
+  if (roomId) {
+    roomSearch.classList.add("hidden");
+  } else {
+    roomSearch.classList.remove("hidden");
+  }
   viewingRoom = roomId;
+}
+
+function stringToColor(value) {
+  let hash = 0;
+  for (let i = 0; i < value.length; i++) {
+    hash = value.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  return `hsl(${hash % 360}, 85%, 35%)`;
 }
 
 function printRoomList() {
   console.log("printing room list");
   let html = "";
-  for (const [roomId, room] of roomList) {
-    html += `<div onClick="setActiveRoom('${roomId}'); render();"> ${room.name} </div>`;
+
+  if (roomList.size === 0) {
+    html += `<p class="text-xl text-center">No rooms found.</p>`;
+  } else {
+    for (const [roomId, room] of roomList) {
+      const thumbnailBg = stringToColor(roomId);
+      const unreadMessagesCount = room.notificationCounts.total || 0;
+      html += `
+<div class="flex items-center justify-between w-full py-2 px-4 rounded-sm bg-gray-100" onClick="setActiveRoom('${roomId}'); render();">
+  <div class="flex items-center space-x-2">
+    <div class="rounded-full h-12 w-12 flex items-center justify-center text-lg font-bold text-white select-none" style="background-color: ${thumbnailBg}">${room.name
+        .charAt(0)
+        .toUpperCase()}</div>
+    <span class="font-medium">${room.name}</span>
+  </div>
+  ${
+    unreadMessagesCount > 0
+      ? `<span class="text-sm font-medium h-6 min-w-[24px] box-content rounded-full p-[3px] bg-blue-500 text-white flex items-center justify-center">${unreadMessagesCount}</span>`
+      : ""
   }
+</div>
+    `;
+    }
+  }
+
   document.getElementById("view").innerHTML = html;
 }
 
 function render() {
   const view = document.getElementById("view");
-  console.log({ viewingRoom });
   if (viewingRoom === null) {
     document.getElementById("title").textContent = "All Chats";
     document.getElementById("back").classList.add("invisible");
@@ -304,9 +337,9 @@ function render() {
     }
   }
 
-  console.log(appMode);
   const canvas = document.getElementById("canvas");
   const toggleChat = document.getElementById("toggle_chat");
+  console.log(appMode);
   if (appMode === "game") {
     // Always show canvas in game mode
     canvas.style.display = "block";
@@ -487,6 +520,37 @@ async function logout() {
   await client.clearStores();
   window.location.replace("login.html");
 }
+
+function debounce(callback, wait = 300) {
+  let timeoutId = null;
+  return (...args) => {
+    window.clearTimeout(timeoutId);
+    timeoutId = window.setTimeout(() => {
+      callback.apply(null, args);
+    }, wait);
+  };
+}
+
+function searchRooms(event) {
+  const value = event.target.value;
+  console.log(value);
+
+  setRoomList();
+
+  if (value !== "") {
+    const foundRooms = [...roomList].filter((item) => {
+      const room = item[1];
+      return room.name.toLowerCase().includes(value.toLowerCase());
+    });
+    roomList = new Map(foundRooms);
+  }
+
+  printRoomList();
+}
+
+const handleSearchRooms = debounce(function (event) {
+  searchRooms(event);
+}, 500);
 
 let appMode = "game";
 
