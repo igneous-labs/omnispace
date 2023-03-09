@@ -455,6 +455,9 @@ let Game = {
   // FEATURE: global die singleton
   globalDie: null,
 
+  // FEATURE: global sign singleton
+  globalSign: null,
+
   /** @type {Array<Entity>} */
   entities: [],
 
@@ -520,16 +523,26 @@ Game.setInitialState = function () {
   };
 
   Game.globalDie = new Die({ position: [600, 700] });
+
+  Game.globalSign = new Sign({
+    position: [160, 420],
+    height: 200,
+    width: 380,
+    direction: "front",
+    messages: {
+      0: "You've lost your face in an accident. The plastic surgeon can either give you a face that looks exactly like Kurt Tay or Steven Lim.	Which new face do you get?",
+      1: "Your health is failing and modern medicine can't save you. The sorcerer offers you a cure. You'll have a perfect health if you copulate with a goat or eat faeces from a Thai restaurant toilet. Which do you pick?",
+      2: "You reach the afterlife and discover that reincarnation is real. You are given the choice to come back as an ugly woman or as the guy who got kicked out of BTS a month before debut. Who do you pick?",
+      3: "You've survived a mountain plane crash and it's time to start eating people. You can choose your mother or your girlfriend. Who do you eat?",
+      4: "If you could self suck, do you spit or swallow?",
+      5: "A billionaire candidate for president promises that he will pay all your taxes as long as you give up the right to masturbate. Do you vote for him?",
+    },
+  });
+
   Game.entities.push(
     Game.globalDie,
     new PressurePlate({ position: [600, 600] }),
-    new Sign({
-      position: [160, 520],
-      height: 100,
-      width: 380,
-      direction: "front",
-      messages: { 0: "hello world" },
-    }),
+    Game.globalSign,
   );
 };
 

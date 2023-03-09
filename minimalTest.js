@@ -370,13 +370,51 @@ function simpleHash(str) {
   return res;
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+/**
+ * Tracks the event.event.origin_server_ts of the latest processed
+ * !roll to mitigate race conditions
+ */
+var lastRollCmdTs = 0;
+
+/**
+ *
+ * @returns {Promise<void>} that resolves when remote echo complete for the
+ */
+async function pollRemoteEcho(matrixEvent) {
+  while (true) {
+    // before remote echo, event_id is of the format
+    // `~!...@melchior.info...`
+    if (matrixEvent.getId().startsWith("$")) {
+      return;
+    }
+    // give enough time for the full sync with server to happen
+    await sleep(1_000);
+  }
+}
+
 function handleCmd(event) {
   const cmd = event.event.content.body.split(" ")[0].substring(1);
   switch (cmd) {
     case "roll":
-      // hash the event id (excluding the leading '$' character)
-      const choice = (simpleHash(event.event.event_id.slice(1)) % 6) + 1;
-      Game.globalDie.choice = choice;
+      pollRemoteEcho(event).then(() => {
+        // hash the event id (excluding the leading '$' character)
+        console.log("[handleCmd::roll] event_id: ", event.getId().slice(1));
+        const choice = (simpleHash(event.getId().slice(1)) % 6) + 1;
+        console.log("[handleCmd::roll] choice: ", choice);
+        if (event.getTs() <= lastRollCmdTs) {
+          console.log("roll expired, discarding");
+          return;
+        }
+        lastRollCmdTs = event.getTs();
+        Game.globalDie.choice = choice;
+        Game.globalSign.state = choice - 1;
+      });
       break;
   }
 }
@@ -390,7 +428,8 @@ function setCallbacksOnPrepared() {
   client.on("Room.timeline", (event, room, toStartOfTimeline) => {
     if (event.getType() === "m.room.message") {
       const isChatCmd = event.event.content.body.startsWith("!");
-      if (isChatCmd) {
+      // only respond to commands in hello-world-0
+      if (isChatCmd && room.name === "hello-world-0") {
         handleCmd(event);
       }
 
