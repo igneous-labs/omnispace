@@ -219,8 +219,8 @@ function setRoomList() {
 
 function setActiveRoom(roomId) {
   const roomSearch = document.getElementById("room-search");
-  const view = document.getElementById("view");
   if (roomId) {
+    markRoomAsRead(roomId);
     roomSearch.classList.add("hidden");
   } else {
     roomSearch.classList.remove("hidden");
@@ -551,6 +551,21 @@ function searchRooms(event) {
 const handleSearchRooms = debounce(function (event) {
   searchRooms(event);
 }, 500);
+
+function markRoomAsRead(roomId) {
+  const roomMessages = messageHistory[roomId];
+  const lastEvent = roomMessages[roomMessages.length - 1];
+  console.log(lastEvent);
+  client
+    .setRoomReadMarkers(roomId, lastEvent.getId(), lastEvent, lastEvent)
+    .then(() => {
+      // Set notifications count to 0 after sending read all event
+      const currentRoom = roomList.get(roomId);
+      if (currentRoom) {
+        currentRoom.notificationCounts.total = 0;
+      }
+    });
+}
 
 let appMode = "game";
 
