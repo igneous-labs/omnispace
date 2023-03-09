@@ -531,12 +531,12 @@ Game.setInitialState = function () {
     direction: "front",
     // col 110 is where sign truncation kicks in
     messages: {
-      0: "Would you rather give up the Internet or showering for a month?",
-      1: "Would you rather be a genius everyone thinks is an idiot or an idiot everyone thinks is a genius?",
-      2: "Would you rather sell all of your possessions or sell one of your organs?",
-      3: "Would you rather know when you're going to die or how you're going to die?",
-      4: "Would you rather give your parents or your boss access to your browser history?",
-      5: "Would you rather be reincarnated as a fly or just stop existing when you die?",
+      0: "You've lost your face in an accident. The plastic surgeon can either give you a face that looks exactly like Kurt Tay or Steven Lim.	Which new face do you get?",
+      1: "Your health is failing and modern medicine can't save you. The sorcerer offers you a cure. You'll have a perfect health if you copulate with a goat or eat faeces from a Thai restaurant toilet. Which do you pick?",
+      2: "You reach the afterlife and discover that reincarnation is real. You are given the choice to come back as an ugly woman or as the guy who got kicked out of BTS a month before debut. Who do you pick?",
+      3: "You've survived a mountain plane crash and it's time to start eating people. You can choose your mother or your girlfriend. Who do you eat?",
+      4: "You're running for political office. Unfortunately, two pieces of blackmail have surfaced. There's a picture of you kicking a baby, and a video of your entire porn browsing video history. You can only stop one of these from being leaked. Which do you pick?",
+      5: "A billionaire candidate for president promises that he will pay all your taxes as long as you give up the right to masturbate. Do you vote for him?",
     },
   });
 
