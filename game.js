@@ -525,11 +525,10 @@ Game.setInitialState = function () {
   Game.globalDie = new Die({ position: [600, 700] });
 
   Game.globalSign = new Sign({
-    position: [160, 520],
-    height: 100,
+    position: [160, 420],
+    height: 200,
     width: 380,
     direction: "front",
-    // col 110 is where sign truncation kicks in
     messages: {
       0: "You've lost your face in an accident. The plastic surgeon can either give you a face that looks exactly like Kurt Tay or Steven Lim.	Which new face do you get?",
       1: "Your health is failing and modern medicine can't save you. The sorcerer offers you a cure. You'll have a perfect health if you copulate with a goat or eat faeces from a Thai restaurant toilet. Which do you pick?",
