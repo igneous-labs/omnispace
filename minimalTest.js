@@ -413,6 +413,7 @@ function handleCmd(event) {
         }
         lastRollCmdTs = event.getTs();
         Game.globalDie.choice = choice;
+        Game.globalSign.state = choice - 1;
       });
       break;
   }

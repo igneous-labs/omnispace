@@ -57,10 +57,10 @@ class Sign {
       this.height,
     );
     Game.ctx.fillStyle = "black";
+    const approxMaxCharLen = (this.height / 50) * (this.width / 4);
     CanvasTxt.drawText(
       Game.ctx,
-      // TODO how to decide how many characters to truncate
-      Sign.truncate(this.messages[this.state], 100),
+      Sign.truncate(this.messages[this.state], approxMaxCharLen),
       this.position[0],
       this.position[1],
       this.width,
