@@ -972,8 +972,23 @@ Game.update = function (tFrame) {
     distanceBetween(playerData.position, Game.coinPosition) < 10
   ) {
     Game.coinPosition = null;
+    // TODO play confetti effect when player picks up coin!
     delete Game.renderEntityState.coin;
     Game.playerCoins += 1;
+  }
+
+  // Spawn a coin if none exists
+  // TODO in future, there should be a probability for coin to spawn,
+  // and when it does, it should make a sound/alert the player
+
+  if (Game.coinPosition === null) {
+    Game.coinPosition = [500 + Math.random() * 300, 500 + Math.random() * 300];
+    console.log(`Coin spawned at ${Game.coinPosition}`);
+    Game.renderEntityState["coin"] = {
+      entityType: "coin",
+      currentAnimationFrame: 0,
+      lastAnimationChangeTime: Game.lastRender,
+    };
   }
 
   // Entities

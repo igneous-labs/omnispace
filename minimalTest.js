@@ -416,6 +416,16 @@ function handleCmd(event) {
         Game.globalSign.state = choice - 1;
       });
       break;
+
+    case "coins":
+      console.log(Game.playerCoins);
+      // Note you can't use the messageToDisplay variable
+      // cos it will be overwritten by coins
+
+      // can't draw directly on the canvas because that gets redrawn every 25ms
+
+      // TODO draw this nicely on canvas
+      break;
   }
 }
 
