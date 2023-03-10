@@ -41,7 +41,6 @@ export class Die {
   }
 
   render() {
-    // TODO: import asset
     Game.ctx.drawImage(
       Loader.getImage(Die.spriteFile),
       (this.choice - 1) * Die.framesPerUpFace * Die.spriteSectionWidthPx, // sx
