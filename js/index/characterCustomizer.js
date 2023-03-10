@@ -51,7 +51,7 @@ async function characterPreviewFetcher(selectors, zip, pose, poseFrame) {
   const res = await fetch("https://api.maplestory.net/character/render", {
     method: "POST",
     headers: {
-      Accept: "application/json",
+      "Accept": "application/json",
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -102,7 +102,7 @@ const generateSpritesheet = async (zip, selectors) => {
   for (const [pose, numOfFrames] of Object.entries(poses)) {
     for (let i = 0; i < numOfFrames; i++) {
       posesToFetch.push(
-        characterPreviewFetcher(selectors, spritesheetFolder, pose, i)
+        characterPreviewFetcher(selectors, spritesheetFolder, pose, i),
       );
     }
   }

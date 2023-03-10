@@ -4,7 +4,7 @@
  */
 
 export const PlayerSpriteSheetMap = {
-  default: "char_default",
+  "default": "char_default",
   "@fp:melchior.info": "char_fp2",
   "@pixisu:melchior.info": "char_pixisu",
   "@chinkeeyong:melchior.info": "char_chinkeeyong",

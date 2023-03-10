@@ -145,7 +145,7 @@ Game.render = function (tFrame) {
   Game.camera.moveTo(
     Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position[0],
     // FIXME 50 is a magic number because I am offsetting the player display
-    Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position[1] - 50
+    Game.worldState.world_state_data[Game.ACTIVE_PLAYER].position[1] - 50,
   );
   Game.camera.begin();
 
@@ -272,7 +272,7 @@ Game.render = function (tFrame) {
           0 + sWidth / 2,
           0 - sHeight,
           sWidth,
-          sHeight
+          sHeight,
         );
         Game.ctx.restore();
       } else {
@@ -285,7 +285,7 @@ Game.render = function (tFrame) {
           x - sWidth / 2,
           y - sHeight,
           sWidth,
-          sHeight
+          sHeight,
         );
       }
 
@@ -326,7 +326,7 @@ Game.render = function (tFrame) {
           offsetX,
           offsetY,
           boxWh,
-          boxHt
+          boxHt,
         );
       } else {
         CanvasTxt.drawText(Game.ctx, "Guest", offsetX, offsetY, boxWh, boxHt);
@@ -362,7 +362,7 @@ Game.render = function (tFrame) {
             offsetXMsg,
             offsetYMsg,
             boxWhMsg,
-            boxHtMsg
+            boxHtMsg,
           );
         }
       }
@@ -402,7 +402,7 @@ Game.render = function (tFrame) {
         x,
         y,
         sWidth,
-        sHeight
+        sHeight,
       );
     }
   }

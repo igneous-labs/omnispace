@@ -26,7 +26,7 @@ export class Sign {
     const angle = (Math.PI / 180) * 26.5;
     Game.ctx.translate(
       this.position[0] + this.width / 2,
-      this.position[1] + this.height / 2
+      this.position[1] + this.height / 2,
     );
     if (this.direction === "side") {
       Game.ctx.rotate(angle);
@@ -39,7 +39,7 @@ export class Sign {
     }
     Game.ctx.translate(
       -(this.position[0] + this.width / 2),
-      -(this.position[1] + this.height / 2)
+      -(this.position[1] + this.height / 2),
     );
 
     Game.ctx.fillStyle = "black";
@@ -47,14 +47,14 @@ export class Sign {
       this.position[0] - 3,
       this.position[1] - 3,
       this.width + 6,
-      this.height + 6
+      this.height + 6,
     );
     Game.ctx.fillStyle = "brown";
     Game.ctx.fillRect(
       this.position[0],
       this.position[1],
       this.width,
-      this.height
+      this.height,
     );
     Game.ctx.fillStyle = "black";
     const approxMaxCharLen = (this.height / 50) * (this.width / 4);
@@ -64,7 +64,7 @@ export class Sign {
       this.position[0],
       this.position[1],
       this.width,
-      this.height
+      this.height,
     );
 
     Game.ctx.restore();

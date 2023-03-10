@@ -113,10 +113,10 @@ export class NetworkHandler {
           case ACKNOWLEDGE_MESSAGE_TYPE: {
             const clientId = payload.getUint16(1, true);
             console.log(
-              `[NetworkHandler::on_message] server acknowledged connection, client_id: ${clientId}`
+              `[NetworkHandler::on_message] server acknowledged connection, client_id: ${clientId}`,
             );
             console.log(
-              `[NetworkHandler::on_message] sending player chat user id: ${matrixLoginStored.userId}`
+              `[NetworkHandler::on_message] sending player chat user id: ${matrixLoginStored.userId}`,
             );
             Game.ACTIVE_PLAYER = clientId;
             // FIXME: I don't really like the fact that we mutate Game state here.
@@ -138,19 +138,19 @@ export class NetworkHandler {
           }
           case PLAYER_CHAT_USER_ID_ACKNOWLEDGE_MESSAGE_TYPE:
             console.log(
-              "[NetworkHandler::on_message] server acknowledged PLAYER_CHAT_USER_ID message"
+              "[NetworkHandler::on_message] server acknowledged PLAYER_CHAT_USER_ID message",
             );
             console.log(
-              "[NetworkHandler::on_message] registering player to instance"
+              "[NetworkHandler::on_message] registering player to instance",
             );
             this.sendPlayerInstance(0n);
             break;
           case PLAYER_INSTANCE_ACKNOWLEDGE_MESSAGE_TYPE:
             console.log(
-              "[NetworkHandler::on_message] server acknowledged PLAYER_INSTANCE message"
+              "[NetworkHandler::on_message] server acknowledged PLAYER_INSTANCE message",
             );
             console.log(
-              "[NetworkHandler::on_message] network handler is initialized"
+              "[NetworkHandler::on_message] network handler is initialized",
             );
             this.isInitialized = true;
             this.sendPlayerState({
@@ -166,26 +166,26 @@ export class NetworkHandler {
               slicePackedByteArray(arrayBuffer, worldStateDataOffset);
             const [, instanceChatUserIdsBytes] = slicePackedByteArray(
               arrayBuffer,
-              instanceChatUserIdsOffset
+              instanceChatUserIdsOffset,
             );
 
             // Parse worldStateData
             Game.receivedWorldStateBuffer = parseEntriesFromArrayBytes(
               parseWorldStateDataEntry,
-              worldStateDataBytes
+              worldStateDataBytes,
             );
 
             // Parse instanceChatUserIds
             Game.worldState.client_chat_user_ids = parseEntriesFromArrayBytes(
               parseInstanceChatUserIdsEntry,
-              instanceChatUserIdsBytes
+              instanceChatUserIdsBytes,
             );
             break;
           }
           default:
             console.log(
               "[NetworkHandler::on_message] received unexpected message: ",
-              arrayBuffer
+              arrayBuffer,
             );
         }
       });
@@ -204,7 +204,7 @@ export class NetworkHandler {
   sendPlayerChatUserId(userId) {
     this.sendMessage(
       PLAYER_CHAT_USER_ID_MESSAGE_TYPE,
-      new TextEncoder().encode(userId)
+      new TextEncoder().encode(userId),
     );
   }
 

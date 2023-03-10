@@ -9,7 +9,7 @@ function setMainHeight() {
   // leave 15px for bottom margin between textrow and bottom of screen
   // @ts-ignore
   document.getElementById("main").style.height = `${Math.round(
-    vpH - navHeight - 15
+    vpH - navHeight - 15,
   )}px`;
 }
 
@@ -61,7 +61,7 @@ export function onPageParsed() {
           e.preventDefault();
         }
       },
-      { passive: false }
+      { passive: false },
     );
   }
 }

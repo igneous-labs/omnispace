@@ -45,7 +45,7 @@ function gameSetInitialState() {
   Game.entities.push(
     Game.globalDie,
     new PressurePlate({ position: [600, 600] }),
-    Game.globalSign
+    Game.globalSign,
   );
 }
 
@@ -123,7 +123,7 @@ function resizeCanvas() {
       Math.min(vpH, vpW),
       // bec flex children cant exceed parent dims
       // @ts-ignore
-      document.getElementById("main").clientHeight
+      document.getElementById("main").clientHeight,
     );
   }
   setCanvasDims(dim);

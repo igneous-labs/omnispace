@@ -21,7 +21,7 @@ async function onLoginSubmit(e) {
           JSON.stringify({
             accessToken: response.access_token,
             userId,
-          })
+          }),
         );
         window.location.replace("index.html");
         return;

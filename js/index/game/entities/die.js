@@ -51,7 +51,7 @@ export class Die {
       this.position[0], // dx
       this.position[1], // dy
       Die.spriteSectionWidthPx * Die.spriteScale, // dwidth
-      Die.spriteHeightPx * Die.spriteScale // dheight
+      Die.spriteHeightPx * Die.spriteScale, // dheight
     );
   }
 }

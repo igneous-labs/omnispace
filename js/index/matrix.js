@@ -36,7 +36,7 @@ function gameCommOnMatrixMsg(matrixEvent) {
   const idUserMapping = Game.worldState.client_chat_user_ids;
 
   const gameUserIds = Object.entries(idUserMapping).filter(
-    ([, v]) => v === matrixUserId
+    ([, v]) => v === matrixUserId,
   );
   console.log(gameUserIds);
   if (gameUserIds.length > 0) {
@@ -82,7 +82,7 @@ function sendImageMessage(e) {
             render();
           });
       });
-    })
+    }),
   );
 }
 
@@ -118,7 +118,7 @@ const messageData = {
 
     const { messageEventId } = e.target.closest("div").dataset;
     const message = messageHistory[viewingRoom].find(
-      (m) => m.event.event_id === messageEventId
+      (m) => m.event.event_id === messageEventId,
     );
     this.selectedMessage = message;
   },
@@ -338,7 +338,7 @@ export function render() {
         const senderId = message.event.sender;
         const members = roomList.get(roomId).getMembers();
         const senderName = members.filter(
-          (member) => member.userId === senderId
+          (member) => member.userId === senderId,
         )[0].rawDisplayName;
 
         return `${acc}
@@ -359,7 +359,7 @@ export function render() {
                       ${
                         message.event.content.msgtype === "m.image"
                           ? `<img src=${client.mxcUrlToHttp(
-                              message.event.content.url
+                              message.event.content.url,
                             )} />`
                           : ""
                       }
@@ -409,7 +409,7 @@ function handlePaste(evt) {
   const images = [].slice.call(clipboardItems).filter(
     (item) =>
       // Filter the image items only
-      item.type.indexOf("image") !== -1
+      item.type.indexOf("image") !== -1,
   );
   if (images.length === 0) {
     return;
@@ -600,7 +600,7 @@ export function toggleAppMode() {
 
 export function onPageParsed() {
   const matrixLoginStoredStr = window.localStorage.getItem(
-    MATRIX_LOGIN_LOCAL_STORAGE_KEY
+    MATRIX_LOGIN_LOCAL_STORAGE_KEY,
   );
   if (!matrixLoginStoredStr) {
     window.location.replace("login.html");

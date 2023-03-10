@@ -34,7 +34,7 @@ export class PressurePlate {
   // Update the count appropriately
   update() {
     this.count = Object.values(Game.worldState.world_state_data).filter(
-      (player) => this.onPressurePlate(player.position)
+      (player) => this.onPressurePlate(player.position),
     ).length;
   }
 
@@ -49,7 +49,7 @@ export class PressurePlate {
       this.position[0],
       this.position[1],
       32,
-      32
+      32,
     );
   }
 }
