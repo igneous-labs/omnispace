@@ -1,14 +1,23 @@
-const defaultTheme = require('tailwindcss/defaultTheme')
-
-/** @type {import('tailwindcss').Config} */
+/** @type {import("tailwindcss").Config} */
 module.exports = {
-  content: ['./**/*.{html,js}'],
+  // dont use overly-broad patterns like ./**/*.{js,css,html}
+  // since this has no exclude option
+  content: [
+    "./404.html",
+    "./index.html",
+    "./login.html",
+    "./css/**/*.css",
+    "./js/**/*.js",
+  ],
+  plugins: [],
+  darkMode: "class",
   theme: {
-    extend: {
-      fontFamily: {
-        sans: ['Inter var', ...defaultTheme.fontFamily.sans],
-      },
+    screens: {
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
     },
   },
-  plugins: [require('@tailwindcss/forms')],
-}
+};
