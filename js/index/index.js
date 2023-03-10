@@ -7,19 +7,23 @@ import {
   toggleAppMode,
 } from "@/js/index/matrix";
 import { onPageParsed as onPageParsedGame } from "@/js/index/game";
+import { onPageParsed as onPageParsedViewportHax } from "@/js/index/viewportHax";
 import { isMobile } from "@/js/common/utils";
 
 function onPageParsed() {
   onPageParsedMatrix();
-  onPageParsedCharacterCustomizer();
+  onPageParsedViewportHax();
   onPageParsedGame();
+  onPageParsedCharacterCustomizer();
 
+  // pollute global scope so alpine can use
+  // @ts-ignore
+  window.isMobile = isMobile;
+
+  // start alpine only after global namespace has been polluted
   // @ts-ignore
   window.Alpine = Alpine;
-
-  queueMicrotask(() => {
-    Alpine.start();
-  });
+  Alpine.start();
 
   // @ts-ignore
   document.getElementById("logout-button").onclick = logout;
@@ -29,10 +33,6 @@ function onPageParsed() {
     toggleAppMode();
     render();
   };
-
-  // pollute global scope so alpine can use
-  // @ts-ignore
-  window.isMobile = isMobile;
 }
 
 onPageParsed();

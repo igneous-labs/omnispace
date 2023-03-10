@@ -1,3 +1,8 @@
+/* eslint-disable import/no-extraneous-dependencies */
+// silence `'tailwindcss'/'@tailwindcss/forms' should be listed in project's dependencies, not devDependencies`
+
+const defaultTheme = require("tailwindcss/defaultTheme");
+
 /** @type {import("tailwindcss").Config} */
 module.exports = {
   // dont use overly-broad patterns like ./**/*.{js,css,html}
@@ -9,15 +14,14 @@ module.exports = {
     "./css/**/*.css",
     "./js/**/*.js",
   ],
-  plugins: [],
+  // eslint-disable-next-line global-require
+  plugins: [require("@tailwindcss/forms")],
   darkMode: "class",
   theme: {
-    screens: {
-      sm: "640px",
-      md: "768px",
-      lg: "1024px",
-      xl: "1280px",
-      "2xl": "1536px",
+    extend: {
+      fontFamily: {
+        sans: ["Inter var", ...defaultTheme.fontFamily.sans],
+      },
     },
   },
 };
