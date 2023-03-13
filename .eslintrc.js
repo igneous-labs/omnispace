@@ -19,7 +19,7 @@ module.exports = {
       },
     },
     {
-      files: "*.js",
+      files: "js/**/*.js",
       plugins: ["simple-import-sort"],
       extends: ["airbnb-base", "prettier"],
       parserOptions: {
