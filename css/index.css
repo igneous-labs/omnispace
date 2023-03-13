@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  1. Use a more-intuitive box-sizing model.
+*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+/*
+  2. Remove default margin
+*/
+* {
+  margin: 0;
+}
+/*
+  3. Allow percentage-based heights in the application
+*/
+html,
+body {
+  height: 100%;
+}
+/*
+  Typographic tweaks!
+  4. Add accessible line-height
+  5. Improve text rendering
+*/
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+/*
+  6. Improve media defaults
+*/
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+/*
+  7. Remove built-in form typography styles
+*/
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+/*
+  8. Avoid text overflows
+*/
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+/*
+  9. Create a root stacking context
+*/
+#root,
+#__next {
+  isolation: isolate;
+}
+
+#chat_input {
+  width: 100%;
+}
+
+#chat_input:empty::before {
+  content: attr(data-placeholder);
+  color: #a2acb4;
+  pointer-events: none;
+}
+
+.pixel {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+@layer base {
+  .message_bubble {
+    @apply w-fit;
+    @apply max-w-[80%];
+    @apply break-words;
+    @apply m-1;
+    @apply px-1;
+    @apply rounded-sm;
+    /*border-radius: var(--rad-sm) var(--rad) var(--rad) var(--rad-sm);*/
+  }
+
+  .other_message {
+    @apply bg-[#ebebeb];
+    @apply mr-auto;
+  }
+
+  .self_message {
+    background: linear-gradient(30deg, #bec2ee, #a3f8ed);
+    @apply ml-auto;
+    @apply rounded-sm;
+    /* border-radius: var(--rad) var(--rad-sm) var(--rad-sm) var(--rad); */
+  }
+
+  /**
+   * apply this to ONE AND ONLY ONE child of a flex-col container 
+   * to make it grow and shrink to fill up the remainder
+   * vertical space of the contianer 
+   */
+  .flex-fill-v {
+    /** if omitted, will overflow container if content height is big.
+     * See: https://stackoverflow.com/questions/36247140/why-dont-flex-items-shrink-past-content-size 
+     */
+    @apply min-h-0;
+    @apply flex-1;
+  }
+}
