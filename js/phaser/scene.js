@@ -1,6 +1,6 @@
 import { Scene3D } from "@enable3d/phaser-extension";
 import { Robot } from "@/js/phaser/robot";
-import { Raycaster } from "three";
+import { Raycaster, OrthographicCamera } from "three";
 
 export class MainScene extends Scene3D {
   /** @type {Robot} */
@@ -17,14 +17,25 @@ export class MainScene extends Scene3D {
   }
 
   init() {
+    // smaller the frustum, narrower FOV
+    const frustumSize = 8;
+    const aspect = this.cameras.main.width / this.cameras.main.height;
     // y - up
     // x - southeast
     // z - southwest
-    this.accessThirdDimension({ gravity: { x: 0, y: -9.8, z: 0 } });
+    this.accessThirdDimension({
+      gravity: { x: 0, y: -9.8, z: 0 },
+      camera: new OrthographicCamera(
+        (frustumSize * aspect) / -2,
+        (frustumSize * aspect) / 2,
+        frustumSize / 2,
+        frustumSize / -2,
+      ),
+    });
   }
 
   async create() {
-    await this.third.warpSpeed("-orbitControls", "-fog");
+    await this.third.warpSpeed("-orbitControls", "-fog", "-camera");
     this.third.camera.position.set(12, 8, 12);
     this.third.camera.lookAt(0, 0, 0);
     const robot = await Robot.load(this.third);
