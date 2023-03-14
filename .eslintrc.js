@@ -3,7 +3,7 @@ module.exports = {
   env: {
     browser: true,
   },
-  ignorePatterns: ["dist/*"],
+  ignorePatterns: ["dist/*", "public/*"],
   overrides: [
     // TODO: include eslint for tailwindcss:
     // https://github.com/francoismassart/eslint-plugin-tailwindcss
@@ -19,7 +19,7 @@ module.exports = {
       },
     },
     {
-      files: "js/**/*.js",
+      files: "*.js",
       plugins: ["simple-import-sort"],
       extends: ["airbnb-base", "prettier"],
       parserOptions: {
