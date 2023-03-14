@@ -45,13 +45,15 @@ export class MainScene extends Scene3D {
 
     // @ts-ignore
     // this draws the collision outlines etc
-    // this.third.physics.debug.enable();
+    this.third.physics.debug.enable();
 
     const { canvas } = this.game;
     const touchHandler = this.handleTouchOrClick.bind(this);
     canvas.addEventListener("touchstart", touchHandler);
     canvas.addEventListener("touchmove", touchHandler);
     canvas.addEventListener("click", touchHandler);
+
+    this.haveSomeFun();
   }
 
   update(_time, _delta) {
@@ -114,13 +116,19 @@ export class MainScene extends Scene3D {
   canvas2DToWorld3D(x, y) {
     this.raycaster.setFromCamera({ x, y }, this.third.camera);
     // emptySpace is located ~500 units away
-    const [closest, emptySpace] = this.raycaster.intersectObjects(
+    const intersects = this.raycaster.intersectObjects(
       this.third.scene.children,
+      false,
     );
     // closest is emptySpace, discard this result
-    if (!emptySpace) {
+    if (intersects.length < 2) {
       return null;
     }
-    return closest.point;
+    for (const obj of intersects) {
+      if (obj.object.id !== this.robot.body.id) {
+        return obj.point;
+      }
+    }
+    return null;
   }
 }
