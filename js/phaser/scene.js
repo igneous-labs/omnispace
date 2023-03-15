@@ -45,9 +45,21 @@ export class MainScene extends Scene3D {
     const tableScale = 4;
     const tableGltf = await this.third.load.gltf("/assets/table.glb");
     const table = new ExtendedObject3D();
+
+    // axes are flipped z=vertical in the blender model
+    // got these measurements from blender (press M in object mode)
+    const depth = 0.447; // z here, -y in blender model
+    const width = 0.841; // x both here and in blender model
+    const height = 0.327; // y here, z in the blender model
+
+    tableGltf.scene.translateX(-width / 2);
+    tableGltf.scene.translateY(-height / 2);
+    tableGltf.scene.translateZ(depth / 2);
     table.add(tableGltf.scene);
     table.scale.set(tableScale, tableScale, tableScale);
     table.translateX(3);
+    // so that it drops at the start
+    table.translateY(1);
     table.traverse((child) => {
       if (child.isMesh) {
         child.castShadow = true;
@@ -55,21 +67,12 @@ export class MainScene extends Scene3D {
       }
     });
     this.third.add.existing(table);
-    /*
     this.third.physics.add.existing(table, {
       shape: "box",
-      height: 0.4,
-      width: 0.75,
-      depth: 0.5,
-      offset: {
-        x: -1.5,
-        y: -1,
-        z: 1.1,
-      },
+      depth,
+      width,
+      height,
     });
-    table.body.setLinearFactor(0, 1, 0);
-    table.body.setAngularFactor(0, 0, 0);
-    */
 
     // @ts-ignore
     // this draws the collision outlines etc

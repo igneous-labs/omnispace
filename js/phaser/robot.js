@@ -13,9 +13,9 @@ const SCALE = 1 / 3;
 const WALKING_ANIM_KEY = "Walking";
 const IDLE_ANIM_KEY = "Idle";
 
+// TODO: fix overshoot behaviour at high velocities
 const DIST_EPS = 1e-2;
 const RADIANS_EPS = 3e-2;
-
 const LINEAR_V = 1;
 const ANGULAR_V = 2;
 
