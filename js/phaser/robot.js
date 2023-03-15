@@ -1,5 +1,11 @@
 import { ExtendedObject3D } from "@enable3d/phaser-extension";
-import { Vector2, Vector3 } from "three";
+import {
+  Mesh,
+  MeshLambertMaterial,
+  BoxGeometry,
+  Vector2,
+  Vector3,
+} from "three";
 
 const ASSET_PATH = "/assets/robot.glb";
 const SCALE = 1 / 3;
@@ -21,6 +27,9 @@ export class Robot {
 
   /** @type {?Vector3} */
   destination;
+
+  /** @type {?ExtendedObject3D} */
+  destinationDebugBlock;
 
   /**
    *
@@ -71,6 +80,7 @@ export class Robot {
     this.body.body.setFriction(0);
 
     this.destination = null;
+    this.destinationDebugBlock = null;
   }
 
   /**
@@ -95,9 +105,50 @@ export class Robot {
   /**
    *
    * @param {Vector3} posWorld
+   * @param {import("@enable3d/phaser-extension").Scene3D} scene
    */
-  moveTo(posWorld) {
+  moveTo(posWorld, scene) {
     this.destination = posWorld;
+    this.drawDebugDestination(scene);
+  }
+
+  /**
+   *
+   * @param {import("@enable3d/phaser-extension").Scene3D} scene
+   */
+  drawDebugDestination(scene) {
+    if (this.destinationDebugBlock) {
+      scene.third.destroy(this.destinationDebugBlock);
+    }
+    // this.destinationDebugBlock = new ExtendedObject3D();
+    // this.destinationDebugBlock.position.set(2, 2, 0);
+    const material = new MeshLambertMaterial({
+      color: "tomato",
+    });
+    const geometry = new BoxGeometry(1, 1, 1);
+    const mesh = new Mesh(geometry, material);
+    // @ts-ignore
+    const { x, y, z } = this.destination;
+    mesh.translateX(x);
+    mesh.translateY(y);
+    mesh.translateZ(z);
+    // Mesh actually implements ExtendedObject3D but js type checking is dumb
+    /** @type {ExtendedObject3D} */
+    // @ts-ignore
+    const typeCast = mesh;
+    this.destinationDebugBlock = typeCast;
+    scene.third.add.existing(this.destinationDebugBlock);
+    // this is kinda dumb but enable3d requires all obejcts to have a physics
+    // body else third.destroy will throw an undefined pointer exception
+    // @ts-ignore
+    scene.third.physics.add.existing(this.destinationDebugBlock, {
+      shape: "box",
+    });
+    // no physics applied
+    this.destinationDebugBlock.body.setLinearFactor(0, 0, 0);
+    this.destinationDebugBlock.body.setAngularFactor(0, 0, 0);
+    // noclip
+    this.destinationDebugBlock.body.setCollisionFlags(4);
   }
 
   update() {

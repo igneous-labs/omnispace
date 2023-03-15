@@ -1,4 +1,4 @@
-import { Scene3D } from "@enable3d/phaser-extension";
+import { ExtendedObject3D, Scene3D } from "@enable3d/phaser-extension";
 import { Robot } from "@/js/phaser/robot";
 import { Raycaster, OrthographicCamera } from "three";
 
@@ -36,12 +36,40 @@ export class MainScene extends Scene3D {
 
   async create() {
     await this.third.warpSpeed("-orbitControls", "-fog", "-camera");
-    this.third.camera.position.set(12, 8, 12);
-    this.third.camera.lookAt(0, 0, 0);
+
+    // robot
     const robot = await Robot.load(this.third);
     this.robot = robot;
-    this.third.camera.lookAt(this.robot.body.position);
-    this.robot.body.anims.play("Idle");
+
+    // table
+    const tableScale = 4;
+    const tableGltf = await this.third.load.gltf("/assets/table.glb");
+    const table = new ExtendedObject3D();
+    table.add(tableGltf.scene);
+    table.scale.set(tableScale, tableScale, tableScale);
+    table.translateX(3);
+    table.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+    this.third.add.existing(table);
+    /*
+    this.third.physics.add.existing(table, {
+      shape: "box",
+      height: 0.4,
+      width: 0.75,
+      depth: 0.5,
+      offset: {
+        x: -1.5,
+        y: -1,
+        z: 1.1,
+      },
+    });
+    table.body.setLinearFactor(0, 1, 0);
+    table.body.setAngularFactor(0, 0, 0);
+    */
 
     // @ts-ignore
     // this draws the collision outlines etc
@@ -53,7 +81,7 @@ export class MainScene extends Scene3D {
     canvas.addEventListener("touchmove", touchHandler);
     canvas.addEventListener("click", touchHandler);
 
-    this.haveSomeFun();
+    // this.haveSomeFun();
   }
 
   update(_time, _delta) {
@@ -101,7 +129,7 @@ export class MainScene extends Scene3D {
     playerY = -(playerY / canvas.clientHeight) * 2 + 1;
     const destWorldCoords = this.canvas2DToWorld3D(playerX, playerY);
     if (destWorldCoords) {
-      this.robot.moveTo(destWorldCoords);
+      this.robot.moveTo(destWorldCoords, this);
     } else {
       console.log("Clicked off the ground");
     }
@@ -125,7 +153,8 @@ export class MainScene extends Scene3D {
       return null;
     }
     for (const obj of intersects) {
-      if (obj.object.id !== this.robot.body.id) {
+      // ray might intersect with one of robot's linesegments
+      if (obj.object.name === "ground") {
         return obj.point;
       }
     }
