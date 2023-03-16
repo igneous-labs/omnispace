@@ -1,4 +1,6 @@
-/* eslint-disable */
+/**
+ * Copied from https://preview.babylonjs.com/recast.js
+ */
 
 // look man i tried adding recast-detour as a package but you get fucking esm bullshit like
 // - `ambiguous indirect export: default`

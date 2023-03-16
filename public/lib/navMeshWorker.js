@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 /**
  * Copied from https://github.com/BabylonJS/Babylon.js/commit/52d8fed2e065ef59531976e0cbbedab01a0d7b25
  *

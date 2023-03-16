@@ -2,16 +2,20 @@
 import "@babylonjs/core/Materials/standardMaterial";
 
 import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
-import { FreeCamera } from "@babylonjs/core/Cameras/freeCamera";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { Scene } from "@babylonjs/core/scene";
 import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
 import { RecastJSPlugin } from "@babylonjs/core/Navigation/Plugins/recastJSPlugin";
 import { setupNav } from "@/js/babylon/nav";
 import { Tags } from "@babylonjs/core/Misc/tags";
+import { Robot } from "@/js/babylon/robot";
+import { Player, PLAYER_TO_CAMERA_VEC } from "@/js/babylon/player";
+import { FollowCamera } from "@babylonjs/core/Cameras/followCamera";
 
 // 20Hz
 const GAME_UPDATE_PERIOD_MS = 50;
+
+const NAVMESH_WORKER_URL = "/lib/navMeshWorker.js";
 
 /**
  * @typedef CtorArgs
@@ -26,7 +30,7 @@ export class Game {
   /** @type {number} */
   lastUpdateMs;
 
-  /** @type {FreeCamera} */
+  /** @type {FollowCamera} */
   camera;
 
   /** @type {RecastJSPlugin} */
@@ -34,6 +38,9 @@ export class Game {
 
   /** @type {?import("@babylonjs/core").ICrowd} */
   crowd;
+
+  /** @type {?Player} */
+  player;
 
   /**
    * @param {CtorArgs} args
@@ -53,8 +60,16 @@ export class Game {
   constructor(args) {
     const { engine } = args;
     this.mainScene = new Scene(engine);
+    this.lastUpdateMs = performance.now();
     // register game update loop
     this.mainScene.registerBeforeRender(() => {
+      // manually lock the camera because FollowCamera rotates with the locked mesh
+      // this must run on every render step else screen will vibrate due to low
+      // camera update frequency
+      if (this.player) {
+        this.camera.position = this.player.cameraPosition();
+        this.camera.setTarget(this.player.robot.rootNode.getAbsolutePosition());
+      }
       const now = performance.now();
       const deltaMs = now - this.lastUpdateMs;
       if (deltaMs >= GAME_UPDATE_PERIOD_MS) {
@@ -63,22 +78,42 @@ export class Game {
       }
     });
     this.setupMainScene(args);
+    // nav
     this.nav = new RecastJSPlugin();
-    this.nav.setWorkerURL("/lib/navMeshWorker.js");
+    this.nav.setWorkerURL(NAVMESH_WORKER_URL);
     this.crowd = null;
-    setupNav(this.mainScene, this.nav).then((crowd) => {
-      this.crowd = crowd;
+    this.player = null;
+
+    this.loadProgressive();
+  }
+
+  async loadProgressive() {
+    // Takes around 2s for navmesh to be generated
+    const navSetupPromise = setupNav(this.mainScene, this.nav);
+    const robotLoadPromise = Robot.loadModel(this.mainScene);
+    const crowd = await navSetupPromise;
+    this.crowd = crowd;
+    await robotLoadPromise;
+    this.player = new Player(this);
+    this.mainScene.onPointerObservable.add((pointerInfo) => {
+      // @ts-ignore
+      this.player.onClick(pointerInfo);
     });
   }
 
   /**
    *
-   * @param {CtorArgs} _unnamed
+   * @param {CtorArgs} _args
    */
-  setupMainScene({ canvas }) {
-    this.camera = new FreeCamera("main", new Vector3(8, 12, 8), this.mainScene);
+  setupMainScene(_args) {
+    // camera setup
+    this.camera = new FollowCamera(
+      "main",
+      PLAYER_TO_CAMERA_VEC,
+      this.mainScene,
+    );
+    // first point at 0 before player loaded
     this.camera.setTarget(Vector3.Zero());
-    this.camera.attachControl(canvas);
 
     const light = new HemisphericLight(
       "ambientLight",
@@ -90,20 +125,20 @@ export class Game {
 
     const ground = MeshBuilder.CreateGround(
       "ground",
-      { width: 100, height: 100 },
+      { width: 50, height: 50 },
       this.mainScene,
     );
     Tags.AddTagsTo(ground, "navigable");
   }
 
-  /* eslint-disable */
   /**
    * Main game update fn
-   * @param {number} nowMs
-   * @param {number} deltaMs
+   * @param {number} _nowMs
+   * @param {number} _deltaMs
    */
-  update(nowMs, deltaMs) {
-    // TODO
+  update(_nowMs, _deltaMs) {
+    if (this.player) {
+      this.player.update();
+    }
   }
-  /* eslint-enable */
 }
