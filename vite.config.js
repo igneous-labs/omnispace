@@ -14,6 +14,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         404: path.resolve(__dirname, "404.html"),
+        babylon: path.resolve(__dirname, "babylon.html"),
         login: path.resolve(__dirname, "login.html"),
         main: path.resolve(__dirname, "index.html"),
       },
