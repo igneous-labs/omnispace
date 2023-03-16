@@ -16,6 +16,7 @@ export default defineConfig({
         404: path.resolve(__dirname, "404.html"),
         login: path.resolve(__dirname, "login.html"),
         main: path.resolve(__dirname, "index.html"),
+        phaser: path.resolve(__dirname, "phaser.html"),
       },
     },
   },

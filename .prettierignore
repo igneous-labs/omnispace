@@ -2,3 +2,5 @@
 dist/
 
 pnpm-lock.yaml
+
+public/

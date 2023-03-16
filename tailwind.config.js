@@ -11,6 +11,7 @@ module.exports = {
     "./404.html",
     "./index.html",
     "./login.html",
+    "./phaser.html",
     "./css/**/*.css",
     "./js/**/*.js",
   ],
