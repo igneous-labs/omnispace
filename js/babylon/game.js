@@ -6,6 +6,9 @@ import { FreeCamera } from "@babylonjs/core/Cameras/freeCamera";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { Scene } from "@babylonjs/core/scene";
 import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
+import { RecastJSPlugin } from "@babylonjs/core/Navigation/Plugins/recastJSPlugin";
+import { setupNav } from "@/js/babylon/nav";
+import { Tags } from "@babylonjs/core/Misc/tags";
 
 // 20Hz
 const GAME_UPDATE_PERIOD_MS = 50;
@@ -26,12 +29,20 @@ export class Game {
   /** @type {FreeCamera} */
   camera;
 
+  /** @type {RecastJSPlugin} */
+  nav;
+
+  /** @type {?import("@babylonjs/core").ICrowd} */
+  crowd;
+
   /**
    * @param {CtorArgs} args
    * @returns {Promise<Game>}
    */
   static async load(args) {
-    // TODO: async loading of assets
+    // @ts-ignore
+    // make sure to include recast.js as commonjs prior
+    await window.Recast();
     return new Game(args);
   }
 
@@ -52,6 +63,12 @@ export class Game {
       }
     });
     this.setupMainScene(args);
+    this.nav = new RecastJSPlugin();
+    this.nav.setWorkerURL("/lib/navMeshWorker.js");
+    this.crowd = null;
+    setupNav(this.mainScene, this.nav).then((crowd) => {
+      this.crowd = crowd;
+    });
   }
 
   /**
@@ -71,11 +88,12 @@ export class Game {
     // at intensity 1, the whole canvas is white lmao
     light.intensity = 0.7;
 
-    MeshBuilder.CreateGround(
+    const ground = MeshBuilder.CreateGround(
       "ground",
       { width: 100, height: 100 },
       this.mainScene,
     );
+    Tags.AddTagsTo(ground, "navigable");
   }
 
   /* eslint-disable */
