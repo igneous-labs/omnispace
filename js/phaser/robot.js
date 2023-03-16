@@ -7,6 +7,11 @@ import {
   Vector3,
 } from "three";
 
+/**
+ * Model by Tomás Laulhé (https://www.patreon.com/quaternius), modifications by Don McCurdy (https://donmccurdy.com)
+ * https://threejs.org/examples/#webgl_animation_skinning_morph
+ * CC-0 license
+ */
 const ASSET_PATH = "/assets/robot.glb";
 const SCALE = 1 / 3;
 
@@ -181,8 +186,6 @@ export class Robot {
    * rotate* setPosition* etc, you can only set velocity
    */
   pathFindStep() {
-    // TODO: clicking on top and right of the robot is jank,
-    // render the destination on the world
     /** @type {Vector3} */
     // @ts-ignore
     const dest = this.destination;
