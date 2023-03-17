@@ -31,6 +31,7 @@
   "dependencies": {
     "@babylonjs/core": "^5.50.1",
     "alpinejs": "^3.12.0",
+    "babylonjs-viewer": "^5.50.1",
     "canvas-txt": "^3.0.0",
     "clipboard": "^2.0.11",
     "file-saver": "^2.0.5",

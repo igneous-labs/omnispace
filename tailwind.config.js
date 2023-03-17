@@ -10,6 +10,7 @@ module.exports = {
   content: [
     "./404.html",
     "./babylon.html",
+    "./build.html",
     "./index.html",
     "./login.html",
     "./css/**/*.css",

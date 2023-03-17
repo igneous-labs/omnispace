@@ -7,6 +7,7 @@ specifiers:
   '@tailwindcss/forms': ^0.5.3
   alpinejs: ^3.12.0
   autoprefixer: ^10.4.13
+  babylonjs-viewer: ^5.50.1
   canvas-txt: ^3.0.0
   clipboard: ^2.0.11
   eslint: ^8.34.0
@@ -30,6 +31,7 @@ specifiers:
 dependencies:
   '@babylonjs/core': 5.50.1
   alpinejs: 3.12.0
+  babylonjs-viewer: 5.50.1
   canvas-txt: 3.0.0
   clipboard: 2.0.11
   file-saver: 2.0.5
@@ -539,6 +541,16 @@ packages:
     resolution: {integrity: sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==}
     engines: {node: '>= 0.4'}
     dev: true
+
+  /babylonjs-gltf2interface/5.50.1:
+    resolution: {integrity: sha512-FgXTm/N0Vz/K4FA0X5OoHxQ7tyacxRvfd8MBYMEtvSSTyDpYEiEqhEmcUgAON0OGGJ3fBYl9jZXromXO2NG7ow==}
+    dev: false
+
+  /babylonjs-viewer/5.50.1:
+    resolution: {integrity: sha512-oXJewthNFalL5pDMO0I1i49b8BNBa3wd5ueX6hsRVnddqopeJ8P5Mf7cEIyuEvzmzqs/f9KBobRVfSyxRgBr5w==}
+    dependencies:
+      babylonjs-gltf2interface: 5.50.1
+    dev: false
 
   /balanced-match/1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}

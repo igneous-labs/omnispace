@@ -15,6 +15,7 @@ export default defineConfig({
       input: {
         404: path.resolve(__dirname, "404.html"),
         babylon: path.resolve(__dirname, "babylon.html"),
+        build: path.resolve(__dirname, "build.html"),
         login: path.resolve(__dirname, "login.html"),
         main: path.resolve(__dirname, "index.html"),
       },

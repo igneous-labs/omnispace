@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script type="module" src="/js/babylon/build/index.js"></script>
+    <link href="/css/index.css" rel="stylesheet" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, minimum-scale=1"
+    />
+    <title>Babylon Build</title>
+  </head>
+  <body class="flex flex-col">
+    <h1 class="m-4">Babylon Build</h1>
+
+    <div class="h-[calc(100%-190px)] w-full">
+      <div id="preview"></div>
+    </div>
+
+    <!-- start items selector -->
+    <div class="w-full">
+      <div class="h-[134px] bg-blue-400 p-4">
+        <button id="backBtn" class="mb-2 hidden">Back</button>
+        <div
+          id="navbarItems"
+          class="flex w-full space-x-4 overflow-x-scroll"
+        ></div>
+      </div>
+    </div>
+    <!-- end items selector -->
+  </body>
+</html>
