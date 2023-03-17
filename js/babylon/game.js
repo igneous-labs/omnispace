@@ -11,6 +11,7 @@ import { Tags } from "@babylonjs/core/Misc/tags";
 import { Robot } from "@/js/babylon/robot";
 import { Player, PLAYER_TO_CAMERA_VEC } from "@/js/babylon/player";
 import { FollowCamera } from "@babylonjs/core/Cameras/followCamera";
+import { Camera } from "@babylonjs/core/Cameras/camera";
 
 // 20Hz
 const GAME_UPDATE_PERIOD_MS = 50;
@@ -114,6 +115,11 @@ export class Game {
     );
     // first point at 0 before player loaded
     this.camera.setTarget(Vector3.Zero());
+    this.camera.mode = Camera.ORTHOGRAPHIC_CAMERA;
+    this.camera.orthoLeft = -PLAYER_TO_CAMERA_VEC.x / 2;
+    this.camera.orthoRight = PLAYER_TO_CAMERA_VEC.x / 2;
+    this.camera.orthoTop = PLAYER_TO_CAMERA_VEC.y / 2;
+    this.camera.orthoBottom = -PLAYER_TO_CAMERA_VEC.y / 2;
 
     const light = new HemisphericLight(
       "ambientLight",
