@@ -29,7 +29,10 @@
     "vite": "^4.1.4"
   },
   "dependencies": {
+    "@babylonjs/core": "^5.50.1",
+    "@babylonjs/loaders": "^5.50.1",
     "alpinejs": "^3.12.0",
+    "babylonjs-gltf2interface": "^5.22.0",
     "canvas-txt": "^3.0.0",
     "clipboard": "^2.0.11",
     "file-saver": "^2.0.5",

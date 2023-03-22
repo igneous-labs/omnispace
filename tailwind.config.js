@@ -9,6 +9,7 @@ module.exports = {
   // since this has no exclude option
   content: [
     "./404.html",
+    "./babylon.html",
     "./index.html",
     "./login.html",
     "./css/**/*.css",

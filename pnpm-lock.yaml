@@ -1,11 +1,14 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@babylonjs/core': ^5.50.1
+  '@babylonjs/loaders': ^5.50.1
   '@html-eslint/eslint-plugin': ^0.16.0
   '@html-eslint/parser': ^0.16.0
   '@tailwindcss/forms': ^0.5.3
   alpinejs: ^3.12.0
   autoprefixer: ^10.4.13
+  babylonjs-gltf2interface: ^5.22.0
   canvas-txt: ^3.0.0
   clipboard: ^2.0.11
   eslint: ^8.34.0
@@ -27,7 +30,10 @@ specifiers:
   vite: ^4.1.4
 
 dependencies:
+  '@babylonjs/core': 5.50.1
+  '@babylonjs/loaders': 5.50.1_yzl65ltvewcubxoq3vs4iuwklu
   alpinejs: 3.12.0
+  babylonjs-gltf2interface: 5.50.1
   canvas-txt: 3.0.0
   clipboard: 2.0.11
   file-saver: 2.0.5
@@ -61,6 +67,20 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.13.11
+    dev: false
+
+  /@babylonjs/core/5.50.1:
+    resolution: {integrity: sha512-XlZVlDvsGZRKLqeld0nCa4rWUsiCAEGXr9CjPkkUWzZiO3k2jnLGZmAghbWMZCFS6jXdDoZMA9KiMyfvnO5D/Q==}
+    dev: false
+
+  /@babylonjs/loaders/5.50.1_yzl65ltvewcubxoq3vs4iuwklu:
+    resolution: {integrity: sha512-baXJ3QYVAvs4AUHl4VnL7ASKbz+gY+rUvKgtrtAuvwE6fYCWWrgsP0w6xVDNiNEChNKL7wMvF1ZwhJJOBfBUgQ==}
+    peerDependencies:
+      '@babylonjs/core': ^5.22.0
+      babylonjs-gltf2interface: ^5.22.0
+    dependencies:
+      '@babylonjs/core': 5.50.1
+      babylonjs-gltf2interface: 5.50.1
     dev: false
 
   /@esbuild/android-arm/0.16.17:
@@ -533,6 +553,10 @@ packages:
     resolution: {integrity: sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==}
     engines: {node: '>= 0.4'}
     dev: true
+
+  /babylonjs-gltf2interface/5.50.1:
+    resolution: {integrity: sha512-FgXTm/N0Vz/K4FA0X5OoHxQ7tyacxRvfd8MBYMEtvSSTyDpYEiEqhEmcUgAON0OGGJ3fBYl9jZXromXO2NG7ow==}
+    dev: false
 
   /balanced-match/1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
